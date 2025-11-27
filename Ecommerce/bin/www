@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-
+require('dotenv').config();
 var app = require('../app');
 var debug = require('debug')('post-mvc:server');
 var http = require('http');
@@ -11,8 +11,7 @@ var http = require('http');
 /**
  * Get port from environment and store in Express.
  */
-mongoose.connect(
-  'mongodb+srv://dbms:eY6BHjjK5BXXxcoZ@cluster0.9gcddz7.mongodb.net/e-commerce',
+mongoose.connect(process.env.MONGODB_URI,
   { useNewUrlParser: true, useUnifiedTopology: true }
 )
 .then(() => console.log('Connected to MongoDB Atlas!'))
