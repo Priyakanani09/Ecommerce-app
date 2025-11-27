@@ -10,7 +10,7 @@ function Signup() {
 
   const collectData = () => {
     console.log(name, email, password);
-    fetch("http://localhost:5001/register", {
+    fetch("http://localhost:5002/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

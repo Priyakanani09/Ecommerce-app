@@ -14,7 +14,7 @@ function TvsAppliances() {
 
   const fetchProducts = (pageNumber) => {
     fetch(
-      `http://localhost:5001/products?page=${pageNumber}&category=tvs & appliances`
+      `http://localhost:5002/products?page=${pageNumber}&category=tvs & appliances`
     )
       .then((res) => res.json())
       .then((data) => {

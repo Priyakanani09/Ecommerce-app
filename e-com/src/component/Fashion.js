@@ -13,7 +13,7 @@ function Fashion() {
   const navigate = useNavigate();
 
   const fetchProducts = (pageNumber) => {
-    fetch(`http://localhost:5001/products?page=${pageNumber}&category=wear`)
+    fetch(`http://localhost:5002/products?page=${pageNumber}&category=wear`)
       .then((res) => res.json())
       .then((data) => {
         const keywords = ["wear", "footwear"];

@@ -13,7 +13,7 @@ function Mobile() {
     const navigate = useNavigate();
 
     const fetchmoblie = (pageNumber) => {
-      fetch(`http://localhost:5001/products?page=${pageNumber}&category=mobiles & tablets`)
+      fetch(`http://localhost:5002/products?page=${pageNumber}&category=mobiles & tablets`)
           .then((res) => res.json())
           .then((data) => {
             console.log("Fetched data:", data);

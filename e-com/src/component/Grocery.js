@@ -13,7 +13,7 @@ function Grocery() {
     const navigate = useNavigate();
 
     const fetchProducts = (pageNumber) => {
-       fetch(`http://localhost:5001/products?page=${pageNumber}&category=grocery`)
+       fetch(`http://localhost:5002/products?page=${pageNumber}&category=grocery`)
           .then((res) => res.json())
           .then((data) => {
             const filteredProducts = data.products.filter(product => product.category && product.category.toLowerCase().includes('grocery'));

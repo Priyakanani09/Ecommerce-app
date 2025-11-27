@@ -13,7 +13,7 @@ function HomeFurniture() {
     const navigate = useNavigate();
 
     const fetchHome = (pageNumber) => {
-      fetch(`http://localhost:5001/products?page=${pageNumber}&category=home & furniture`)
+      fetch(`http://localhost:5002/products?page=${pageNumber}&category=home & furniture`)
           .then((res) => res.json())
           .then((data) => {
             const filteredProducts = data.products.filter(product => product.category && product.category.toLowerCase().includes('home & furniture'));

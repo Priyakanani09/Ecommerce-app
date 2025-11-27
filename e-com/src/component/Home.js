@@ -13,7 +13,7 @@ function Home() {
   const navigate = useNavigate();
 
   const fetchProducts = (pageNumber) => {
-    fetch(`https://ecommerce-backend.onrender.com/products?page=${pageNumber}`)
+    fetch(`http://localhost:5002/products?page=${pageNumber}`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(data.products);

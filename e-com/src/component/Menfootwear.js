@@ -13,7 +13,7 @@ function Menfootwear() {
   const navigate = useNavigate();
   
   const fetchProducts = (pageNumber) => {
-    fetch(`http://localhost:5001/products?page=${pageNumber}&category=men footwear`)
+    fetch(`http://localhost:5002/products?page=${pageNumber}&category=men footwear`)
     .then((res) => res.json())
     .then((data) => {
         const MenProducts = data.products.filter(product => product.category && product.category.toLowerCase().startsWith('men footwear'));

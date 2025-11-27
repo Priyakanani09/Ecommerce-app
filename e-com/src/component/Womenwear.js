@@ -13,7 +13,7 @@ function Womenwear() {
   const navigate = useNavigate();
 
   const fetchProducts = (pageNumber) => {
-    fetch(`http://localhost:5001/products?page=${pageNumber}&category=women wear`)
+    fetch(`http://localhost:5002/products?page=${pageNumber}&category=women wear`)
       .then((res) => res.json())
       .then((data) => {
         const WomenProducts = data.products.filter(

@@ -13,7 +13,7 @@ function Search() {
   // Fetch product data from API
   useEffect(() => {
   if (query) {
-     fetch(`http://localhost:5001/search?query=${query}`, {
+     fetch(`http://localhost:5002/search?query=${query}`, {
       method: "GET",
       headers: { "Cache-Control": "no-cache" }
     })
