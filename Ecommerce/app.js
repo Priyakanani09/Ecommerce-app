@@ -11,7 +11,9 @@ var usersRouter = require('./routes/users');
 var app = express();
 
 // Enable CORS for all routes
-app.use(cors());
+app.use(cors({
+  origin: "*"  // or "https://priyakanani09.github.io" for more secure
+}));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
