@@ -13,7 +13,7 @@ function Beautyproduct() {
     const navigate = useNavigate();
 
     const fetchProducts = (pageNumber) => {
-      fetch(`http://localhost:5001/products?page=${pageNumber}&category=beauty product`)
+       fetch(`https://ecommerce-backend.onrender.com/products?page=${pageNumber}&category=beauty product`)
           .then((res) => res.json())
           .then((data) => {
             const filteredProducts = data.products.filter(product => product.category && product.category.toLowerCase().includes('beauty product'));
