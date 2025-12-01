@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 function OrderSuccess() {
   const [message, setMessage] = useState("");
@@ -17,9 +18,9 @@ function OrderSuccess() {
           <p className="mt-3">Thank you for shopping with us!</p>
 
           <div className="text-center">
-            <a href="/" className="btn btn-primary mt-4 w-40">
+            <Link to="/" className="btn btn-primary mt-4 w-40">
               Go to Home
-            </a>
+            </Link>
           </div>
         </div>
       </div>
