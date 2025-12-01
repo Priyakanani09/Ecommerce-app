@@ -80,7 +80,7 @@ function Home() {
                         }`}
                       >
                         <img
-                          src={`http://localhost:5001${img}`}
+                          src={`http://localhost:5002${img}`}
                           className="d-block w-100"
                           alt={`${p.name} ${index + 1}`}
                           style={{

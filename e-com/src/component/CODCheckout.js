@@ -48,7 +48,7 @@ function CODCheckout() {
 
     localStorage.setItem(`order_${user.id}`, JSON.stringify(data));
 
-     const response = await fetch("http://localhost:5001/order", {
+     const response = await fetch("http://localhost:5002/order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
