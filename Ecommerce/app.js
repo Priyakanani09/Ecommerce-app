@@ -52,13 +52,12 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
-});
+  });
 
-// Start server
-const port = process.env.PORT || 5002;
+const PORT = process.env.PORT || 5002;
 
-app.listen(5002, () => {
-  console.log("Server running on port", port);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
 
