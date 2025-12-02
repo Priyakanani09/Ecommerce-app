@@ -48,7 +48,7 @@ function Footer() {
             </h6>
 
             <h6 className="text-[15px] mb-2 text-gray-300">
-              <Link to="/products" className="text-light text-decoration-none">
+              <Link to="/" className="text-light text-decoration-none">
                 Products
               </Link>
             </h6>
