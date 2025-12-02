@@ -2,6 +2,7 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { FaFacebook, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
 import "../App.css";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -33,28 +34,29 @@ function Footer() {
 
           <div className="col-md-4 mb-4 pleft">
             <h5 className="fw-bold mb-3">About</h5>
+
             <h6 className="text-[15px] mb-2">
-              <a href="/" className="text-light text-decoration-none">
+              <Link to="/" className="text-light text-decoration-none">
                 Home
-              </a>
+              </Link>
             </h6>
 
             <h6 className="text-[15px] mb-2">
-              <a href="/cart" className="text-light text-decoration-none">
+              <Link to="/cart" className="text-light text-decoration-none">
                 My Cart
-              </a>
+              </Link>
             </h6>
 
             <h6 className="text-[15px] mb-2 text-gray-300">
-              <a href="/" className="text-light text-decoration-none">
+              <Link to="/products" className="text-light text-decoration-none">
                 Products
-              </a>
+              </Link>
             </h6>
 
             <h6 className="text-[15px] mb-2 text-gray-300">
-              <a href="/contact" className="text-light text-decoration-none">
+              <Link to="/contact" className="text-light text-decoration-none">
                 Contact Us
-              </a>
+              </Link>
             </h6>
           </div>
 
@@ -78,7 +80,7 @@ function Footer() {
           </p>
         </div>
       </div>
-    </footer> 
+    </footer>
   );
 }
 
