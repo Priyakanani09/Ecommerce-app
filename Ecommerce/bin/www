@@ -18,8 +18,8 @@ mongoose.connect(process.env.MONGODB_URI,
 .then(() => console.log('Connected to MongoDB Atlas!'))
 .catch((err) => console.log('Connection error:', err));
 
-// var port = normalizePort(process.env.PORT || '5002');
-// app.set('port', port);
+var port = normalizePort(process.env.PORT || '5002');
+app.set('port', port);
 
 /**
  * Create HTTP server.
