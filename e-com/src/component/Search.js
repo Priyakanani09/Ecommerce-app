@@ -13,7 +13,7 @@ function Search() {
   // Fetch product data from API
   useEffect(() => {
   if (query) {
-     fetch(`http://localhost:5002/search?query=${query}`, {
+     fetch(`https://ecommerce-app-1-igf3.onrender.com/search?query=${query}`, {
       method: "GET",
       headers: { "Cache-Control": "no-cache" }
     })
@@ -64,7 +64,7 @@ function Search() {
                         className={`carousel-item ${index === 0 ? "active" : ""}`}
                       >
                         <img
-                          src={`http://localhost:5002${img}`}
+                          src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
                           className="d-block w-100"
                           alt={`${p.name} ${index + 1}`}
                           style={{

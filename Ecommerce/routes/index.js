@@ -17,6 +17,7 @@ const upload = multer({ storage });
 //User Registration and Login
 router.post('/register', signController.register);
 router.post('/login', signController.login);
+router.post("/refresh", signController.refreshToken);
 
 //Product Upload Setup
 router.post('/add-product',jwtAuth, upload.array('image',5), productController.addProduct);

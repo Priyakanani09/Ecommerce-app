@@ -13,7 +13,7 @@ function Womenfootwear() {
   const navigate = useNavigate();
   
   const fetchProducts = (pageNumber) => {
-    fetch(`http://localhost:5002/products?page=${pageNumber}&category=women footwear`)
+    fetch(`https://ecommerce-app-1-igf3.onrender.com/products?page=${pageNumber}&category=women footwear`)
     .then((res) => res.json())
     .then((data) => {
         const WomenProducts = data.products.filter(product => product.category && product.category.toLowerCase().startsWith('women footwear'));
@@ -80,7 +80,7 @@ function Womenfootwear() {
                         className={`carousel-item ${index === 0 ? "active" : ""}`}
                       >
                         <img
-                          src={`http://localhost:5002${img}`}
+                          src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
                           className="d-block w-100"
                           alt={`${p.name} ${index + 1}`}
                           style={{

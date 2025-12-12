@@ -14,7 +14,7 @@ function TvsAppliances() {
 
   const fetchProducts = (pageNumber) => {
     fetch(
-      `http://localhost:5002/products?page=${pageNumber}&category=tvs & appliances`
+      `https://ecommerce-app-1-igf3.onrender.com/products?page=${pageNumber}&category=tvs & appliances`
     )
       .then((res) => res.json())
       .then((data) => {
@@ -86,7 +86,7 @@ function TvsAppliances() {
                         }`}
                       >
                         <img
-                          src={`http://localhost:5002${img}`}
+                          src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
                           className="d-block w-100"
                           alt={`${p.name} ${index + 1}`}
                           style={{

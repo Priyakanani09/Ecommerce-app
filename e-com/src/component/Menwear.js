@@ -13,7 +13,7 @@ function Menwear() {
   const navigate = useNavigate();
 
   const fetchProducts = (pageNumber) => {
-    fetch(`http://localhost:5002/products?page=${pageNumber}&category=men wear`)
+    fetch(`https://ecommerce-app-1-igf3.onrender.com/products?page=${pageNumber}&category=men wear`)
       .then((res) => res.json())
       .then((data) => {
         const MenProducts = data.products.filter(product => product.category && product.category.toLowerCase().startsWith('men wear'));
@@ -80,7 +80,7 @@ function Menwear() {
                         }`}
                       >
                         <img
-                          src={`http://localhost:5002${img}`}
+                          src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
                           className="d-block w-100"
                           alt={`${p.name} ${index + 1}`}
                           style={{
