@@ -80,7 +80,7 @@ function Home() {
                         }`}
                       >
                         <img
-                          src={`http://localhost:5002${img}`}
+                          src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
                           className="d-block w-100"
                           alt={`${p.name} ${index + 1}`}
                           style={{
