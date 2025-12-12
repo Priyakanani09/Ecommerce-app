@@ -84,7 +84,7 @@ function Cart() {
                             className={`carousel-item ${i === 0 ? "active" : ""}`}
                           >
                             <img
-                              src={`http://localhost:5002${img}`}
+                              src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
                               alt={item.name}
                               className="d-block w-100"
                               style={{ height: "280px", objectFit: "contain" }}
