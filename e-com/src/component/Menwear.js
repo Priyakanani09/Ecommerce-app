@@ -4,6 +4,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "../App.css";
 import { useNavigate } from "react-router-dom";
 import { cartcontext } from "../App";
+import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 
 function Menwear() {
   const [products, setProducts] = useState([]);
@@ -11,12 +12,19 @@ function Menwear() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
+  const [showScroll, setShowScroll] = useState(false);
 
   const fetchProducts = (pageNumber) => {
-    fetch(`https://ecommerce-app-1-igf3.onrender.com/products?page=${pageNumber}&category=men wear`)
+    fetch(
+      `https://ecommerce-app-1-igf3.onrender.com/products?page=${pageNumber}&category=men wear`
+    )
       .then((res) => res.json())
       .then((data) => {
-        const MenProducts = data.products.filter(product => product.category && product.category.toLowerCase().startsWith('men wear'));
+        const MenProducts = data.products.filter(
+          (product) =>
+            product.category &&
+            product.category.toLowerCase().startsWith("men wear")
+        );
         setProducts(MenProducts);
         setTotalPages(data.totalPages);
         setPage(data.currentPage);
@@ -26,8 +34,35 @@ function Menwear() {
 
   useEffect(() => {
     fetchProducts(page);
-    window.scrollTo(0,0);
+    window.scrollTo(0, 0);
   }, [page]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setShowScroll(true);
+      } else {
+        setShowScroll(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const scrollToBottom = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
+  };
 
   const handleAddToCart = (product) => {
     addToCart(product);
@@ -128,6 +163,41 @@ function Menwear() {
           Next
         </button>
       </div>
+      {showScroll && (
+        <>
+          <button
+            onClick={scrollToTop}
+            className="btn btn-secondary d-flex align-items-center justify-content-center"
+            style={{
+              position: "fixed",
+              bottom: "80px",
+              right: "20px",
+              zIndex: 1000,
+              borderRadius: "50%",
+              width: "40px",
+              height: "40px",
+            }}
+          >
+            <FaArrowUp size={18} />
+          </button>
+
+          <button
+            onClick={scrollToBottom}
+            className="btn btn-secondary d-flex align-items-center justify-content-center"
+            style={{
+              position: "fixed",
+              bottom: "30px",
+              right: "20px",
+              zIndex: 1000,
+              borderRadius: "50%",
+              width: "40px",
+              height: "40px",
+            }}
+          >
+            <FaArrowDown size={18} />
+          </button>
+        </>
+      )}
     </div>
   );
 }

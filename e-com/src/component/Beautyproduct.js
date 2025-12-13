@@ -1,46 +1,81 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "../App.css";
 import { useNavigate } from "react-router-dom";
 import { cartcontext } from "../App";
+import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 
 function Beautyproduct() {
-    const [products, setProducts] = useState([]);
-    const {addToCart} = useContext(cartcontext);
-    const [page,setPage] = useState(1);
-    const [totalPages,setTotalPages] = useState(1);
-    const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  const { addToCart } = useContext(cartcontext);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const navigate = useNavigate();
+  const [showScroll, setShowScroll] = useState(false);
 
-    const fetchProducts = (pageNumber) => {
-      fetch(`https://ecommerce-app-1-igf3.onrender.com/products?page=${pageNumber}&category=beauty product`)
-          .then((res) => res.json())
-          .then((data) => {
-            const filteredProducts = data.products.filter(product => product.category && product.category.toLowerCase().includes('beauty product'));
-            setProducts(filteredProducts);
-            setTotalPages(data.totalPages);
-            setPage(data.currentPage);
-        })
-          .catch((err) => console.error("Error fetching products:", err));
-    }
+  const fetchProducts = (pageNumber) => {
+    fetch(
+      `https://ecommerce-app-1-igf3.onrender.com/products?page=${pageNumber}&category=beauty product`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        const filteredProducts = data.products.filter(
+          (product) =>
+            product.category &&
+            product.category.toLowerCase().includes("beauty product")
+        );
+        setProducts(filteredProducts);
+        setTotalPages(data.totalPages);
+        setPage(data.currentPage);
+      })
+      .catch((err) => console.error("Error fetching products:", err));
+  };
 
-     useEffect(() => {
-        fetchProducts(page);
-        window.scrollTo(0,0);
-      }, [page]);
-    
-      const handleAddToCart = (product) => {
-        addToCart(product);
-        navigate('/cart');
-      }
-    
-      const nextPage = () => {
-        if(page < totalPages) setPage(page + 1);
-      }
+  useEffect(() => {
+    fetchProducts(page);
+    window.scrollTo(0, 0);
+  }, [page]);
 
-      const prevPage = () => {
-        if(page > 1) setPage(page - 1);
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setShowScroll(true);
+      } else {
+        setShowScroll(false);
       }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const scrollToBottom = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
+  };
+
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    navigate("/cart");
+  };
+
+  const nextPage = () => {
+    if (page < totalPages) setPage(page + 1);
+  };
+
+  const prevPage = () => {
+    if (page > 1) setPage(page - 1);
+  };
   return (
     <div className="container mt-5">
       <h2 className="text-center mb-4 fw-bold text-2xl">Beauty Product</h2>
@@ -48,17 +83,15 @@ function Beautyproduct() {
       <div className="row">
         {products.map((p) => (
           <div key={p._id} className="col-md-3 mb-3">
-
             <div className="card p-3">
               {p.image && p.image.length > 0 && (
                 <div
                   id={`carousel-${p._id}`}
                   className="carousel slide"
                   data-bs-ride="carousel"
-                  data-bs-interval="3000" 
-                  data-bs-pause="hover" 
+                  data-bs-interval="3000"
+                  data-bs-pause="hover"
                 >
-
                   <div className="carousel-indicators custom-indicators">
                     {p.image.map((_, index) => (
                       <button
@@ -77,15 +110,17 @@ function Beautyproduct() {
                     {p.image.map((img, index) => (
                       <div
                         key={index}
-                        className={`carousel-item ${index === 0 ? "active" : ""}`}
+                        className={`carousel-item ${
+                          index === 0 ? "active" : ""
+                        }`}
                       >
                         <img
                           src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
                           className="d-block w-100"
                           alt={`${p.name} ${index + 1}`}
                           style={{
-                            height: "280px", 
-                            objectFit: "contain"
+                            height: "280px",
+                            objectFit: "contain",
                           }}
                         />
                       </div>
@@ -98,7 +133,12 @@ function Beautyproduct() {
                 <h5 className="card-title">{p.name}</h5>
                 <p className="card-text text-muted">{p.description}</p>
                 <p className="text-primary fw-bold">₹{p.price}</p>
-                <button className="btn btn-success" onClick={() => handleAddToCart(p)}>Add to Cart</button>
+                <button
+                  className="btn btn-success"
+                  onClick={() => handleAddToCart(p)}
+                >
+                  Add to Cart
+                </button>
               </div>
             </div>
           </div>
@@ -123,8 +163,43 @@ function Beautyproduct() {
           Next
         </button>
       </div>
+      {showScroll && (
+        <>
+          <button
+            onClick={scrollToTop}
+            className="btn btn-secondary d-flex align-items-center justify-content-center"
+            style={{
+              position: "fixed",
+              bottom: "80px",
+              right: "20px",
+              zIndex: 1000,
+              borderRadius: "50%",
+              width: "40px",
+              height: "40px",
+            }}
+          >
+            <FaArrowUp size={18} />
+          </button>
+
+          <button
+            onClick={scrollToBottom}
+            className="btn btn-secondary d-flex align-items-center justify-content-center"
+            style={{
+              position: "fixed",
+              bottom: "30px",
+              right: "20px",
+              zIndex: 1000,
+              borderRadius: "50%",
+              width: "40px",
+              height: "40px",
+            }}
+          >
+            <FaArrowDown size={18} />
+          </button>
+        </>
+      )}
     </div>
-  )
+  );
 }
 
-export default Beautyproduct
+export default Beautyproduct;

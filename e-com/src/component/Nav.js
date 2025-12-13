@@ -11,10 +11,10 @@ function Nav() {
 
   const logout = () => {
     const user = JSON.parse(localStorage.getItem("user"));
-    localStorage.removeItem("user")
+    localStorage.removeItem("user");
     if (user && user._id) {
-    localStorage.removeItem(`cart_${user._id}`);
-  }
+      localStorage.removeItem(`cart_${user._id}`);
+    }
     navigate("/");
   };
 
@@ -29,11 +29,14 @@ function Nav() {
     <div>
       <header className="bg-white py-1 md:px-32 flex flex-col md:flex-row items-center justify-between">
         <div className="flex items-center justify-center md:justify-start w-full md:w-auto">
-          <img
-            src={require("./img/logo1.png")}
-            className="md:w-36 rounded-full object-cover"
-            alt="logo"
-          />
+          <Link to="/">
+            <img
+              src={require("./img/logo1.png")}
+              alt="logo"
+              className=" md:w-36 rounded-full object-cover cursor-pointer border-2 border-transparent hover:border-gray-400
+                  transition-all duration-300"
+            />
+          </Link>
         </div>
 
         <div className="relative w-full md:w-1/2">
@@ -52,7 +55,7 @@ function Nav() {
           {auth ? (
             <Link
               onClick={logout}
-              className="text-gray-800 no-underline text-[18px] font-semibold hover:text-blue-500"
+              className="text-gray-800 no-underline text-[18px] font-semibold hover:text-blue-500 "
             >
               Logout ({JSON.parse(auth).name})
             </Link>
