@@ -105,3 +105,16 @@ background-color: #000 !important;
 .pleft{
   padding-left: 10% !important;
 }
+.global-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5); /* page grey out */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+

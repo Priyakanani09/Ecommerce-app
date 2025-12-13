@@ -22,6 +22,8 @@ import CODCheckout from './component/CODCheckout';
 import OrderSuccess from './component/OrderSuccess';
 import Footer from './component/Footer';
 
+
+
 export const cartcontext = createContext();
 
 function App() {
@@ -65,6 +67,7 @@ function App() {
   }, [cartItems]);
 
   return (
+    <>
     <cartcontext.Provider value={{ cartItems, setCartItems, addToCart }}>
       <Nav />
       <Routes>
@@ -89,6 +92,7 @@ function App() {
       </Routes>
       <Footer />
     </cartcontext.Provider>
+  </>
   );
 }
 

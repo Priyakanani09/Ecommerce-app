@@ -1,11 +1,40 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { cartcontext } from "../App";
 import "../App.css";
 import { useNavigate } from "react-router-dom";
+import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 
 function Cart() {
   const { cartItems, setCartItems } = useContext(cartcontext);
+  const [showScroll, setShowScroll] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setShowScroll(true);
+      } else {
+        setShowScroll(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const scrollToBottom = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
+  };
 
   const increaseQty = (index) => {
     const updated = [...cartItems];
@@ -58,7 +87,6 @@ function Cart() {
             return (
               <div key={index} className="col-md-3 mb-4">
                 <div className="card shadow p-3">
-
                   {item.image && item.image.length > 0 && (
                     <div
                       id={`cart-carousel-${index}`}
@@ -81,10 +109,12 @@ function Cart() {
                         {item.image.map((img, i) => (
                           <div
                             key={i}
-                            className={`carousel-item ${i === 0 ? "active" : ""}`}
+                            className={`carousel-item ${
+                              i === 0 ? "active" : ""
+                            }`}
                           >
                             <img
-                              src={`http://localhost:5002${img}`}
+                              src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
                               alt={item.name}
                               className="d-block w-100"
                               style={{ height: "280px", objectFit: "contain" }}
@@ -127,6 +157,42 @@ function Cart() {
             );
           })}
         </div>
+      )}
+
+      {showScroll && (
+        <>
+          <button
+            onClick={scrollToTop}
+            className="btn btn-secondary d-flex align-items-center justify-content-center"
+            style={{
+              position: "fixed",
+              bottom: "80px",
+              right: "20px",
+              zIndex: 1000,
+              borderRadius: "50%",
+              width: "40px",
+              height: "40px",
+            }}
+          >
+            <FaArrowUp size={18} />
+          </button>
+
+          <button
+            onClick={scrollToBottom}
+            className="btn btn-secondary d-flex align-items-center justify-content-center"
+            style={{
+              position: "fixed",
+              bottom: "30px",
+              right: "20px",
+              zIndex: 1000,
+              borderRadius: "50%",
+              width: "40px",
+              height: "40px",
+            }}
+          >
+            <FaArrowDown size={18} />
+          </button>
+        </>
       )}
     </div>
   );

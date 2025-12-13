@@ -9,7 +9,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:5002/login", {
+      const res = await fetch("https://ecommerce-app-1-igf3.onrender.com/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

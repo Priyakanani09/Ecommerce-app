@@ -10,7 +10,7 @@ function Signup() {
 
   const collectData = () => {
     console.log(name, email, password);
-    fetch("http://localhost:5002/register", {
+    fetch("https://ecommerce-app-1-igf3.onrender.com/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
