@@ -38,11 +38,30 @@ function Home() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowScroll(window.scrollY > 100);
+      if (window.scrollY > 100) {
+        setShowScroll(true);
+      } else {
+        setShowScroll(false);
+      }
     };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const scrollToBottom = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
+  };
 
   const handleAddToCart = (product) => {
     addToCart(product);
@@ -55,9 +74,7 @@ function Home() {
 
       <div className="row">
         {loading
-          ? Array.from({ length: 8 }).map((_, i) => (
-              <ProductSkeleton key={i} />
-            ))
+          ? Array.from({ length: 8 }).map((_, i) => <ProductSkeleton key={i} />)
           : products.map((p) => (
               <div key={p._id} className="col-md-3 mb-3">
                 <div className="card p-3 h-100">
@@ -131,24 +148,35 @@ function Home() {
       {showScroll && (
         <>
           <button
-            className="btn btn-secondary"
-            style={{ position: "fixed", bottom: 80, right: 20 }}
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            onClick={scrollToTop}
+            className="btn btn-secondary d-flex align-items-center justify-content-center"
+            style={{
+              position: "fixed",
+              bottom: "80px",
+              right: "20px",
+              zIndex: 1000,
+              borderRadius: "50%",
+              width: "40px",
+              height: "40px",
+            }}
           >
-            <FaArrowUp />
+            <FaArrowUp size={18} />
           </button>
 
           <button
-            className="btn btn-secondary"
-            style={{ position: "fixed", bottom: 30, right: 20 }}
-            onClick={() =>
-              window.scrollTo({
-                top: document.documentElement.scrollHeight,
-                behavior: "smooth",
-              })
-            }
+            onClick={scrollToBottom}
+            className="btn btn-secondary d-flex align-items-center justify-content-center"
+            style={{
+              position: "fixed",
+              bottom: "30px",
+              right: "20px",
+              zIndex: 1000,
+              borderRadius: "50%",
+              width: "40px",
+              height: "40px",
+            }}
           >
-            <FaArrowDown />
+            <FaArrowDown size={18} />
           </button>
         </>
       )}
