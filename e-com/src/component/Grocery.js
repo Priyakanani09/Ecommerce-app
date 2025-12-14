@@ -5,6 +5,7 @@ import "../App.css";
 import { useNavigate } from "react-router-dom";
 import { cartcontext } from "../App";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import ProductSkeleton from "./ProductSkeleton";
 
 function Grocery() {
   const [products, setProducts] = useState([]);
@@ -13,8 +14,10 @@ function Grocery() {
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
   const [showScroll, setShowScroll] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const fetchProducts = (pageNumber) => {
+    setLoading(true);
     fetch(
       `https://ecommerce-app-1-igf3.onrender.com/products?page=${pageNumber}&category=grocery`
     )
@@ -29,7 +32,8 @@ function Grocery() {
         setTotalPages(data.totalPages);
         setPage(data.currentPage);
       })
-      .catch((err) => console.error("Error fetching products:", err));
+      .catch((err) => console.error("Error fetching products:", err))
+      .finally(() => setLoading(false));
   };
   useEffect(() => {
     fetchProducts(page);
@@ -79,68 +83,54 @@ function Grocery() {
       <h2 className="text-center mb-4 fw-bold text-2xl">Grocery</h2>
 
       <div className="row">
-        {products.map((p) => (
-          <div key={p._id} className="col-md-3 mb-3">
-            <div className="card p-3">
-              {p.image && p.image.length > 0 && (
-                <div
-                  id={`carousel-${p._id}`}
-                  className="carousel slide"
-                  data-bs-ride="carousel"
-                  data-bs-interval="3000"
-                  data-bs-pause="hover"
-                >
-                  <div className="carousel-indicators custom-indicators">
-                    {p.image.map((_, index) => (
-                      <button
-                        key={index}
-                        type="button"
-                        data-bs-target={`#carousel-${p._id}`}
-                        data-bs-slide-to={index}
-                        className={index === 0 ? "active" : ""}
-                        aria-current={index === 0 ? "true" : "false"}
-                        aria-label={`Slide ${index + 1}`}
-                      ></button>
-                    ))}
-                  </div>
-
-                  <div className="carousel-inner">
-                    {p.image.map((img, index) => (
-                      <div
-                        key={index}
-                        className={`carousel-item ${
-                          index === 0 ? "active" : ""
-                        }`}
-                      >
-                        <img
-                          src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
-                          className="d-block w-100"
-                          alt={`${p.name} ${index + 1}`}
-                          style={{
-                            height: "280px",
-                            objectFit: "contain",
-                          }}
-                        />
+        {loading
+          ? Array.from({ length: 8 }).map((_, i) => <ProductSkeleton key={i} />)
+          : products.map((p) => (
+              <div key={p._id} className="col-md-3 mb-3">
+                <div className="card p-3 h-100">
+                  {p.image?.length > 0 && (
+                    <div
+                      id={`carousel-${p._id}`}
+                      className="carousel slide"
+                      data-bs-ride="carousel"
+                    >
+                      <div className="carousel-inner">
+                        {p.image.map((img, index) => (
+                          <div
+                            key={index}
+                            className={`carousel-item ${
+                              index === 0 ? "active" : ""
+                            }`}
+                          >
+                            <img
+                              src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
+                              className="d-block w-100"
+                              alt={p.name}
+                              style={{
+                                height: "280px",
+                                objectFit: "contain",
+                              }}
+                            />
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    </div>
+                  )}
+
+                  <div className="card-body text-center">
+                    <h5>{p.name}</h5>
+                    <p className="text-muted">{p.description}</p>
+                    <p className="fw-bold text-primary">₹{p.price}</p>
+                    <button
+                      className="btn btn-success"
+                      onClick={() => handleAddToCart(p)}
+                    >
+                      Add to Cart
+                    </button>
                   </div>
                 </div>
-              )}
-
-              <div className="card-body text-center">
-                <h5 className="card-title">{p.name}</h5>
-                <p className="card-text text-muted">{p.description}</p>
-                <p className="text-primary fw-bold">₹{p.price}</p>
-                <button
-                  className="btn btn-success"
-                  onClick={() => handleAddToCart(p)}
-                >
-                  Add to Cart
-                </button>
               </div>
-            </div>
-          </div>
-        ))}
+            ))}
       </div>
       <div className="d-flex justify-content-center align-items-center my-4">
         <button

@@ -66,14 +66,22 @@ function Cart() {
       <h4 className="text-center mb-4">Total Amount: ₹{total}</h4>
 
       {cartItems.length > 0 && (
-        <div className="text-center mb-4">
-          <button
-            className="btn btn-success px-4 py-2"
-            onClick={() => navigate("/checkout")}
-          >
-            Proceed to Checkout (COD)
-          </button>
-        </div>
+      <div className="d-flex justify-content-center gap-3 mb-4">
+  <button
+    className="btn btn-outline-success px-4 py-2"
+    onClick={() => navigate("/checkout")}
+  >
+    Proceed to Checkout (COD)
+  </button>
+
+  <button
+    className="btn btn-outline-primary px-4 py-2"
+    onClick={() => navigate("/")}
+  >
+     Continue Shopping
+  </button>
+</div>
+
       )}
 
       {cartItems.length === 0 ? (

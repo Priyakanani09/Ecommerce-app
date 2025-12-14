@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSearch, FaShoppingCart, FaAngleDown } from "react-icons/fa";
 import "../App.css";
+import { cartcontext } from "../App";
 
 function Nav() {
   const [search, setSearch] = useState("");
   const auth = localStorage.getItem("user");
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const { cartItems } = useContext(cartcontext);
 
   const logout = () => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -79,7 +81,7 @@ function Nav() {
           <Link to="/cart" className="relative flex items-center space-x-1 ">
             <FaShoppingCart className="text-2xl text-gray-700 hover:text-blue-500" />
             <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-              0
+              {cartItems.length}
             </span>
           </Link>
         </div>

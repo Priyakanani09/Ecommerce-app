@@ -2,9 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "../App.css";
-import { useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { cartcontext } from "../App";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import ProductSkeleton from "./ProductSkeleton";
 
 function Menfootwear() {
   const [products, setProducts] = useState([]);
@@ -13,8 +14,10 @@ function Menfootwear() {
   const [totalPages, setTotalPages] = useState(1);
   const navigate = useNavigate();
   const [showScroll, setShowScroll] = useState(false);
+  const [loading,setLoading] = useState(false);
 
   const fetchProducts = (pageNumber) => {
+    setLoading(true);
     fetch(
       `https://ecommerce-app-1-igf3.onrender.com/products?page=${pageNumber}&category=men footwear`
     )
@@ -29,7 +32,8 @@ function Menfootwear() {
         setTotalPages(data.totalPages);
         setPage(data.currentPage);
       })
-      .catch((err) => console.error("Error fetching products:", err));
+      .catch((err) => console.error("Error fetching products:", err))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -81,7 +85,11 @@ function Menfootwear() {
       <h2 className="text-center mb-4 fw-bold text-2xl">Men Footwear</h2>
 
       <div className="row">
-        {products.map((p) => (
+        {loading
+          ? Array.from({ length: 8 }).map((_, i) => (
+              <ProductSkeleton key={i} />
+            ))
+          : products.map((p) => (
           <div key={p._id} className="col-md-3 mb-3">
             <div className="card p-3">
               {p.image && p.image.length > 0 && (

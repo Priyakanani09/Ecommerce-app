@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { cartcontext } from "../App";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import ProductSkeleton from "./ProductSkeleton";
 
 function Search() {
   const [filtered, setFiltered] = useState([]);
@@ -11,17 +12,20 @@ function Search() {
   const { addToCart } = useContext(cartcontext);
   const navigate = useNavigate();
   const [showScroll, setShowScroll] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Fetch product data from API
   useEffect(() => {
     if (query) {
+      setLoading(true);
       fetch(`https://ecommerce-app-1-igf3.onrender.com/search?query=${query}`, {
         method: "GET",
         headers: { "Cache-Control": "no-cache" },
       })
         .then((res) => res.json())
         .then((data) => setFiltered(data))
-        .catch((err) => console.error("Error fetching search results:", err));
+        .catch((err) => console.error("Error fetching search results:", err))
+        .finally(() => setLoading(false));
     }
   }, [query]);
 
@@ -59,7 +63,9 @@ function Search() {
   return (
     <div className="p-5">
       <h2>Search Results for "{query}"</h2>
-      {filtered.length > 0 ? (
+      {loading ? (
+        Array.from({ length: 8 }).map((_, i) => <ProductSkeleton key={i} />)
+      ) : filtered.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
           {filtered.map((p, index) => (
             <div className="card p-3">
