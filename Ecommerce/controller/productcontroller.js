@@ -40,6 +40,11 @@ exports.getProducts = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch products" });
   }
 };
+exports.deleteproduct = async(req,res) => {
+  try{
+    const data = await
+  }
+}
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;

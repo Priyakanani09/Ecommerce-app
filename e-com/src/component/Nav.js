@@ -77,7 +77,7 @@ function Nav() {
               </Link>
             </>
           )}
-
+            
           <Link to="/cart" className="relative flex items-center space-x-1 ">
             <FaShoppingCart className="text-2xl text-gray-700 hover:text-blue-500" />
             <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">

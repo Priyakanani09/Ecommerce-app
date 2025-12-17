@@ -28,5 +28,6 @@ router.get("/search",productController.searchProduct);
 
 // User Order 
 router.post('/order',jwtAuth,ordercontroller.order);
+router.get("/getorder",ordercontroller.getorder);
 
 module.exports = router;
