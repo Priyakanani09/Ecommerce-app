@@ -40,11 +40,32 @@ exports.getProducts = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch products" });
   }
 };
-// exports.deleteproduct = async(req,res) => {
-//   try{
-//     const data = await
-//   }
-// }
+exports.deleteproduct = async (req, res) => {
+  try {
+    const { name } = req.params;
+
+    const data = await Product.findOneAndDelete({
+      name: { $regex: `^${name}$`, $options: "i" } // case-insensitive
+    });
+
+    if (!data) {
+      return res.status(404).json({
+        message: "Product not found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Product deleted successfully",
+      data,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      error: "Failed to delete product",
+    });
+  }
+};
+
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
