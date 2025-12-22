@@ -6,6 +6,7 @@ const productController = require('../controller/productcontroller');
 const ordercontroller = require("../controller/ordercontroller");
 
 var jwtAuth = require('../middleware/authMiddleware');
+const admin = require('../middleware/admin');
 
 // Multer setup for file uploads
 const storage = multer.diskStorage({
@@ -19,6 +20,9 @@ router.post('/register', signController.register);
 router.post('/login', signController.login);
 router.post("/refresh", signController.refreshToken);
 
+router.get('/admin-data', jwtAuth, admin, (req, res) => {
+  res.json({ message: 'This is admin only data' });
+});
 //Product Upload Setup
 router.post('/add-product',jwtAuth, upload.array('image',5), productController.addProduct);
 router.get('/products', productController.getProducts);

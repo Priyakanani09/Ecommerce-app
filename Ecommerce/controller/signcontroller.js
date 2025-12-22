@@ -1,13 +1,18 @@
+// controller/signcontroller.js
 const Sign = require('../model/signmodel');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const SECRET_KEY = "cdmi";
 
-// REGISTER API
+// REGISTER USER (for admin, you can manually set role: 'admin')
 exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
+
+    // Check if user exists
+    const existingUser = await Sign.findOne({ email });
+    if (existingUser) return res.status(400).json({ message: 'Email already registered' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -15,14 +20,12 @@ exports.register = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role: "user"
+      role: role || 'user'
     });
 
-    res.status(201).json({
-      message: "User registered successfully"
-    });
+    res.status(201).json({ message: 'User registered successfully', user });
   } catch (error) {
-    res.status(400).json({ message: "Registration failed" });
+    res.status(500).json({ message: 'Registration failed', error });
   }
 };
 
@@ -32,33 +35,28 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
 
     const user = await Sign.findOne({ email });
-    if (!user)
-      return res.status(404).json({ message: "User not found" });
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
     const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword)
-      return res.status(401).json({ message: "Invalid password" });
+    if (!validPassword) return res.status(401).json({ message: 'Invalid password' });
 
-    const accessToken = jwt.sign(
-      {
-        id: user._id,
-        email: user.email,
-        role: user.role
-      },
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
       SECRET_KEY,
-      { expiresIn: "10d" }
+      { expiresIn: '10d' }
     );
 
     res.json({
-      message: "Login successful",
-      token: accessToken,
+      message: 'Login successful',
+      token,
       role: user.role
     });
-
   } catch (error) {
-    res.status(500).json({ message: "Login failed" });
+    res.status(500).json({ message: 'Login failed', error });
   }
 };
+
 
 // REFRESH TOKEN
 exports.refreshToken = (req, res) => {
