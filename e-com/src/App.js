@@ -1,4 +1,5 @@
 import './App.css';
+import 'animate.css'; // Import Animate.css globally
 import Nav from './component/Nav';
 import { Route, Routes } from 'react-router-dom';
 import SingUp from './component/SingUp';
@@ -22,13 +23,12 @@ import CODCheckout from './component/CODCheckout';
 import OrderSuccess from './component/OrderSuccess';
 import Footer from './component/Footer';
 
-
-
 export const cartcontext = createContext();
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
 
+  // Load cart items for logged-in user
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user._id) {
@@ -39,6 +39,7 @@ function App() {
     }
   }, []);
 
+  // Add item to cart
   const addToCart = (product) => {
     const exist = cartItems.find((item) => item._id === product._id);
 
@@ -59,6 +60,7 @@ function App() {
     }
   };
 
+  // Save cart to localStorage on changes
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user._id) {
@@ -67,7 +69,6 @@ function App() {
   }, [cartItems]);
 
   return (
-    <>
     <cartcontext.Provider value={{ cartItems, setCartItems, addToCart }}>
       <Nav />
       <Routes>
@@ -92,7 +93,6 @@ function App() {
       </Routes>
       <Footer />
     </cartcontext.Provider>
-  </>
   );
 }
 

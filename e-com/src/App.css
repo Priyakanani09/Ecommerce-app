@@ -1,40 +1,50 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-*{
+
+/* Reset */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
+
 body {
   font-family: Arial, sans-serif;
-  background-color:  #f9f9f9 !important;
+  background-color: #f9f9f9 !important;
 }
+
+/* Header & Navigation */
 header {
   background-color: rgb(249, 246, 246);
   color: black;
   padding: 20px;
 }
+
 ul {
   list-style: none;
   display: flex;
   gap: 30px;
 }
-li a{
+
+li a {
   text-decoration: none;
   font-size: large;
   align-items: center;
 }
-li a:hover{
+
+li a:hover {
   cursor: pointer;
+  color: #007bff;
+  transition: color 0.3s ease;
 }
 
-/* Center the form container */
+/* Form Styling */
 .form-container {
   display: flex;
-  justify-content: center;   /* Center horizontally */
-  align-items: center;       /* Center vertically */
-  height: 65vh;             /* Full viewport height */
-  /* background-color: #f2f2f2; Light background for visibility */
+  justify-content: center;
+  align-items: center;
+  height: 65vh;
 }
 
 form {
@@ -45,7 +55,6 @@ form {
   box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
 }
 
-/* Inputs */
 input {
   width: 300px;
   padding: 10px;
@@ -53,72 +62,84 @@ input {
   border-radius: 5px;
 }
 
-/* Button */
-button {
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-}
 
-button:hover {
-  background-color: #0056b3;
-}
-.carousel-item img {
-  height: 300px;
-  object-fit: cover;
-  /* border-radius: 10px; */
-}
-
+/* Product Cards */
 .card {
-  transition: transform 0.3s ease;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.5s ease;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s forwards;
 }
 
 .card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
 }
 
-/* ✅ Make carousel indicators round */
+/* Fade-in Animation */
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Carousel Styling */
+.carousel-item img {
+  height: 280px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  border-radius: 10px;
+}
+
+.carousel-item img:hover {
+  transform: scale(1.05);
+}
+
+/* Carousel Indicators */
 .carousel-indicators button {
   width: 7px !important;
   height: 7px !important;
   border-radius: 100%;
   background-color: #171723 !important;
-  /* border: none; */
   margin: 4px;
   transition: all 0.3s ease;
 }
 
-/* ✅ Active indicator styling */
 .carousel-indicators .active {
-background-color: #000 !important;
+  background-color: #000 !important;
   width: 12px;
   height: 12px;
 }
 
-/* ✅ Optional - adjust the position slightly */
 .custom-indicators {
   bottom: -10px !important;
 }
 
-.pleft{
-  padding-left: 10% !important;
-}
-.global-overlay {
+/* Scroll Buttons */
+.scroll-btn {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5); /* page grey out */
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  z-index: 1000;
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 9999;
+  justify-content: center;
+  background-color: #6c757d;
+  color: white;
+  transition: all 0.3s ease;
 }
 
+.scroll-btn:hover {
+  transform: scale(1.2);
+  background-color: #333;
+}
+
+/* Skeleton Loader */
 .skeleton {
   background: linear-gradient(
     90deg,
@@ -127,17 +148,13 @@ background-color: #000 !important;
     #e0e0e0 63%
   );
   background-size: 400% 100%;
-  animation: shimmer 1.4s infinite ease;
+  animation: shimmer 1.2s infinite ease-in-out;
   border-radius: 6px;
 }
 
 @keyframes shimmer {
-  0% {
-    background-position: 100% 0;
-  }
-  100% {
-    background-position: -100% 0;
-  }
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
 }
 
 .skeleton-img {
@@ -147,6 +164,7 @@ background-color: #000 !important;
 .skeleton-text {
   height: 14px;
   width: 100%;
+  margin-top: 6px;
 }
 
 .skeleton-text.small {
@@ -157,4 +175,23 @@ background-color: #000 !important;
   height: 36px;
   width: 100%;
   border-radius: 6px;
+}
+
+/* Padding Helper */
+.pleft {
+  padding-left: 10% !important;
+}
+
+/* Global Overlay for modals/loading */
+.global-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
 }
