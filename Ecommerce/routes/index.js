@@ -18,6 +18,7 @@ const upload = multer({ storage });
 //User Registration and Login
 router.post('/register', signController.register);
 router.post('/login', signController.login);
+router.get("/getuser",signController.getuser);
 router.post("/refresh", signController.refreshToken);
 
 router.get('/admin-data', jwtAuth, admin, (req, res) => {

@@ -95,3 +95,12 @@ exports.refreshToken = (req, res) => {
     });
   });
 };
+exports.getuser = async (req,res) =>{
+  try{
+    const data = await Sign.find();
+    res.status(200).json({message : "Find Successfully" ,data})
+  }
+  catch (err) {
+    res.status(400).json({ message: "user not find", error: err.message });
+  }
+};
