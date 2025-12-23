@@ -32,7 +32,7 @@ router.put('/update-product/:id',jwtAuth, upload.array('image',5), productContro
 router.get("/search",productController.searchProduct);
 
 // User Order 
-router.post('/order',jwtAuth,ordercontroller.order);
+router.post('/order',ordercontroller.order);
 router.get("/getorder",ordercontroller.getorder);
 
 module.exports = router;

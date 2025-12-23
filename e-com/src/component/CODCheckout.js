@@ -47,6 +47,7 @@ function CODCheckout() {
     };
 
     localStorage.setItem(`order_${user.id}`, JSON.stringify(data));
+     console.log("Sending order data:", data);
 
      const response = await fetch("https://ecommerce-app-1-igf3.onrender.com/order", {
       method: "POST",
@@ -55,6 +56,7 @@ function CODCheckout() {
     });
 
     const resData = await response.json();
+    console.log("Response from server:", resData);
 
     if (response.ok) {
       localStorage.setItem("orderMessage", "Your order is confirmed!");
