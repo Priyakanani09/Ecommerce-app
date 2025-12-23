@@ -9,7 +9,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("https://ecommerce-app-1-igf3.onrender.com/login", {
+      const res = await fetch("http://localhost:5002/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -22,9 +22,11 @@ function Login() {
 
       if (result.message === "Login successful" && result.user) {
         localStorage.setItem("user", JSON.stringify(result.user));
-        navigate("/");
+        localStorage.setItem("token", result.token);
+        navigate("/", { replace: true });
       } else {
-        alert(result.message || "Invalid credentials");
+        localStorage.removeItem("user");
+        alert(result.message || "Login failed");
       }
     } catch (error) {
       console.error(error);
@@ -35,11 +37,27 @@ function Login() {
   return (
     <div className="form-container">
       <form onSubmit={handleLogin}>
-        <h2 className="text-2xl font-bold text-center text-blue-600 pb-5">Login</h2>
-        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        <br /><br />
-        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-        <br /><br />
+        <h2 className="text-2xl font-bold text-center text-blue-600 pb-5">
+          Login
+        </h2>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <br />
+        <br />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <br />
+        <br />
         <button type="submit">Login</button>
       </form>
     </div>
