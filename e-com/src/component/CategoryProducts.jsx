@@ -14,7 +14,7 @@ function CategoryProducts() {
   const [showScroll, setShowScroll] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:5002/products")
+    fetch("https://ecommerce-app-1-igf3.onrender.com/products")
       .then((res) => res.json())
       .then((data) => {
         const normalize = (str = "") => str.toLowerCase().trim();

@@ -20,7 +20,7 @@ function Home() {
 
   const fetchProducts = (pageNumber) => {
     setLoading(true);
-    fetch(`http://localhost:5002/products`)
+    fetch(`https://ecommerce-app-1-igf3.onrender.com/products`)
       .then((res) => res.json())
       .then((data) => {
         const filteredProducts = data.products.filter(
