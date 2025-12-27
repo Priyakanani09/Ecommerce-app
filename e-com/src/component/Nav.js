@@ -105,7 +105,7 @@ function Nav() {
       {/* ================= CATEGORY BAR ================= */}
       <div className="bg-white shadow-sm py-3 md:px-40  md:my-3 flex flex-wrap items-center justify-center gap-24">
         <Link
-          to="/mobile"
+          to="/Mobiles & Tablets"
           className="text-gray-800 font-semibold no-underline hover:text-blue-500 flex flex-col items-center"
         >
           <img src={require("./img/Mobile.png")} alt="" />
@@ -136,31 +136,31 @@ function Nav() {
           {open && (
             <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2  bg-white shadow-lg rounded-lg p-2 w-48 z-10">
               <Link
-                to="/fashion/male"
+                to="/fashion/Men Wear"
                 className="block px-3 py-1 text-gray-800 no-underline hover:bg-blue-100 rounded"
               >
                 Men Wear
               </Link>
               <Link
-                to="/fashion/female"
+                to="/fashion/Women Wear"
                 className="block px-3 py-1 text-gray-800 no-underline hover:bg-blue-100 rounded"
               >
                 Women Wear
               </Link>
               <Link
-                to="/fashion/MenFootwear"
+                to="/fashion/Men Footwear"
                 className="block px-3 py-1 text-gray-800 no-underline hover:bg-blue-100 rounded"
               >
                 Men Footwear
               </Link>
               <Link
-                to="/fashion/WomenFootwear"
+                to="/fashion/Women Footwear"
                 className="block px-3 py-1 text-gray-800 no-underline hover:bg-blue-100 rounded"
               >
                 Women Footwear
               </Link>
               <Link
-                to="/fashion/BeautyProducts"
+                to="/fashion/Beauty Product"
                 className="block px-3 py-1 text-gray-800 no-underline hover:bg-blue-100 rounded"
               >
                 Beauty Products
@@ -170,7 +170,7 @@ function Nav() {
         </div>
 
         <Link
-          to="/TvsAppliances"
+          to="/Tvs & Appliances"
           className="text-gray-800 font-semibold no-underline hover:text-blue-500 flex flex-col items-center"
         >
           <img src={require("./img/Tv.png")} alt="" />
@@ -186,7 +186,7 @@ function Nav() {
         </Link>
 
         <Link
-          to="/HomeFurniture"
+          to="/Home & Furniture"
           className="text-gray-800 font-semibold no-underline hover:text-blue-500 flex flex-col items-center"
         >
           <img src={require("./img/Furniture.png")} alt="" />

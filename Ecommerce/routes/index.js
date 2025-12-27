@@ -24,11 +24,11 @@ router.post("/refresh", signController.refreshToken);
 router.get('/admin-data', jwtAuth, admin, (req, res) => {
   res.json({ message: 'This is admin only data' });
 });
+
 //Product Upload Setup
 router.post('/add-product',jwtAuth, upload.array('image',5), productController.addProduct);
 router.get('/products', productController.getProducts);
 router.delete("/delete/:name",productController.deleteproduct);
-
 router.put('/update-product/:id',jwtAuth, upload.array('image',5), productController.updateProduct);
 router.get("/search",productController.searchProduct);
 

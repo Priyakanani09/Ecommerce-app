@@ -85,7 +85,6 @@ function Fashion() {
   return (
     <div className="container mt-5">
       <h2 className="text-center mb-4 fw-bold text-2xl">All Products</h2>
-
       <div className="row">
         {loading
           ? Array.from({ length: 8 }).map((_, i) => (

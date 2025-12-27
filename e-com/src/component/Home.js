@@ -1,40 +1,77 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "../App.css";
-import { useNavigate } from "react-router-dom";
-import { cartcontext } from "../App";
+import { Link } from "react-router-dom";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import ProductSkeleton from "./ProductSkeleton";
+import { FaChevronRight } from "react-icons/fa";
 
 function Home() {
   const [products, setProducts] = useState([]);
-  const { addToCart } = useContext(cartcontext);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const navigate = useNavigate();
+  const [homeproduct, setHomeproduct] = useState([]);
+  const [beautyproduct, setBeautyproduct] = useState([]);
+  const [womenproduct, setWomenproduct] = useState([]);
+  const [menproduct, setMenproduct] = useState([]);
+  const [mobileElectronics, setMobileElectronics] = useState([]);
+  const [homeFurnitureSlider, setHomeFurnitureSlider] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showScroll, setShowScroll] = useState(false);
 
   const fetchProducts = (pageNumber) => {
     setLoading(true);
-    fetch(
-      `https://ecommerce-app-1-igf3.onrender.com/products?page=${pageNumber}`
-    )
+    fetch(`http://localhost:5002/products`)
       .then((res) => res.json())
       .then((data) => {
-        setProducts(data.products);
-        setTotalPages(data.totalPages);
-        setPage(data.currentPage);
+        const filteredProducts = data.products.filter(
+          (product) =>
+            product.category &&
+            product.category.toLowerCase().includes("tvs & appliances")
+        );
+        const homeProducts = data.products.filter(
+          (product) =>
+            product.category &&
+            product.category.toLowerCase().includes("home & furniture")
+        );
+        const beautyProducts = data.products.filter(
+          (product) =>
+            product.category &&
+            product.category.toLowerCase().includes("beauty product")
+        );
+        const womenproduct = data.products.filter(
+          (product) =>
+            product.category &&
+            (product.category.toLowerCase().includes("women wear") ||
+              product.category.toLowerCase().includes("women footwear"))
+        );
+        const menproduct = data.products.filter(
+          (product) =>
+            product.category &&
+            (product.category.toLowerCase().startsWith("men wear") ||
+              product.category.toLowerCase().startsWith("men footwear"))
+        );
+        const mobileElectronics = data.products.filter(
+          (product) =>
+            product.category &&
+            (product.category.toLowerCase().includes("mobiles & tablets") ||
+              product.category.toLowerCase().includes("electronics"))
+        );
+        setProducts(filteredProducts.slice(0, 4));
+        setHomeproduct(homeProducts.slice(0, 4));
+        setHomeFurnitureSlider(homeProducts.slice(0, 8));
+        setBeautyproduct(beautyProducts.slice(0, 4));
+        setWomenproduct(womenproduct.slice(0, 4));
+        setMenproduct(menproduct.slice(0, 4));
+        setMobileElectronics(mobileElectronics.slice(0, 4));
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    fetchProducts(page);
+    fetchProducts();
     window.scrollTo(0, 0);
-  }, [page]);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,44 +100,243 @@ function Home() {
     });
   };
 
-  const handleAddToCart = (product) => {
-    addToCart(product);
-    navigate("/cart");
-  };
-
   return (
-    <div className="container mt-5">
-      <h2 className="text-center mb-4 fw-bold">All Products</h2>
+    <div className="container mt-2">
+      <div className="container-fluid px-0">
+        <div
+          id="carouselExampleIndicators"
+          className="carousel slide"
+          data-bs-ride="carousel"
+          data-bs-interval="2000"
+        >
+          <div className="carousel-indicators">
+            {[0, 1, 2, 3].map((i) => (
+              <button
+                key={i}
+                type="button"
+                data-bs-target="#carouselExampleIndicators"
+                data-bs-slide-to={i}
+                className={i === 0 ? "active" : ""}
+              />
+            ))}
+          </div>
 
-      <div className="row">
-        {loading
-          ? Array.from({ length: 8 }).map((_, i) => <ProductSkeleton key={i} />)
-          : products.map((p) => (
-              <div key={p._id} className="col-md-3 mb-3">
-                <div className="card p-3 h-100">
-                  {p.image && p.image.length > 0 && (
+          <div className="carousel-inner">
+            {[1, 3, 4, 5].map((img, index) => (
+              <div
+                key={img}
+                className={`carousel-item ${index === 0 ? "active" : ""}`}
+              >
+                <img
+                  src={require(`../component/img/slider(${img}).png`)}
+                  className="d-block w-100 img-fluid"
+                  alt="slide"
+                />
+              </div>
+            ))}
+          </div>
+
+          <button
+            className="carousel-control-prev"
+            type="button"
+            data-bs-target="#carouselExampleIndicators"
+            data-bs-slide="prev"
+          >
+            <span className="carousel-control-prev-icon" />
+          </button>
+
+          <button
+            className="carousel-control-next"
+            type="button"
+            data-bs-target="#carouselExampleIndicators"
+            data-bs-slide="next"
+          >
+            <span className="carousel-control-next-icon" />
+          </button>
+        </div>
+      </div>
+
+      <div className="homepage-grid">
+        {/* LEFT – TVs */}
+        <div className="category-section">
+          <div className="category-header">
+            <h5>Best Gadgets & Appliances</h5>
+            <Link to="" className="arrow-link">
+              <span className="arrow-btn1">
+                <FaChevronRight />
+              </span>
+            </Link>
+          </div>
+
+          <div className="product-grid">
+            {products.map((p) => (
+              <div className="product-box" key={p._id}>
+                <img
+                  src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                  alt={p.name}
+                />
+                <h6>{p.name}</h6>
+                <p className="offer">Min. 50% Off</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* RIGHT – Home */}
+        <div className="category-section">
+          <div className="category-header">
+            <h5>Make your home stylish</h5>
+            <Link to="" className="arrow-link">
+              <span className="arrow-btn1">
+                <FaChevronRight />
+              </span>
+            </Link>
+          </div>
+
+          <div className="product-grid">
+            {homeproduct.map((p) => (
+              <div className="product-box" key={p._id}>
+                <img
+                  src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                  alt={p.name}
+                />
+                <h6>{p.name}</h6>
+                <p className="offer">Min. 50% Off</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="category-section">
+          <div className="category-header">
+            <h5>Beauty product</h5>
+            <Link to="/fashion/Beauty Product" className="arrow-link">
+              <span className="arrow-btn1">
+                <FaChevronRight />
+              </span>
+            </Link>
+          </div>
+
+          <div className="product-grid">
+            {beautyproduct.map((p) => (
+              <div className="product-box " key={p._id}>
+                <img
+                  src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                  alt={p.name}
+                />
+                <h6>{p.name}</h6>
+                <p className="offer">Min. 30% Off</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="homepage-grid">
+        {/* LEFT – TVs */}
+        <div className="category-section">
+          <div className="category-header">
+            <h5>Women Wear and Footwear</h5>
+            <Link to="" className="arrow-link">
+              <span className="arrow-btn1">
+                <FaChevronRight />
+              </span>
+            </Link>
+          </div>
+
+          <div className="product-grid">
+            {womenproduct.map((p) => (
+              <div className="product-box" key={p._id}>
+                <img
+                  src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                  alt={p.name}
+                />
+                <h6>{p.name}</h6>
+                <p className="offer">Min. 50% Off</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* RIGHT – Home */}
+        <div className="category-section">
+          <div className="category-header">
+            <h5>Men Wear and Footwear</h5>
+            <Link to="" className="arrow-link">
+              <span className="arrow-btn1">
+                <FaChevronRight />
+              </span>
+            </Link>
+          </div>
+
+          <div className="product-grid">
+            {menproduct.map((p) => (
+              <div className="product-box" key={p._id}>
+                <img
+                  src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                  alt={p.name}
+                />
+                <h6>{p.name}</h6>
+                <p className="offer">Min. 50% Off</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="category-section">
+          <div className="category-header">
+            <h5>Mobiles, Tablets & Electronics</h5>
+            <Link to="/fashion/Beauty Product" className="arrow-link">
+              <span className="arrow-btn1">
+                <FaChevronRight />
+              </span>
+            </Link>
+          </div>
+
+          <div className="product-grid">
+            {mobileElectronics.map((p) => (
+              <div className="product-box " key={p._id}>
+                <img
+                  src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                  alt={p.name}
+                />
+                <h6>{p.name}</h6>
+                <p className="offer">Min. 30% Off</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      {/* ===== HOME & FURNITURE HORIZONTAL SLIDER ===== */}
+      <div className="container-fluid mt-4 category-section">
+        <div className="d-flex justify-content-between align-items-center mb-2 ">
+          <h4>Home & Furniture</h4>
+          <button
+            className="btn btn-light slider-arrow"
+            onClick={() =>
+              (document.getElementById("hf-slider").scrollLeft += 300)
+            }
+          >
+            ❯
+          </button>
+        </div>
+
+        <div className="hf-slider" id="hf-slider">
+          {loading
+            ? Array.from({ length: 7 }).map((_, i) => (
+                <ProductSkeleton key={i} />
+              ))
+            : homeFurnitureSlider.map((p) => (
+                <div key={p._id} className="hf-card">
+                  {/* PRODUCT IMAGE CAROUSEL (SAME AS YOUR CODE) */}
+                  {p.image && (
                     <div
                       id={`carousel-${p._id}`}
                       className="carousel slide"
                       data-bs-ride="carousel"
-                      data-bs-interval="3000"
-                      data-bs-pause="hover"
+                      data-bs-interval="2500"
                     >
-                      <div className="carousel-indicators custom-indicators">
-                        {p.image.map((_, index) => (
-                          <button
-                            key={index}
-                            type="button"
-                            data-bs-target={`#carousel-${p._id}`}
-                            data-bs-slide-to={index}
-                            className={index === 0 ? "active" : ""}
-                            aria-current={index === 0 ? "true" : "false"}
-                            aria-label={`Slide ${index + 1}`}
-                          ></button>
-                        ))}
-                      </div>
-
-                      <div className="carousel-inner">
+                      <div className="carousel-inner ">
                         {p.image.map((img, index) => (
                           <div
                             key={index}
@@ -110,12 +346,8 @@ function Home() {
                           >
                             <img
                               src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
+                              alt={p.name}
                               className="d-block w-100"
-                              alt={`${p.name} ${index + 1}`}
-                              style={{
-                                height: "280px",
-                                objectFit: "contain",
-                              }}
                             />
                           </div>
                         ))}
@@ -123,41 +355,14 @@ function Home() {
                     </div>
                   )}
 
-                  <div className="card-body text-center">
-                    <h5>{p.name}</h5>
-                    <p className="text-muted">{p.description}</p>
-                    <p className="fw-bold text-primary">₹{p.price}</p>
-                    <button
-                      className="btn btn-success"
-                      onClick={() => handleAddToCart(p)}
-                    >
-                      Add to Cart
-                    </button>
+                  {/* PRODUCT INFO */}
+                  <div className="text-center mt-2">
+                    <p className="fw-semibold small mb-1">{p.name}</p>
+                    <p className="text-success fw-bold mb-0">₹{p.price}</p>
                   </div>
                 </div>
-              </div>
-            ))}
-      </div>
-
-      {/* Pagination */}
-      <div className="d-flex justify-content-center my-4">
-        <button
-          className="btn btn-outline-primary mx-2"
-          disabled={page === 1}
-          onClick={() => setPage(page - 1)}
-        >
-          Prev
-        </button>
-        <span className="fw-bold mt-2">
-          Page {page} of {totalPages}
-        </span>
-        <button
-          className="btn btn-outline-primary mx-2"
-          disabled={page === totalPages}
-          onClick={() => setPage(page + 1)}
-        >
-          Next
-        </button>
+              ))}
+        </div>
       </div>
 
       {/* Scroll Buttons */}
@@ -178,7 +383,6 @@ function Home() {
           >
             <FaArrowUp size={18} />
           </button>
-
           <button
             onClick={scrollToBottom}
             className="btn btn-secondary d-flex align-items-center justify-content-center"

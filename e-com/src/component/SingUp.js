@@ -89,7 +89,7 @@ function Signup() {
           <p style={{ color: "red"}}>{error}</p>
         )}
 
-        <button type="submit">Sign Up</button>
+        <button type="submit"  className="btn btn-primary">Sign Up</button>
       </form>
     </div>
   );

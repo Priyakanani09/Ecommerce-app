@@ -1,27 +1,17 @@
 import './App.css';
-import 'animate.css'; // Import Animate.css globally
 import Nav from './component/Nav';
 import { Route, Routes } from 'react-router-dom';
 import SingUp from './component/SingUp';
 import Login from './component/Login';
 import Home from './component/Home';
-import Mobile from './component/Mobile';
 import Cart from './component/Cart';
 import { createContext, useEffect, useState } from 'react';
 import Search from './component/Search';
-import Menwear from './component/Menwear';
-import Womenwear from './component/Womenwear';
-import Menfootwear from './component/Menfootwear';
-import Womenfootwear from './component/Womenfootwear';
-import TvsAppliances from './component/TvsAppliances';
-import Electronics from './component/Electronics';
-import HomeFurniture from './component/HomeFurniture';
-import Grocery from './component/Grocery';
-import Beautyproduct from './component/Beautyproduct';
 import Fashion from './component/Fashion';
 import CODCheckout from './component/CODCheckout';
 import OrderSuccess from './component/OrderSuccess';
 import Footer from './component/Footer';
+import CategoryProducts from "./component/CategoryProducts";
 
 export const cartcontext = createContext();
 
@@ -73,23 +63,14 @@ function App() {
       <Nav />
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/mobile' element={<Mobile />} />
         <Route path='/signup' element={<SingUp />} />
         <Route path='/login' element={<Login />} />
         <Route path='/cart' element={<Cart />} />
         <Route path='/search' element={<Search />} />
-        <Route path='/fashion' element={<Fashion />} />
-        <Route path='/fashion/male' element={<Menwear />} />
-        <Route path='/fashion/female' element={<Womenwear />} />
-        <Route path='/fashion/MenFootwear' element={<Menfootwear />} />
-        <Route path='/fashion/WomenFootwear' element={<Womenfootwear />} />
-        <Route path='/fashion/BeautyProducts' element={<Beautyproduct />} />
-        <Route path='/TvsAppliances' element={<TvsAppliances />} />
-        <Route path='/Electronics' element={<Electronics />} />
-        <Route path='/HomeFurniture' element={<HomeFurniture />} />
-        <Route path='/Grocery' element={<Grocery />} />
+         <Route path='/fashion' element={<Fashion />} />
         <Route path="/checkout" element={<CODCheckout />} />
         <Route path="/order-success" element={<OrderSuccess />} />
+        <Route path="/:mainCategory/:subCategory?" element={<CategoryProducts />} />
       </Routes>
       <Footer />
     </cartcontext.Provider>
@@ -97,3 +78,4 @@ function App() {
 }
 
 export default App;
+

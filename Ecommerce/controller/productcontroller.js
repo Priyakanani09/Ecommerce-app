@@ -33,7 +33,8 @@ exports.getProducts = async (req, res) => {
       : {};
     
     const totalProducts = await Product.countDocuments(query);
-    const products = await Product.find(query).skip(skip).limit(limit);
+    // const products = await Product.find(query).skip(skip).limit(limit);
+    const products = await Product.find(query);
     res.status(200).json({products,totalProducts,currentPage: page, totalPages: Math.ceil(totalProducts / limit)});
   } catch (error) {
     console.log(error);

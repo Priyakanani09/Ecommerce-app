@@ -1,44 +1,45 @@
 import React, { useContext, useEffect, useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import "../App.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import Breadcrumbs from "./Breadcrumbs";
 import { cartcontext } from "../App";
-import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import ProductSkeleton from "./ProductSkeleton";
+import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 
-function Grocery() {
+function CategoryProducts() {
+  const { mainCategory, subCategory } = useParams();
   const [products, setProducts] = useState([]);
-  const { addToCart } = useContext(cartcontext);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const navigate = useNavigate();
-  const [showScroll, setShowScroll] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { addToCart } = useContext(cartcontext);
+  const [showScroll, setShowScroll] = useState(false);
 
-  const fetchProducts = (pageNumber) => {
-    setLoading(true);
-    fetch(
-      `https://ecommerce-app-1-igf3.onrender.com/products?page=${pageNumber}&category=grocery`
-    )
+  useEffect(() => {
+    fetch("http://localhost:5002/products")
       .then((res) => res.json())
       .then((data) => {
-        const filteredProducts = data.products.filter(
-          (product) =>
-            product.category &&
-            product.category.toLowerCase().includes("grocery")
-        );
-        setProducts(filteredProducts);
-        setTotalPages(data.totalPages);
-        setPage(data.currentPage);
-      })
-      .catch((err) => console.error("Error fetching products:", err))
-      .finally(() => setLoading(false));
+        const normalize = (str = "") => str.toLowerCase().trim();
+
+        let filtered = [];
+
+        if (subCategory) {
+          filtered = data.products.filter(
+            (p) => normalize(p.category) === normalize(subCategory)
+          );
+        } else {
+          filtered = data.products.filter(
+            (p) => normalize(p.category) === normalize(mainCategory)
+          );
+        }
+
+        console.log("Filtered products:", filtered);
+        setProducts(filtered);
+      });
+  }, [mainCategory, subCategory]);
+
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    navigate("/cart");
   };
-  useEffect(() => {
-    fetchProducts(page);
-    window.scrollTo(0, 0);
-  }, [page]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -66,21 +67,14 @@ function Grocery() {
       behavior: "smooth",
     });
   };
-  const handleAddToCart = (product) => {
-    addToCart(product);
-    navigate("/cart");
-  };
 
-  const nextPage = () => {
-    if (page < totalPages) setPage(page + 1);
-  };
-
-  const prevPage = () => {
-    if (page > 1) setPage(page - 1);
-  };
   return (
-    <div className="container mt-5">
-      <h2 className="text-center mb-4 fw-bold text-2xl">Grocery</h2>
+    <div className="container mt-4">
+      <Breadcrumbs mainCategory={mainCategory} subCategory={subCategory} />
+
+      <h4 className="mb-3 capitalize">
+        {subCategory || mainCategory} Products
+      </h4>
 
       <div className="row">
         {loading
@@ -148,25 +142,6 @@ function Grocery() {
               </div>
             ))}
       </div>
-      <div className="d-flex justify-content-center align-items-center my-4">
-        <button
-          className="btn btn-outline-primary mx-2"
-          onClick={prevPage}
-          disabled={page === 1}
-        >
-          Prev
-        </button>
-        <span className="fw-bold">
-          Page {page} of {totalPages}
-        </span>
-        <button
-          className="btn btn-outline-primary mx-2"
-          onClick={nextPage}
-          disabled={page === totalPages}
-        >
-          Next
-        </button>
-      </div>
 
       {showScroll && (
         <>
@@ -207,4 +182,4 @@ function Grocery() {
   );
 }
 
-export default Grocery;
+export default CategoryProducts;
