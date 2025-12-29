@@ -1,4 +1,5 @@
 import './App.css';
+import "react-loading-skeleton/dist/skeleton.css";
 import Nav from './component/Nav';
 import { Route, Routes } from 'react-router-dom';
 import SingUp from './component/SingUp';

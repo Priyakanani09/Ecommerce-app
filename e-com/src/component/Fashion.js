@@ -5,7 +5,10 @@ import "../App.css";
 import { useNavigate } from "react-router-dom";
 import { cartcontext } from "../App";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
-import ProductSkeleton from "./ProductSkeleton";
+import {
+  skeletonBlock,
+  skeletonLine,
+} from "../utils/skeletons";
 
 function Fashion() {
   const [products, setProducts] = useState([]);
@@ -86,11 +89,18 @@ function Fashion() {
     <div className="container mt-5">
       <h2 className="text-center mb-4 fw-bold text-2xl">All Products</h2>
       <div className="row">
-        {loading
-          ? Array.from({ length: 8 }).map((_, i) => (
-              <ProductSkeleton key={i} />
-            ))
-        :products.map((p) => (
+         {loading ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div className="card p-3" key={i}>
+                {skeletonBlock("100%", 280)}
+                {skeletonLine("80%", 18)}
+                {skeletonLine("60%", 16)}
+                {skeletonBlock("100%", 36)}
+              </div>
+            ))}
+          </div>
+              ) :products.map((p) => (
           <div key={p._id} className="col-md-3 mb-3">
             <div className="card p-3">
               {p.image && p.image.length > 0 && (

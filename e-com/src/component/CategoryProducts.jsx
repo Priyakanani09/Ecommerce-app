@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Breadcrumbs from "./Breadcrumbs";
 import { cartcontext } from "../App";
-import ProductSkeleton from "./ProductSkeleton";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { skeletonBlock, skeletonLine } from "../utils/skeletons";
 
 function CategoryProducts() {
   const { mainCategory, subCategory } = useParams();
@@ -14,6 +14,7 @@ function CategoryProducts() {
   const [showScroll, setShowScroll] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     fetch("https://ecommerce-app-1-igf3.onrender.com/products")
       .then((res) => res.json())
       .then((data) => {
@@ -33,6 +34,7 @@ function CategoryProducts() {
 
         console.log("Filtered products:", filtered);
         setProducts(filtered);
+        setLoading(false);
       });
   }, [mainCategory, subCategory]);
 
@@ -77,70 +79,81 @@ function CategoryProducts() {
       </h4>
 
       <div className="row">
-        {loading
-          ? Array.from({ length: 8 }).map((_, i) => <ProductSkeleton key={i} />)
-          : products.map((p) => (
-              <div key={p._id} className="col-md-3 mb-3">
-                <div className="card p-3 h-100">
-                  {p.image && p.image.length > 0 && (
-                    <div
-                      id={`carousel-${p._id}`}
-                      className="carousel slide"
-                      data-bs-ride="carousel"
-                      data-bs-interval="3000"
-                      data-bs-pause="hover"
-                    >
-                      <div className="carousel-indicators custom-indicators">
-                        {p.image.map((_, index) => (
-                          <button
-                            key={index}
-                            type="button"
-                            data-bs-target={`#carousel-${p._id}`}
-                            data-bs-slide-to={index}
-                            className={index === 0 ? "active" : ""}
-                            aria-current={index === 0 ? "true" : "false"}
-                            aria-label={`Slide ${index + 1}`}
-                          ></button>
-                        ))}
-                      </div>
-
-                      <div className="carousel-inner">
-                        {p.image.map((img, index) => (
-                          <div
-                            key={index}
-                            className={`carousel-item ${
-                              index === 0 ? "active" : ""
-                            }`}
-                          >
-                            <img
-                              src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
-                              className="d-block w-100"
-                              alt={`${p.name} ${index + 1}`}
-                              style={{
-                                height: "280px",
-                                objectFit: "contain",
-                              }}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="card-body text-center">
-                    <h5>{p.name}</h5>
-                    <p className="text-muted">{p.description}</p>
-                    <p className="fw-bold text-primary">₹{p.price}</p>
-                    <button
-                      className="btn btn-success"
-                      onClick={() => handleAddToCart(p)}
-                    >
-                      Add to Cart
-                    </button>
-                  </div>
-                </div>
+        {loading ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div className="card p-3" key={i}>
+                {skeletonBlock("100%", 280)}
+                {skeletonLine("80%", 18)}
+                {skeletonLine("60%", 16)}
+                {skeletonBlock("100%", 36)}
               </div>
             ))}
+          </div>
+        ) : (
+          products.map((p) => (
+            <div key={p._id} className="col-md-3 mb-3">
+              <div className="card p-3 h-100">
+                {p.image && p.image.length > 0 && (
+                  <div
+                    id={`carousel-${p._id}`}
+                    className="carousel slide"
+                    data-bs-ride="carousel"
+                    data-bs-interval="3000"
+                    data-bs-pause="hover"
+                  >
+                    <div className="carousel-indicators custom-indicators">
+                      {p.image.map((_, index) => (
+                        <button
+                          key={index}
+                          type="button"
+                          data-bs-target={`#carousel-${p._id}`}
+                          data-bs-slide-to={index}
+                          className={index === 0 ? "active" : ""}
+                          aria-current={index === 0 ? "true" : "false"}
+                          aria-label={`Slide ${index + 1}`}
+                        ></button>
+                      ))}
+                    </div>
+
+                    <div className="carousel-inner">
+                      {p.image.map((img, index) => (
+                        <div
+                          key={index}
+                          className={`carousel-item ${
+                            index === 0 ? "active" : ""
+                          }`}
+                        >
+                          <img
+                            src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
+                            className="d-block w-100"
+                            alt={`${p.name} ${index + 1}`}
+                            style={{
+                              height: "280px",
+                              objectFit: "contain",
+                            }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="card-body text-center">
+                  <h5>{p.name}</h5>
+                  <p className="text-muted">{p.description}</p>
+                  <p className="fw-bold text-primary">₹{p.price}</p>
+                  <button
+                    className="btn btn-success"
+                    onClick={() => handleAddToCart(p)}
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {showScroll && (

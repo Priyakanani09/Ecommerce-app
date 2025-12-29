@@ -3,7 +3,11 @@ import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { cartcontext } from "../App";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
-import ProductSkeleton from "./ProductSkeleton";
+import {
+  skeletonBlock,
+  skeletonLine,
+} from "../utils/skeletons";
+
 
 function Search() {
   const [filtered, setFiltered] = useState([]);
@@ -64,7 +68,16 @@ function Search() {
     <div className="p-5">
       <h2>Search Results for "{query}"</h2>
       {loading ? (
-        Array.from({ length: 8 }).map((_, i) => <ProductSkeleton key={i} />)
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+    {Array.from({ length: 8 }).map((_, i) => (
+      <div className="card p-3" key={i}>
+        {skeletonBlock("100%", 280)}
+        {skeletonLine("80%", 18)}
+        {skeletonLine("60%", 16)}
+        {skeletonBlock("100%", 36)}
+      </div>
+    ))}
+  </div>
       ) : filtered.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
           {filtered.map((p, index) => (
