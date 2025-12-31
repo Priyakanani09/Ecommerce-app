@@ -177,6 +177,8 @@ function Nav() {
           <span className="mt-2">TVs & Appliances</span>
         </Link>
 
+      
+
         <Link
           to="/Electronics"
           className="text-gray-800 font-semibold no-underline hover:text-blue-500 flex flex-col items-center"
@@ -193,6 +195,37 @@ function Nav() {
           <span className="mt-2">Home & Furniture</span>
         </Link>
 
+          {/* <div
+          className="relative"
+          onMouseEnter={() => setOpen(true)}
+          onMouseLeave={() => setOpen(false)}
+        >
+          <Link
+            to="/Home & Furniture"
+            className="text-gray-800 font-semibold no-underline hover:text-blue-500 flex flex-col items-center"
+          >
+            <img src={require("./img/Furniture.png")} alt="" />
+            <div className="flex items-center mt-2">
+              <span>Home & Furnitur</span>
+              <FaAngleDown
+                className={`ml-1 transition-transform ${
+                  open ? "rotate-180" : ""
+                }`}
+              />
+            </div>
+          </Link>
+
+          {open && (
+            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2  bg-white shadow-lg rounded-lg p-2 w-48 z-10">
+              <Link
+                to="/Home & Furniture/Chair"
+                className="block px-3 py-1 text-gray-800 no-underline hover:bg-blue-100 rounded"
+              >
+                Chair
+              </Link>
+            </div>
+          )}
+        </div> */}
         <Link
           to="/Grocery"
           className="text-gray-800 font-semibold no-underline hover:text-blue-500 flex flex-col items-center"

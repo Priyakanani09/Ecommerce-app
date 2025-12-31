@@ -54,7 +54,7 @@ function Home() {
           (product) =>
             product.category &&
             (product.category.toLowerCase().includes("mobiles & tablets") ||
-              product.category.toLowerCase().includes("electronics"))
+              product.category.toLowerCase().includes("chair"))
         );
         setProducts(filteredProducts.slice(0, 4));
         setHomeproduct(homeProducts.slice(0, 4));
@@ -62,7 +62,7 @@ function Home() {
         setBeautyproduct(beautyProducts.slice(0, 4));
         setWomenproduct(womenproduct.slice(0, 4));
         setMenproduct(menproduct.slice(0, 4));
-        setMobileElectronics(mobileElectronics.slice(0, 4));
+        setMobileElectronics(mobileElectronics.slice(0,4));
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
