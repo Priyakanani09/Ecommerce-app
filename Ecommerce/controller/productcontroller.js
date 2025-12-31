@@ -91,29 +91,46 @@ exports.updateProduct = async (req, res) => {
     if (category && !mongoose.Types.ObjectId.isValid(category)) {
       return res.status(400).json({ message: "Invalid category ID" });
     }
+
     if (subCategory && !mongoose.Types.ObjectId.isValid(subCategory)) {
       return res.status(400).json({ message: "Invalid subCategory ID" });
     }
-    const image = req.files
-      ? req.files.map((file) => `/Img/${file.filename}`)
-      : [];
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    let images = product.image;
+    if (req.files && req.files.length > 0) {
+      images = req.files.map((file) => `/Img/${file.filename}`);
+    }
 
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
-      { image, name, price, category, subCategory, description },
+      {
+        image: images,
+        name,
+        price,
+        category,
+        subCategory,
+        description,
+      },
       { new: true }
-    );
-    if (!updatedProduct) {
-      return res.status(404).json({ error: "Product not found" });
-    }
-    res
-      .status(200)
-      .json({ message: "Product updated successfully", updatedProduct });
+    )
+      .populate("category", "name")
+      .populate("subCategory", "name");
+
+    res.status(200).json({
+      message: "Product updated successfully",
+      updatedProduct,
+    });
   } catch (error) {
     console.log(error);
-    res.status(400).json({ error: "Failed to update product" });
+    res.status(500).json({ error: "Failed to update product" });
   }
 };
+
 exports.searchProduct = async (req, res) => {
   try {
     const query = req.query.query || "";
