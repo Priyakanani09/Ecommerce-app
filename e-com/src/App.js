@@ -71,7 +71,9 @@ function App() {
          <Route path='/fashion' element={<Fashion />} />
         <Route path="/checkout" element={<CODCheckout />} />
         <Route path="/order-success" element={<OrderSuccess />} />
-        <Route path="/:mainCategory/:subCategory?" element={<CategoryProducts />} />
+        <Route path="/category/:mainCategory" element={<CategoryProducts />} />
+<Route path="/category/:mainCategory/:subCategory" element={<CategoryProducts />} />
+
       </Routes>
       <Footer />
     </cartcontext.Provider>

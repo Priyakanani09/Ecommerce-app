@@ -28,7 +28,7 @@ router.get('/admin-data', jwtAuth, admin, (req, res) => {
 });
 
 // Add Main Category
-router.post( '/add-main-category',jwtAuth,admin,maincategory.addCategory);
+router.post( '/add-main-category',jwtAuth,admin, upload.single('image'),maincategory.addCategory);
 router.get('/main-categories',maincategory.getCategories);
 router.delete('/main-category/:id',jwtAuth,admin,maincategory.deleteCategory);
 

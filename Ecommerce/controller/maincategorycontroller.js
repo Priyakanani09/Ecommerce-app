@@ -2,8 +2,11 @@ const Category = require("../model/maincategorymodel");
 
 exports.addCategory = async (req, res) => {
   try {
+    const { name } = req.body;
+   const image = req.file ? `/Img/${req.file.filename}` : null;
 
-    const category = await Category.create(req.body);
+    const category = await Category.create({ name, image });
+
     res.status(201).json({
       message: "Category added successfully",
       category

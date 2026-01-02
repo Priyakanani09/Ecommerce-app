@@ -1,36 +1,27 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaSearch, FaShoppingCart, FaAngleDown } from "react-icons/fa";
-import "../App.css";
+import { FaSearch, FaShoppingCart ,FaAngleDown } from "react-icons/fa";
+import axios from "axios";
 import { cartcontext } from "../App";
 
 function Nav() {
   const [search, setSearch] = useState("");
-  const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [openId, setOpenId] = useState(null);
+
   const { cartItems } = useContext(cartcontext);
+  const navigate = useNavigate();
 
-  // ✅ SAFE USER FETCH
-  let user = null;
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  try {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser && storedUser !== "undefined") {
-      user = JSON.parse(storedUser);
-    }
-  } catch (e) {
-    user = null;
-  }
-
-  // ✅ SAFE LOGOUT
+  // 🔐 LOGOUT
   const logout = () => {
-    if (user && user._id) {
-      localStorage.removeItem(`cart_${user._id}`);
-    }
     localStorage.removeItem("user");
     navigate("/login");
   };
 
+  // 🔍 SEARCH
   const handleSearch = (e) => {
     if (e.key === "Enter" && search.trim()) {
       navigate(`/search?query=${search}`);
@@ -38,11 +29,31 @@ function Nav() {
     }
   };
 
+  // ✅ FETCH MAIN CATEGORY
+  useEffect(() => {
+    axios
+      .get("http://localhost:5002/main-categories")
+      .then((res) => {
+        setCategories(res.data.categories);
+      })
+
+      .catch((err) => console.log(err));
+  }, []);
+
+  // ✅ FETCH ALL SUB CATEGORY
+  useEffect(() => {
+    axios
+      .get("http://localhost:5002/sub-categories")
+      .then((res) => {
+        setSubCategories(res.data.subCategories); // ✅ correct key
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   return (
     <div>
       {/* ================= HEADER ================= */}
       <header className="bg-white py-1 md:px-36 flex flex-col md:flex-row items-center justify-between">
-        {/* LOGO */}
         <div className="flex items-center justify-center md:justify-start w-full md:w-auto">
           <Link to="/">
             <img
@@ -53,20 +64,17 @@ function Nav() {
           </Link>
         </div>
 
-        {/* SEARCH */}
-        <div className="relative w-full md:w-1/2">
+        <div className="relative w-1/2">
           <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input
-            type="text"
-            placeholder="Search for products, brands and more..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={handleSearch}
+            placeholder="Search products..."
             className="w-full border border-gray-300 rounded-full pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
 
-        {/* LOGIN / LOGOUT */}
         <div className="flex items-center justify-center gap-3">
           {user ? (
             <button
@@ -92,7 +100,6 @@ function Nav() {
             </>
           )}
 
-          {/* CART */}
           <Link to="/cart" className="relative">
             <FaShoppingCart className="text-2xl text-gray-700 hover:text-blue-500" />
             <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
@@ -104,135 +111,53 @@ function Nav() {
 
       {/* ================= CATEGORY BAR ================= */}
       <div className="bg-white shadow-sm py-3 md:px-40  md:my-3 flex flex-wrap items-center justify-center gap-24">
-        <Link
-          to="/Mobiles & Tablets"
-          className="text-gray-800 font-semibold no-underline hover:text-blue-500 flex flex-col items-center"
-        >
-          <img src={require("./img/Mobile.png")} alt="" />
-          <span className="mt-2">Mobiles & Tablets</span>
-        </Link>
-
-        {/* FASHION DROPDOWN */}
-        <div
-          className="relative"
-          onMouseEnter={() => setOpen(true)}
-          onMouseLeave={() => setOpen(false)}
-        >
-          <Link
-            to="/fashion"
-            className="text-gray-800 font-semibold no-underline hover:text-blue-500 flex flex-col items-center"
+        {categories.map((cat) => (
+          <div
+            key={cat._id}
+            className="relative flex flex-col items-center"
+            onMouseEnter={() => setOpenId(cat._id)}
+            onMouseLeave={() => setOpenId(null)}
           >
-            <img src={require("./img/Fashion.png")} alt="" />
-            <div className="flex items-center mt-2">
-              <span>Fashion</span>
-              <FaAngleDown
-                className={`ml-1 transition-transform ${
-                  open ? "rotate-180" : ""
-                }`}
+            
+            {cat.image && (
+              <img
+                src={`http://localhost:5002${cat.image}`}
+                alt={cat.name}
+                className="mb-2"
               />
-            </div>
+            )}
+
+            {/* CATEGORY NAME */}
+            <Link
+            to={`/category/${cat._id}`}
+            className="flex items-center text-gray-800 font-semibold hover:text-blue-500 space-x-1 no-underline"
+          >
+            <span>{cat.name}</span>
+            <FaAngleDown
+              className={`transition-transform ${
+                openId === cat._id ? "rotate-180" : ""
+              }`}
+            />
           </Link>
 
-          {open && (
-            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2  bg-white shadow-lg rounded-lg p-2 w-48 z-10">
-              <Link
-                to="/fashion/Men Wear"
-                className="block px-3 py-1 text-gray-800 no-underline hover:bg-blue-100 rounded"
-              >
-                Men Wear
-              </Link>
-              <Link
-                to="/fashion/Women Wear"
-                className="block px-3 py-1 text-gray-800 no-underline hover:bg-blue-100 rounded"
-              >
-                Women Wear
-              </Link>
-              <Link
-                to="/fashion/Men Footwear"
-                className="block px-3 py-1 text-gray-800 no-underline hover:bg-blue-100 rounded"
-              >
-                Men Footwear
-              </Link>
-              <Link
-                to="/fashion/Women Footwear"
-                className="block px-3 py-1 text-gray-800 no-underline hover:bg-blue-100 rounded"
-              >
-                Women Footwear
-              </Link>
-              <Link
-                to="/fashion/Beauty Product"
-                className="block px-3 py-1 text-gray-800 no-underline hover:bg-blue-100 rounded"
-              >
-                Beauty Products
-              </Link>
-            </div>
-          )}
-        </div>
-
-        <Link
-          to="/Tvs & Appliances"
-          className="text-gray-800 font-semibold no-underline hover:text-blue-500 flex flex-col items-center"
-        >
-          <img src={require("./img/Tv.png")} alt="" />
-          <span className="mt-2">TVs & Appliances</span>
-        </Link>
-
-      
-
-        <Link
-          to="/Electronics"
-          className="text-gray-800 font-semibold no-underline hover:text-blue-500 flex flex-col items-center"
-        >
-          <img src={require("./img/Electronics.png")} alt="" />
-          <span className="mt-2">Electronics</span>
-        </Link>
-
-        <Link
-          to="/Home & Furniture"
-          className="text-gray-800 font-semibold no-underline hover:text-blue-500 flex flex-col items-center"
-        >
-          <img src={require("./img/Furniture.png")} alt="" />
-          <span className="mt-2">Home & Furniture</span>
-        </Link>
-
-          {/* <div
-          className="relative"
-          onMouseEnter={() => setOpen(true)}
-          onMouseLeave={() => setOpen(false)}
-        >
-          <Link
-            to="/Home & Furniture"
-            className="text-gray-800 font-semibold no-underline hover:text-blue-500 flex flex-col items-center"
-          >
-            <img src={require("./img/Furniture.png")} alt="" />
-            <div className="flex items-center mt-2">
-              <span>Home & Furnitur</span>
-              <FaAngleDown
-                className={`ml-1 transition-transform ${
-                  open ? "rotate-180" : ""
-                }`}
-              />
-            </div>
-          </Link>
-
-          {open && (
-            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2  bg-white shadow-lg rounded-lg p-2 w-48 z-10">
-              <Link
-                to="/Home & Furniture/Chair"
-                className="block px-3 py-1 text-gray-800 no-underline hover:bg-blue-100 rounded"
-              >
-                Chair
-              </Link>
-            </div>
-          )}
-        </div> */}
-        <Link
-          to="/Grocery"
-          className="text-gray-800 font-semibold no-underline hover:text-blue-500 flex flex-col items-center"
-        >
-          <img src={require("./img/Grocery.png")} alt="" />
-          <span className="mt-2">Grocery</span>
-        </Link>
+            {/* SUBCATEGORY DROPDOWN */}
+            {openId === cat._id && (
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-white shadow-lg rounded-lg p-2 w-52 z-10">
+                {subCategories
+                  .filter((sub) => sub.mainCategory === cat._id)
+                  .map((sub) => (
+                    <Link
+                      key={sub._id}
+                      to={`/category/${cat._id}/${sub._id}`}
+                      className="block px-3 py-1 text-gray-800 no-underline hover:bg-blue-100 rounded"
+                    >
+                      {sub.name}
+                    </Link>
+                  ))}
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
