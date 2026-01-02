@@ -36,11 +36,7 @@ exports.addSubCategory = async (req, res) => {
 
 exports.getAllSubCategories = async (req, res) => {
   try {
-    const { categoryId } = req.params;
-
-    const subCategories = await SubCategory.find({
-      mainCategory: categoryId
-    });
+    const subCategories = await SubCategory.find();
 
     res.status(200).json({
       message: "Sub categories fetched successfully",

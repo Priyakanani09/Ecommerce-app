@@ -30,11 +30,11 @@ router.get('/admin-data', jwtAuth, admin, (req, res) => {
 // Add Main Category
 router.post( '/add-main-category',jwtAuth,admin,maincategory.addCategory);
 router.get('/main-categories',maincategory.getCategories);
-router.delete( '/main-category/:id',jwtAuth,admin,maincategory.deleteCategory);
+router.delete('/main-category/:id',jwtAuth,admin,maincategory.deleteCategory);
 
 // Add SubCategory
 router.post("/add-sub-category",jwtAuth,admin,subCategoryController.addSubCategory);
-router.get("/sub-categories/:categoryId",subCategoryController.getAllSubCategories);
+router.get("/sub-categories",subCategoryController.getAllSubCategories);
 router.delete("/sub-category/:id",jwtAuth,admin,subCategoryController.deleteSubCategory);
 
 
@@ -44,6 +44,7 @@ router.get('/products', productController.getProducts);
 router.delete("/delete/:name",jwtAuth,admin,productController.deleteProduct);
 router.put('/update-product/:id',jwtAuth,admin, upload.array('image',5), productController.updateProduct);
 router.get("/search",productController.searchProduct);
+
 
 // User Order 
 router.post('/order',ordercontroller.order);
