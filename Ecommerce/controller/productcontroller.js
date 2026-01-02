@@ -57,15 +57,15 @@ exports.getProducts = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch products" });
   }
 };
-exports.deleteproduct = async (req, res) => {
- try {
-    const { id } = req.params;
+exports.deleteProduct = async (req, res) => {
+  try {
+    const { name } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid product ID" });
+    if (!name) {
+      return res.status(400).json({ message: "Product name is required" });
     }
 
-    const deletedProduct = await Product.findByIdAndDelete(id)
+    const deletedProduct = await Product.findOneAndDelete({ name : name })
       .populate("category", "name")
       .populate("subCategory", "name");
 
@@ -79,9 +79,13 @@ exports.deleteproduct = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to delete product", details: error.message });
+    res.status(500).json({
+      error: "Failed to delete product",
+      details: error.message,
+    });
   }
 };
+
 
 exports.updateProduct = async (req, res) => {
   try {

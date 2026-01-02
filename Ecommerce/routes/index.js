@@ -41,7 +41,7 @@ router.delete("/sub-category/:id",jwtAuth,admin,subCategoryController.deleteSubC
 //Product Upload Setup
 router.post('/add-product',jwtAuth, admin,upload.array('image',5), productController.addProduct);
 router.get('/products', productController.getProducts);
-router.delete("/delete/:name",jwtAuth,admin,productController.deleteproduct);
+router.delete("/delete/:name",jwtAuth,admin,productController.deleteProduct);
 router.put('/update-product/:id',jwtAuth,admin, upload.array('image',5), productController.updateProduct);
 router.get("/search",productController.searchProduct);
 
