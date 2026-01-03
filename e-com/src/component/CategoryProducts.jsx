@@ -5,7 +5,6 @@ import { cartcontext } from "../App";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { skeletonBlock, skeletonLine } from "../utils/skeletons";
 
-
 function CategoryProducts() {
   const { mainCategory, subCategory } = useParams();
   const [products, setProducts] = useState([]);
@@ -14,19 +13,19 @@ function CategoryProducts() {
   const { addToCart } = useContext(cartcontext);
   const [showScroll, setShowScroll] = useState(false);
 
-    const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
 
- useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
 
         // Fetch products, main categories, and subcategories from your backend
         const [prodRes, catRes, subCatRes] = await Promise.all([
-          fetch("http://localhost:5002/products"),
-          fetch("http://localhost:5002/main-categories"),
-          fetch("http://localhost:5002/sub-categories"),
+          fetch("https://ecommerce-app-1-igf3.onrender.com/products"),
+          fetch("https://ecommerce-app-1-igf3.onrender.com/main-categories"),
+          fetch("https://ecommerce-app-1-igf3.onrender.com/sub-categories"),
         ]);
 
         const prodData = await prodRes.json();
@@ -36,14 +35,20 @@ function CategoryProducts() {
         // Save categories/subCategories
         setCategories(catData.categories || catData);
         setSubCategories(subCatData.subCategories || subCatData);
-         let filteredProducts = [];
+        let filteredProducts = [];
+
         if (subCategory) {
           filteredProducts = prodData.products.filter(
             (p) => p.subCategory?._id === subCategory
           );
         } else if (mainCategory) {
-          filteredProducts = prodData.products.filter(
-            (p) => p.category?._id === mainCategory
+          const relatedSubCategories = subCatData.subCategories.filter(
+            (sub) => sub.mainCategory === mainCategory
+          );
+
+          const subCategoryIds = relatedSubCategories.map((sub) => sub._id);
+          filteredProducts = prodData.products.filter((p) =>
+            subCategoryIds.includes(p.subCategory?._id)
           );
         } else {
           filteredProducts = prodData.products;
@@ -98,9 +103,15 @@ function CategoryProducts() {
 
   return (
     <div className="container mt-4">
-       <Breadcrumbs mainCategory={mainCatObj?.name} subCategory={subCatObj?.name} />
+      <Breadcrumbs
+        mainCategory={mainCatObj?.name}
+        mainCategoryId={mainCategory}
+        subCategory={subCatObj?.name}
+      />
 
-      <h4 className="mb-4">{subCatObj?.name || mainCatObj?.name || "Products"} Products</h4>
+      <h4 className="mb-4">
+        {subCatObj?.name || mainCatObj?.name || "Products"} Products
+      </h4>
 
       <div className="row">
         {loading ? (

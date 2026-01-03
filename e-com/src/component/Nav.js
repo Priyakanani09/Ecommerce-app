@@ -32,7 +32,7 @@ function Nav() {
   // ✅ FETCH MAIN CATEGORY
   useEffect(() => {
     axios
-      .get("http://localhost:5002/main-categories")
+      .get("https://ecommerce-app-1-igf3.onrender.com/main-categories")
       .then((res) => {
         setCategories(res.data.categories);
       })
@@ -43,7 +43,7 @@ function Nav() {
   // ✅ FETCH ALL SUB CATEGORY
   useEffect(() => {
     axios
-      .get("http://localhost:5002/sub-categories")
+      .get("https://ecommerce-app-1-igf3.onrender.com/sub-categories")
       .then((res) => {
         setSubCategories(res.data.subCategories); // ✅ correct key
       })
@@ -118,10 +118,10 @@ function Nav() {
             onMouseEnter={() => setOpenId(cat._id)}
             onMouseLeave={() => setOpenId(null)}
           >
-            
+
             {cat.image && (
               <img
-                src={`http://localhost:5002${cat.image}`}
+                src={`https://ecommerce-app-1-igf3.onrender.com${cat.image}`}
                 alt={cat.name}
                 className="mb-2"
               />

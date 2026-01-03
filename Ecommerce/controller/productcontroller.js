@@ -38,19 +38,32 @@ exports.getProducts = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = 24;
     const skip = (page - 1) * limit;
-    const category = req.query.category;
+    const { mainCategory, subCategory } = req.query;
 
     let query = {};
-    if (category) {
-      if (!mongoose.Types.ObjectId.isValid(category)) {
-        return res.status(400).json({ message: "Invalid category ID" });
+    if (subCategory) {
+      if (!mongoose.Types.ObjectId.isValid(subCategory)) {
+        return res.status(400).json({ message: "Invalid subCategory ID" });
       }
-      query.category = category;
+      query.subCategory = subCategory;
+    }
+
+    if (mainCategory) {
+      if (!mongoose.Types.ObjectId.isValid(mainCategory)) {
+        return res.status(400).json({ message: "Invalid mainCategory ID" });
+      }
+
+      const subCategories = await SubCategory.find(
+        { mainCategory },
+        "_id"
+      );
+
+      const subCategoryIds = subCategories.map(sc => sc._id);
+      query.subCategory = { $in: subCategoryIds };
     }
     
     const totalProducts = await Product.countDocuments(query);
-    // const products = await Product.find(query).skip(skip).limit(limit);
-    const products = await Product.find(query).populate("category", "name").populate("subCategory", "name");
+    const products = await Product.find(query).skip(skip).limit(limit).populate("category", "name").populate("subCategory", "name");
     res.status(200).json({products,totalProducts,currentPage: page, totalPages: Math.ceil(totalProducts / limit)});
   } catch (error) {
     console.log(error);
