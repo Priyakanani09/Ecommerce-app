@@ -117,6 +117,7 @@ function Nav() {
             className="relative flex flex-col items-center"
             onMouseEnter={() => setOpenId(cat._id)}
             onMouseLeave={() => setOpenId(null)}
+
           >
 
             {cat.image && (
@@ -130,7 +131,7 @@ function Nav() {
             {/* CATEGORY NAME */}
             <Link
             to={`/category/${cat._id}`}
-            className="flex items-center text-gray-800 font-semibold hover:text-blue-500 space-x-1 no-underline"
+            className="flex items-center text-gray-800  font-semibold hover:text-blue-500 space-x-1 no-underline"
           >
             <span>{cat.name}</span>
             <FaAngleDown
@@ -142,7 +143,7 @@ function Nav() {
 
             {/* SUBCATEGORY DROPDOWN */}
             {openId === cat._id && (
-              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 bg-white shadow-lg rounded-lg p-2 w-52 z-10">
+              <div className="absolute mt-24 left-1/2 -translate-x-1/2 font-medium bg-white shadow-lg rounded-lg p-2 w-52 z-10">
                 {subCategories
                   .filter((sub) => sub.mainCategory === cat._id)
                   .map((sub) => (

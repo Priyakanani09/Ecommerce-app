@@ -7,67 +7,83 @@ import { skeletonBlock, skeletonLine } from "../utils/skeletons";
 
 function CategoryProducts() {
   const { mainCategory, subCategory } = useParams();
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { addToCart } = useContext(cartcontext);
+
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const [mainCategoryName, setMainCategoryName] = useState("");
+  const [subCategoryName, setSubCategoryName] = useState("");
+
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [showScroll, setShowScroll] = useState(false);
 
-  const [categories, setCategories] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
+  const fetchData = async (pageNumber) => {
+    try {
+      setLoading(true);
+      let url = `https://ecommerce-app-1-igf3.onrender.com/products?page=${pageNumber}`;
+
+      if (subCategory) {
+        url += `&subCategory=${subCategory}`;
+      } else if (mainCategory) {
+        url += `&mainCategory=${mainCategory}`;
+      }
+
+      const prodRes = await fetch(url);
+      const prodData = await prodRes.json();
+
+      setProducts(prodData.products);
+      setTotalPages(prodData.totalPages);
+        
+    } catch (error) {
+      console.error("Fetch error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchCategoryNames = async () => {
       try {
-        setLoading(true);
-
-        // Fetch products, main categories, and subcategories from your backend
-        const [prodRes, catRes, subCatRes] = await Promise.all([
-          fetch("https://ecommerce-app-1-igf3.onrender.com/products"),
-          fetch("https://ecommerce-app-1-igf3.onrender.com/main-categories"),
-          fetch("https://ecommerce-app-1-igf3.onrender.com/sub-categories"),
-        ]);
-
-        const prodData = await prodRes.json();
-        const catData = await catRes.json();
-        const subCatData = await subCatRes.json();
-
-        // Save categories/subCategories
-        setCategories(catData.categories || catData);
-        setSubCategories(subCatData.subCategories || subCatData);
-        let filteredProducts = [];
-
-        if (subCategory) {
-          filteredProducts = prodData.products.filter(
-            (p) => p.subCategory?._id === subCategory
+        if (mainCategory) {
+          const res = await fetch(
+            `https://ecommerce-app-1-igf3.onrender.com/main-categories`
           );
-        } else if (mainCategory) {
-          const relatedSubCategories = subCatData.subCategories.filter(
-            (sub) => sub.mainCategory === mainCategory
-          );
+          const data = await res.json();
 
-          const subCategoryIds = relatedSubCategories.map((sub) => sub._id);
-          filteredProducts = prodData.products.filter((p) =>
-            subCategoryIds.includes(p.subCategory?._id)
+          const objectMainCategory = data?.categories?.find(
+            (d1) => d1._id === mainCategory
           );
-        } else {
-          filteredProducts = prodData.products;
+          setMainCategoryName(objectMainCategory?.name);
         }
 
-        setProducts(filteredProducts);
-      } catch (error) {
-        console.error("Fetch error:", error);
-      } finally {
-        setLoading(false);
+        if (subCategory) {
+          const res = await fetch(
+            "https://ecommerce-app-1-igf3.onrender.com/sub-categories"
+          );
+          const data = await res.json();
+
+          const objectSubCategory = data?.subCategories?.find(
+            (d1) => d1._id === subCategory
+          );
+
+          setSubCategoryName(objectSubCategory?.name);
+        } else {
+          setSubCategoryName("");
+        }
+      } catch (err) {
+        console.error("Category name error:", err);
       }
     };
 
-    fetchData();
+    fetchCategoryNames();
   }, [mainCategory, subCategory]);
 
-  // Find main and sub category objects to get their names
-  const mainCatObj = categories.find((c) => c._id === mainCategory);
-  const subCatObj = subCategories.find((s) => s._id === subCategory);
+  useEffect(() => {
+    fetchData(page);
+  }, [mainCategory, subCategory, page]);
 
   const handleAddToCart = (product) => {
     addToCart(product);
@@ -101,16 +117,23 @@ function CategoryProducts() {
     });
   };
 
+  const nextPage = () => {
+    if (page < totalPages) setPage(page + 1);
+  };
+
+  const prevPage = () => {
+    if (page > 1) setPage(page - 1);
+  };
   return (
     <div className="container mt-4">
       <Breadcrumbs
-        mainCategory={mainCatObj?.name}
+        mainCategory={mainCategoryName}
+        subCategory={subCategoryName}
         mainCategoryId={mainCategory}
-        subCategory={subCatObj?.name}
       />
 
       <h4 className="mb-4">
-        {subCatObj?.name || mainCatObj?.name || "Products"} Products
+        {(subCategoryName || mainCategoryName || "Products") + " Products"}
       </h4>
 
       <div className="row">
@@ -189,6 +212,25 @@ function CategoryProducts() {
             </div>
           ))
         )}
+      </div>
+      <div className="d-flex justify-content-center align-items-center my-4">
+        <button
+          className="btn btn-outline-primary mx-2"
+          onClick={prevPage}
+          disabled={page === 1}
+        >
+          Prev
+        </button>
+        <span className="fw-bold">
+          Page {page} of {totalPages}
+        </span>
+        <button
+          className="btn btn-outline-primary mx-2"
+          onClick={nextPage}
+          disabled={page === totalPages}
+        >
+          Next
+        </button>
       </div>
 
       {showScroll && (
