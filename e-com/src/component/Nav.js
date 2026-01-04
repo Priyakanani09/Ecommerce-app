@@ -145,7 +145,7 @@ function Nav() {
             {openId === cat._id && (
               <div className="absolute mt-24 left-1/2 -translate-x-1/2 font-medium bg-white shadow-lg rounded-lg p-2 w-52 z-10">
                 {subCategories
-                  .filter((sub) => sub.mainCategory === cat._id)
+                  .filter((sub) => sub.mainCategory?._id === cat._id)
                   .map((sub) => (
                     <Link
                       key={sub._id}
