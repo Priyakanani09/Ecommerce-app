@@ -5,7 +5,11 @@ import "../App.css";
 import { Link } from "react-router-dom";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
-import { skeletonBlock, skeletonLine, skeletonHeading } from "../utils/skeletons";
+import {
+  skeletonBlock,
+  skeletonLine,
+  skeletonHeading,
+} from "../utils/skeletons";
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -19,62 +23,61 @@ function Home() {
   const [showScroll, setShowScroll] = useState(false);
 
   const fetchProducts = () => {
-  setLoading(true);
-  fetch(`https://ecommerce-app-1-igf3.onrender.com/products`)
-    .then((res) => res.json())
-    .then((data) => {
-      const filteredProducts = data.products.filter(
-        (product) =>
-          product.category &&
-          product.category.name.toLowerCase().includes("tvs & appliances")
-      );
+    setLoading(true);
+    fetch(`https://ecommerce-app-1-igf3.onrender.com/products`)
+      .then((res) => res.json())
+      .then((data) => {
+        const filteredProducts = data.products.filter(
+          (product) =>
+            product.category &&
+            product.category.name.toLowerCase().includes("tvs & appliances")
+        );
 
-      const homeProducts = data.products.filter(
-        (product) =>
-          product.category &&
-          product.category.name.toLowerCase().includes("home & furniture")
-      );
+        const homeProducts = data.products.filter(
+          (product) =>
+            product.category &&
+            product.category.name.toLowerCase().includes("home & furniture")
+        );
 
-      const beautyProducts = data.products.filter(
-        (product) =>
-          product.category &&
-          product.category.name.toLowerCase().includes("beauty product")
-      );
+        const beautyProducts = data.products.filter(
+          (product) =>
+            product.category &&
+            product.category.name.toLowerCase().includes("beauty product")
+        );
 
-      const womenproduct = data.products.filter(
-        (product) =>
-          product.category &&
-          (product.category.name.toLowerCase().includes("women wear") ||
-            product.category.name.toLowerCase().includes("women footwear"))
-      );
+        const womenproduct = data.products.filter(
+          (product) =>
+            product.category &&
+            (product.category.name.toLowerCase().includes("women wear") ||
+              product.category.name.toLowerCase().includes("women footwear"))
+        );
 
-      const menproduct = data.products.filter(
-        (product) =>
-          product.category &&
-          (product.category.name.toLowerCase().startsWith("men wear") ||
-            product.category.name.toLowerCase().startsWith("men footwear"))
-      );
+        const menproduct = data.products.filter(
+          (product) =>
+            product.category &&
+            (product.category.name.toLowerCase().startsWith("men wear") ||
+              product.category.name.toLowerCase().startsWith("men footwear"))
+        );
 
-      // Example: filter by name keywords
-const mobileElectronics = data.products.filter(
-  (product) =>
-    product.category.toLowerCase().includes("smart phone") ||
-    product.category.toLowerCase().includes("tablet") ||
-    product.category.toLowerCase().includes("electronics")
-);
+        // Example: filter by name keywords
+        const mobileElectronics = data.products.filter(
+          (product) =>
+            product.category.toLowerCase().includes("smart phone") ||
+            product.category.toLowerCase().includes("tablet") ||
+            product.category.toLowerCase().includes("electronics")
+        );
 
-      setProducts(filteredProducts.slice(0, 4));
-      setHomeproduct(homeProducts.slice(0, 4));
-      setHomeFurnitureSlider(homeProducts.slice(4, 12));
-      setBeautyproduct(beautyProducts.slice(0, 4));
-      setWomenproduct(womenproduct.slice(0, 4));
-      setMenproduct(menproduct.slice(0, 4));
-      setMobileElectronics(mobileElectronics.slice(0, 4));
-    })
-    .catch((err) => console.error(err))
-    .finally(() => setLoading(false));
-};
-
+        setProducts(filteredProducts.slice(0, 4));
+        setHomeproduct(homeProducts.slice(0, 4));
+        setHomeFurnitureSlider(homeProducts.slice(4, 12));
+        setBeautyproduct(beautyProducts.slice(0, 4));
+        setWomenproduct(womenproduct.slice(0, 4));
+        setMenproduct(menproduct.slice(0, 4));
+        setMobileElectronics(mobileElectronics.slice(0, 4));
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -144,7 +147,7 @@ const mobileElectronics = data.products.filter(
                 className={`carousel-item ${index === 0 ? "active" : ""}`}
               >
                 <img
-                  src={require(`../component/img/slider(${img}).png`)}
+                  src={require(`./img/slider(${img}).png`)}
                   className="d-block w-100 img-fluid"
                   alt="slide"
                 />
@@ -284,7 +287,7 @@ const mobileElectronics = data.products.filter(
         {/* RIGHT – Home */}
         <div className="category-section">
           <div className="category-header">
-            {loading ? skeletonHeading() : <h5>Men Wear and Footwear</h5> }           
+            {loading ? skeletonHeading() : <h5>Men Wear and Footwear</h5>}
             <Link to="" className="arrow-link">
               <span className="arrow-btn1">
                 <FaChevronRight />
@@ -310,7 +313,11 @@ const mobileElectronics = data.products.filter(
 
         <div className="category-section">
           <div className="category-header">
-            {loading ? skeletonHeading() : <h5>Mobiles, Tablets & Electronics</h5> }
+            {loading ? (
+              skeletonHeading()
+            ) : (
+              <h5>Mobiles, Tablets & Electronics</h5>
+            )}
             <Link to="/fashion/Beauty Product" className="arrow-link">
               <span className="arrow-btn1">
                 <FaChevronRight />
@@ -337,7 +344,7 @@ const mobileElectronics = data.products.filter(
       {/* ===== HOME & FURNITURE HORIZONTAL SLIDER ===== */}
       <div className="container-fluid mt-4 category-section">
         <div className="d-flex justify-content-between align-items-center mb-2 ">
-          {loading ? skeletonHeading() : <h4>Home & Furniture</h4> }
+          {loading ? skeletonHeading() : <h4>Home & Furniture</h4>}
           <button
             className="btn btn-light slider-arrow"
             onClick={() =>
