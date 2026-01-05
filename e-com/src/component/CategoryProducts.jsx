@@ -83,6 +83,7 @@ function CategoryProducts() {
 
   useEffect(() => {
     fetchData(page);
+    window.scrollTo(0, 0);
   }, [mainCategory, subCategory, page]);
 
   const handleAddToCart = (product) => {
