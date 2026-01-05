@@ -5,6 +5,11 @@ import "../App.css";
 import { Link } from "react-router-dom";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { FaChevronRight } from "react-icons/fa";
+import slider1 from "./img/slider(1).png";
+import slider3 from "./img/slider(3).png";
+import slider4 from "./img/slider(4).png";
+import slider5 from "./img/slider(5).png";
+
 import {
   skeletonBlock,
   skeletonLine,
@@ -21,6 +26,7 @@ function Home() {
   const [homeFurnitureSlider, setHomeFurnitureSlider] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showScroll, setShowScroll] = useState(false);
+  const sliderImages = [slider1, slider3, slider4, slider5];
 
   const fetchProducts = () => {
     setLoading(true);
@@ -141,13 +147,13 @@ function Home() {
           </div>
 
           <div className="carousel-inner">
-            {[1, 3, 4, 5].map((img, index) => (
+            {sliderImages.map((img, index) => (
               <div
-                key={img}
+                key={index}
                 className={`carousel-item ${index === 0 ? "active" : ""}`}
               >
                 <img
-                  src={require(`./img/slider(${img}).png`)}
+                  src={img}
                   className="d-block w-100 img-fluid"
                   alt="slide"
                 />
