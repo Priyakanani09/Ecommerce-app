@@ -28,11 +28,8 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/Img', express.static(path.join(__dirname, 'Img'), {
-  cacheControl: false,
-  etag: false,
-  maxAge: 0
-}));
+app.use("/Img", express.static(path.join(__dirname, "Img")));
+
  // must be before 404
  app.get("/", (req, res) => {
   res.send("Backend is running successfully 🚀");
