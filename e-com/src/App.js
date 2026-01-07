@@ -74,7 +74,7 @@ function App() {
         <Route path="/order-success" element={<OrderSuccess />} />
         <Route path="/category/:mainCategory" element={<CategoryProducts />} />
         <Route path="/category/:mainCategory/:subCategory" element={<CategoryProducts />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/product/:mainCategory/:subCategory/:id" element={<ProductDetail />} />
 
       </Routes>
       <Footer />

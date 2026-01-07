@@ -3,20 +3,24 @@ import { useContext, useEffect, useState } from "react";
 import ImageGallery from "./ImageGallery";
 import { cartcontext } from "../App";
 import { FaShoppingCart, FaBolt } from "react-icons/fa";
+import Breadcrumbs from "./Breadcrumbs";
 
 function ProductDetail() {
-  const { id } = useParams();
+  const { id, mainCategory, subCategory } = useParams();
+
   const [allProducts, setAllProducts] = useState([]);
   const [product, setProduct] = useState(null);
   const navigate = useNavigate();
   const { addToCart } = useContext(cartcontext);
+  const [mainCategoryName, setMainCategoryName] = useState("");
+  const [subCategoryName, setSubCategoryName] = useState("");
 
   useEffect(() => {
     fetch("https://ecommerce-app-1-igf3.onrender.com/products")
       .then((res) => res.json())
       .then((data) => {
-        console.log({data})
-        setAllProducts(data.products)
+        console.log({ data });
+        setAllProducts(data.products);
       });
   }, []);
 
@@ -27,15 +31,50 @@ function ProductDetail() {
     }
   }, [id, allProducts]);
 
+  useEffect(() => {
+    const fetchCategoryNames = async () => {
+      try {
+        if (mainCategory) {
+          const res = await fetch(
+            `https://ecommerce-app-1-igf3.onrender.com/main-categories`
+          );
+          const data = await res.json();
+
+          const objectMainCategory = data?.categories?.find(
+            (d1) => d1._id === mainCategory
+          );
+          setMainCategoryName(objectMainCategory?.name);
+        }
+
+        if (subCategory) {
+          const res = await fetch(
+            "https://ecommerce-app-1-igf3.onrender.com/sub-categories"
+          );
+          const data = await res.json();
+
+          const objectSubCategory = data?.subCategories?.find(
+            (d1) => d1._id === subCategory
+          );
+
+          setSubCategoryName(objectSubCategory?.name);
+        } else {
+          setSubCategoryName("");
+        }
+      } catch (err) {
+        console.error("Category name error:", err);
+      }
+    };
+
+    fetchCategoryNames();
+  }, [mainCategory, subCategory]);
+
   if (!product) return <h4 className="text-center mt-5">Loading...</h4>;
 
-  const related = allProducts
-  .filter(
+  const related = allProducts.filter(
     (p) =>
-      p.subCategory?._id === product.subCategory?._id &&
-      p._id !== product._id
+      p.subCategory?._id === product.subCategory?._id && p._id !== product._id
   );
-  console.log({related})
+  console.log({ related });
 
   const handleAddToCart = (item) => {
     addToCart(item);
@@ -48,19 +87,26 @@ function ProductDetail() {
   };
 
   return (
-    <div className="container mt-4">
-      {/* ================= PRODUCT DETAIL ================= */}
+    <div className="container bg-white p-4 mt-4">
       <div className="row">
-        {/* LEFT: IMAGE */}
         <div className="col-md-5">
           <ImageGallery images={product.image} />
         </div>
 
-        {/* RIGHT: DETAILS */}
-        <div className="col-md-7 p-10">
+        <div className="col-md-7">
+          <Breadcrumbs
+            mainCategory={mainCategoryName}
+            subCategory={subCategoryName}
+            mainCategoryId={mainCategory}
+            subCategoryId={subCategory}
+            productName={product.name}
+          />
+
           <h3 className="font-semibold">{product.name}</h3>
 
-          <p className=" text-gray-500 font-medium mt-2">{product.description}</p>
+          <p className=" text-gray-500 font-medium mt-2">
+            {product.description}
+          </p>
 
           <h3 className="font-semibold text-4xl mt-3">₹{product.price}</h3>
 
@@ -90,7 +136,10 @@ function ProductDetail() {
         {related.map((p) => (
           <div key={p._id} className="col-md-3 mb-3">
             <div className="card p-3 h-100">
-              <Link to={`/product/${p._id}`} key={p._id}>
+              <Link
+                to={`/product/${p.category?._id}/${p.subCategory?._id}/${p._id}`}
+                key={p._id}
+              >
                 {p.image && p.image.length > 0 && (
                   <div
                     id={`carousel-${p._id}`}

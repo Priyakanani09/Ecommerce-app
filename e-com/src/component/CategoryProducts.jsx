@@ -152,7 +152,10 @@ function CategoryProducts() {
           products.map((p) => (
             <div key={p._id} className="col-md-3 mb-3">
               <div className="card p-3 h-100">
-                <Link to={`/product/${p._id}`} key={p._id}>
+                <Link
+  to={`/product/${p.category?._id}/${p.subCategory?._id}/${p._id}`}
+>
+
                   {p.image && p.image.length > 0 && (
                     <div
                       id={`carousel-${p._id}`}

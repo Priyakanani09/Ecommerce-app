@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FaChevronRight } from "react-icons/fa";
 
-function Breadcrumbs({ mainCategory, subCategory , mainCategoryId}) {
+function Breadcrumbs({ mainCategory, subCategory , mainCategoryId, subCategoryId, productName}) {
   return (
     <nav className="text-sm mb-4 flex items-center gap-2 text-gray-600 font-medium">
       <Link to="/" className="no-underline text-gray-900 font-semibold hover:text-blue-500">
@@ -24,7 +24,20 @@ function Breadcrumbs({ mainCategory, subCategory , mainCategoryId}) {
       {subCategory && (
         <>
           <FaChevronRight className="text-gray-400 text-xs" />
-          <span className="text-gray-800 font-bold">{subCategory || "Loading..."}</span>
+          <Link
+  to={`/category/${mainCategoryId}/${subCategoryId}`}
+  className="no-underline text-gray-800 font-bold hover:text-blue-500"
+>
+  {subCategory || "Loading..."}
+</Link>
+
+        </>
+      )}
+
+      {productName && (
+        <>
+          <FaChevronRight size={12} className="text-muted" />
+          <span className="text-muted">{productName}</span>
         </>
       )}
     </nav>
