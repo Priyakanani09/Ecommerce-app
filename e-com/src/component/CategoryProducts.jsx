@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import Breadcrumbs from "./Breadcrumbs";
 import { cartcontext } from "../App";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
@@ -36,7 +36,6 @@ function CategoryProducts() {
 
       setProducts(prodData.products);
       setTotalPages(prodData.totalPages);
-        
     } catch (error) {
       console.error("Fetch error:", error);
     } finally {
@@ -153,51 +152,52 @@ function CategoryProducts() {
           products.map((p) => (
             <div key={p._id} className="col-md-3 mb-3">
               <div className="card p-3 h-100">
-                {p.image && p.image.length > 0 && (
-                  <div
-                    id={`carousel-${p._id}`}
-                    className="carousel slide"
-                    data-bs-ride="carousel"
-                    data-bs-interval="3000"
-                    data-bs-pause="hover"
-                  >
-                    <div className="carousel-indicators custom-indicators">
-                      {p.image.map((_, index) => (
-                        <button
-                          key={index}
-                          type="button"
-                          data-bs-target={`#carousel-${p._id}`}
-                          data-bs-slide-to={index}
-                          className={index === 0 ? "active" : ""}
-                          aria-current={index === 0 ? "true" : "false"}
-                          aria-label={`Slide ${index + 1}`}
-                        ></button>
-                      ))}
-                    </div>
+                <Link to={`/product/${p._id}`} key={p._id}>
+                  {p.image && p.image.length > 0 && (
+                    <div
+                      id={`carousel-${p._id}`}
+                      className="carousel slide"
+                      data-bs-ride="carousel"
+                      data-bs-interval="3000"
+                      data-bs-pause="hover"
+                    >
+                      <div className="carousel-indicators custom-indicators">
+                        {p.image.map((_, index) => (
+                          <button
+                            key={index}
+                            type="button"
+                            data-bs-target={`#carousel-${p._id}`}
+                            data-bs-slide-to={index}
+                            className={index === 0 ? "active" : ""}
+                            aria-current={index === 0 ? "true" : "false"}
+                            aria-label={`Slide ${index + 1}`}
+                          ></button>
+                        ))}
+                      </div>
 
-                    <div className="carousel-inner">
-                      {p.image.map((img, index) => (
-                        <div
-                          key={index}
-                          className={`carousel-item ${
-                            index === 0 ? "active" : ""
-                          }`}
-                        >
-                          <img
-                            src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
-                            className="d-block w-100"
-                            alt={`${p.name} ${index + 1}`}
-                            style={{
-                              height: "280px",
-                              objectFit: "contain",
-                            }}
-                          />
-                        </div>
-                      ))}
+                      <div className="carousel-inner">
+                        {p.image.map((img, index) => (
+                          <div
+                            key={index}
+                            className={`carousel-item ${
+                              index === 0 ? "active" : ""
+                            }`}
+                          >
+                            <img
+                              src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
+                              className="d-block w-100"
+                              alt={`${p.name} ${index + 1}`}
+                              style={{
+                                height: "280px",
+                                objectFit: "contain",
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-
+                  )}
+                </Link>
                 <div className="card-body text-center">
                   <h5>{p.name}</h5>
                   <p className="text-muted">{p.description}</p>

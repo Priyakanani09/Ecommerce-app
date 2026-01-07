@@ -13,6 +13,7 @@ import CODCheckout from './component/CODCheckout';
 import OrderSuccess from './component/OrderSuccess';
 import Footer from './component/Footer';
 import CategoryProducts from "./component/CategoryProducts";
+import ProductDetail from './component/ProductDetail';
 
 export const cartcontext = createContext();
 
@@ -72,7 +73,8 @@ function App() {
         <Route path="/checkout" element={<CODCheckout />} />
         <Route path="/order-success" element={<OrderSuccess />} />
         <Route path="/category/:mainCategory" element={<CategoryProducts />} />
-<Route path="/category/:mainCategory/:subCategory" element={<CategoryProducts />} />
+        <Route path="/category/:mainCategory/:subCategory" element={<CategoryProducts />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
 
       </Routes>
       <Footer />

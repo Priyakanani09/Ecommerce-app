@@ -35,47 +35,55 @@ function Home() {
       .then((data) => {
         const filteredProducts = data.products.filter(
           (product) =>
-            product.category &&
-            product.category.name.toLowerCase().includes("tvs & appliances")
+            product.subCategory?.name &&
+            (
+              product.subCategory?.name.toLowerCase().includes("tablets") ||
+              product.subCategory?.name.toLowerCase().includes("smart phone") ||
+              product.subCategory?.name.toLowerCase().includes("smart watches") ||
+              product.subCategory?.name.toLowerCase().includes("mobile accessorie") 
+            ) 
         );
-
+        console.log(filteredProducts);
         const homeProducts = data.products.filter(
           (product) =>
             product.category &&
-            product.category.name.toLowerCase().includes("home & furniture")
+            product.category?.name?.toLowerCase().includes("home & furniture")
         );
 
-        const beautyProducts = data.products.filter(
-          (product) =>
-            product.category &&
-            product.category.name.toLowerCase().includes("beauty product")
-        );
+       const beautyProducts = data.products.filter(
+  (p) =>
+    (p.subCategory?.name && p.subCategory.name.toLowerCase().includes("beauty")) ||
+    (p.category?.name && p.category.name.toLowerCase().includes("beauty")) ||
+    /foundation|gloss|lipstick|makeup|cream|lotion/i.test(p.name)
+);
 
+        console.log(beautyProducts)
         const womenproduct = data.products.filter(
           (product) =>
-            product.category &&
-            (product.category.name.toLowerCase().includes("women wear") ||
-              product.category.name.toLowerCase().includes("women footwear"))
+            product.subCategory?.name &&
+            (product.subCategory?.name.toLowerCase().includes("women wear") ||
+              product.subCategory?.name.toLowerCase().includes("women footwear"))
         );
 
         const menproduct = data.products.filter(
           (product) =>
-            product.category &&
-            (product.category.name.toLowerCase().startsWith("men wear") ||
-              product.category.name.toLowerCase().startsWith("men footwear"))
+            product.subCategory?.name &&
+            (product.subCategory?.name.toLowerCase().startsWith("men wear") ||
+              product.subCategory?.name.toLowerCase().startsWith("men footwear"))
         );
 
-        // Example: filter by name keywords
         const mobileElectronics = data.products.filter(
           (product) =>
-            product.category.toLowerCase().includes("smart phone") ||
-            product.category.toLowerCase().includes("tablet") ||
-            product.category.toLowerCase().includes("electronics")
+            product.subCategory?.name  &&
+          (
+            product.subCategory?.name.toLowerCase().includes("laptops") ||
+            product.subCategory?.name.toLowerCase().includes("desktops")
+          )
         );
 
         setProducts(filteredProducts.slice(0, 4));
         setHomeproduct(homeProducts.slice(0, 4));
-        setHomeFurnitureSlider(homeProducts.slice(4, 12));
+        setHomeFurnitureSlider(homeProducts);
         setBeautyproduct(beautyProducts.slice(0, 4));
         setWomenproduct(womenproduct.slice(0, 4));
         setMenproduct(menproduct.slice(0, 4));
@@ -85,7 +93,7 @@ function Home() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => {
+  useEffect(() => { 
     fetchProducts();
     window.scrollTo(0, 0);
   }, []);
