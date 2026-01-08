@@ -16,12 +16,24 @@ function ProductDetail() {
   const [subCategoryName, setSubCategoryName] = useState("");
 
   useEffect(() => {
-    fetch("https://ecommerce-app-1-igf3.onrender.com/products")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log({ data });
-        setAllProducts(data.products);
-      });
+    const fetchAllProducts = async () => {
+      let all = [];
+      let currentPage = 1;
+      let total = 1;
+
+      while (currentPage <= total) {
+        const res = await fetch(
+          `https://ecommerce-app-1-igf3.onrender.com/products?page=${currentPage}`
+        );
+        const data = await res.json();
+        all = [...all, ...data.products];
+        total = data.totalPages;
+        currentPage++;
+      }
+      setAllProducts(all);
+    };
+
+    fetchAllProducts();
   }, []);
 
   useEffect(() => {
@@ -110,9 +122,9 @@ function ProductDetail() {
 
           <h3 className="font-semibold text-4xl mt-3">₹{product.price}</h3>
 
-          <div className="mt-4 d-flex gap-3">
+          <div className="mt-4 d-flex flex-column flex-md-row gap-3">
             <button
-              className="btn btn-warning text-white px-4 d-flex align-items-center fw-bold gap-2"
+              className="btn btn-warning text-white px-4 d-flex align-items-center justify-content-center fw-bold gap-2 "
               onClick={() => handleAddToCart(product)}
             >
               <FaShoppingCart size={18} />
@@ -120,7 +132,7 @@ function ProductDetail() {
             </button>
 
             <button
-              className="btn btn-success fw-bold px-4 d-flex align-items-center gap-2"
+              className="btn btn-success fw-bold px-4 d-flex align-items-center justify-content-center gap-2"
               onClick={() => CODCart(product)}
             >
               <FaBolt size={18} />

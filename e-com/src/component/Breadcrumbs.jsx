@@ -2,10 +2,19 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FaChevronRight } from "react-icons/fa";
 
-function Breadcrumbs({ mainCategory, subCategory , mainCategoryId, subCategoryId, productName}) {
+function Breadcrumbs({
+  mainCategory,
+  subCategory,
+  mainCategoryId,
+  subCategoryId,
+  productName,
+}) {
   return (
     <nav className="text-sm mb-4 flex items-center gap-2 text-gray-600 font-medium">
-      <Link to="/" className="no-underline text-gray-900 font-semibold hover:text-blue-500">
+      <Link
+        to="/"
+        className="no-underline text-gray-900 font-semibold hover:text-blue-500"
+      >
         Home
       </Link>
 
@@ -25,12 +34,11 @@ function Breadcrumbs({ mainCategory, subCategory , mainCategoryId, subCategoryId
         <>
           <FaChevronRight className="text-gray-400 text-xs" />
           <Link
-  to={`/category/${mainCategoryId}/${subCategoryId}`}
-  className="no-underline text-gray-800 font-bold hover:text-blue-500"
->
-  {subCategory || "Loading..."}
-</Link>
-
+            to={`/category/${mainCategoryId}/${subCategoryId}`}
+            className="no-underline text-gray-800 font-bold hover:text-blue-500"
+          >
+            {subCategory || "Loading..."}
+          </Link>
         </>
       )}
 
@@ -43,6 +51,5 @@ function Breadcrumbs({ mainCategory, subCategory , mainCategoryId, subCategoryId
     </nav>
   );
 }
-
 
 export default Breadcrumbs;
