@@ -9,12 +9,7 @@ import slider1 from "./img/slider(1).png";
 import slider3 from "./img/slider(3).png";
 import slider4 from "./img/slider(4).png";
 import slider5 from "./img/slider(5).png";
-
-import {
-  skeletonBlock,
-  skeletonLine,
-  skeletonHeading,
-} from "../utils/skeletons";
+import { skeletonBlock, skeletonLine, skeletonHeading } from "../utils/skeletons";
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -27,76 +22,84 @@ function Home() {
   const [loading, setLoading] = useState(false);
   const [showScroll, setShowScroll] = useState(false);
   const sliderImages = [slider1, slider3, slider4, slider5];
+  const [allProducts, setAllProducts] = useState([]);
 
-  const fetchProducts = () => {
-    setLoading(true);
-    fetch(`https://ecommerce-app-1-igf3.onrender.com/products`)
-      .then((res) => res.json())
-      .then((data) => {
-        const filteredProducts = data.products.filter(
-          (product) =>
-            product.subCategory?.name &&
-            (
-              product.subCategory?.name.toLowerCase().includes("tablets") ||
-              product.subCategory?.name.toLowerCase().includes("smart phone") ||
-              product.subCategory?.name.toLowerCase().includes("smart watches") ||
-              product.subCategory?.name.toLowerCase().includes("mobile accessorie") 
-            ) 
+  useEffect(() => {
+    const fetchAllProducts = async () => {
+      let all = [];
+      let currentPage = 1;
+      let total = 1;
+      while (currentPage <= total) {
+        const res = await fetch(
+          `https://ecommerce-app-1-igf3.onrender.com/products?page=${currentPage}`
         );
-        console.log(filteredProducts);
-        const homeProducts = data.products.filter(
-          (product) =>
-            product.category &&
-            product.category?.name?.toLowerCase().includes("home & furniture")
-        );
+        const data = await res.json();
+        all = [...all, ...data.products];
+        total = data.totalPages;
+        currentPage++;
+      }
+      setAllProducts(all);
+    };
 
-       const beautyProducts = data.products.filter(
-  (p) =>
-    (p.subCategory?.name && p.subCategory.name.toLowerCase().includes("beauty")) ||
-    (p.category?.name && p.category.name.toLowerCase().includes("beauty")) ||
-    /foundation|gloss|lipstick|makeup|cream|lotion/i.test(p.name)
-);
-
-        console.log(beautyProducts)
-        const womenproduct = data.products.filter(
-          (product) =>
-            product.subCategory?.name &&
-            (product.subCategory?.name.toLowerCase().includes("women wear") ||
-              product.subCategory?.name.toLowerCase().includes("women footwear"))
-        );
-
-        const menproduct = data.products.filter(
-          (product) =>
-            product.subCategory?.name &&
-            (product.subCategory?.name.toLowerCase().startsWith("men wear") ||
-              product.subCategory?.name.toLowerCase().startsWith("men footwear"))
-        );
-
-        const mobileElectronics = data.products.filter(
-          (product) =>
-            product.subCategory?.name  &&
-          (
-            product.subCategory?.name.toLowerCase().includes("laptops") ||
-            product.subCategory?.name.toLowerCase().includes("desktops")
-          )
-        );
-
-        setProducts(filteredProducts.slice(0, 4));
-        setHomeproduct(homeProducts.slice(0, 4));
-        setHomeFurnitureSlider(homeProducts);
-        setBeautyproduct(beautyProducts.slice(0, 4));
-        setWomenproduct(womenproduct.slice(0, 4));
-        setMenproduct(menproduct.slice(0, 4));
-        setMobileElectronics(mobileElectronics.slice(0, 4));
-      })
-      .catch((err) => console.error(err))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => { 
-    fetchProducts();
-    window.scrollTo(0, 0);
+    fetchAllProducts();
   }, []);
+
+  useEffect(() => {
+    // setLoading(true);
+    if (!allProducts.length) return;
+    const mobileProducts = allProducts.filter(
+      (p) =>
+        p.subCategory?.name &&
+        (p.subCategory.name.toLowerCase().includes("smart phone") ||
+          p.subCategory.name.toLowerCase().includes("tablet") ||
+          p.subCategory.name.toLowerCase().includes("mobile accessories") ||
+          p.subCategory.name.toLowerCase().includes("smart watches"))
+    );
+    
+    const homeProducts = allProducts.filter(
+      (p) =>
+        p.category?.name &&
+        p.category.name.toLowerCase().includes("home & furniture")
+    );
+
+    const beautyProducts = allProducts.filter(
+      (p) =>
+        p.subCategory?.name &&
+        (p.subCategory?.name?.toLowerCase().includes("beauty") ||
+          p.subCategory?.name?.toLowerCase().includes("bags"))
+    );
+
+    const womenProducts = allProducts.filter(
+      (p) =>
+        p.subCategory?.name &&
+        (p.subCategory.name.toLowerCase().startsWith("women wear") ||
+          p.subCategory.name.toLowerCase().startsWith("women footwear"))
+    );
+
+    const menProducts = allProducts.filter(
+      (p) =>
+        p.subCategory?.name &&
+        (p.subCategory.name.toLowerCase().startsWith("men wear") ||
+          p.subCategory.name.toLowerCase().startsWith("men footwear"))
+    );
+
+    const electronicsProducts = allProducts.filter(
+      (p) =>
+        p.subCategory?.name &&
+        (p.subCategory.name.toLowerCase().includes("laptops") ||
+          p.subCategory.name.toLowerCase().includes("speakear") ||
+          p.subCategory.name.toLowerCase().includes("cameras") ||
+          p.subCategory.name.toLowerCase().includes("network components"))
+    );
+
+    setProducts(mobileProducts.slice(0, 4));
+    setHomeproduct(homeProducts.slice(0, 4));
+    setHomeFurnitureSlider(homeProducts.slice(4, 12));
+    setBeautyproduct(beautyProducts.slice(0, 4));
+    setWomenproduct(womenProducts.slice(0, 4));
+    setMenproduct(menProducts.slice(0, 4));
+    setMobileElectronics(electronicsProducts.slice(0, 4));
+  }, [allProducts]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -106,7 +109,6 @@ function Home() {
         setShowScroll(false);
       }
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -190,11 +192,10 @@ function Home() {
       </div>
 
       <div className="homepage-grid">
-        {/* LEFT – TVs */}
         <div className="category-section">
           <div className="category-header">
             {loading ? skeletonHeading() : <h5>Best Gadgets & Appliances</h5>}
-            <Link to="" className="arrow-link">
+            <Link to=" " className="arrow-link">
               <span className="arrow-btn1">
                 <FaChevronRight />
               </span>
@@ -206,10 +207,15 @@ function Home() {
               ? renderSkeletonGrid()
               : products.map((p) => (
                   <div className="product-box" key={p._id}>
-                    <img
-                      src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
-                      alt=""
-                    />
+                    <Link
+                      to={`/category/${p.category?._id}/${p.subCategory?._id}`}
+                    >
+                      <img
+                        src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                        alt={p.name}
+                      />
+                    </Link>
+
                     <h6>{p.name}</h6>
                     <p className="offer">Min. 50% Off</p>
                   </div>
@@ -217,7 +223,6 @@ function Home() {
           </div>
         </div>
 
-        {/* RIGHT – Home */}
         <div className="category-section">
           <div className="category-header">
             {loading ? skeletonHeading() : <h5>Make your home stylish</h5>}
@@ -233,10 +238,14 @@ function Home() {
               ? renderSkeletonGrid()
               : homeproduct.map((p) => (
                   <div className="product-box" key={p._id}>
-                    <img
-                      src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
-                      alt=""
-                    />
+                    <Link
+                      to={`/category/${p.category?._id}/${p.subCategory?._id}`}
+                    >
+                      <img
+                        src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                        alt={p.name}
+                      />
+                    </Link>
                     <h6>{p.name}</h6>
                     <p className="offer">Min. 50% Off</p>
                   </div>
@@ -247,7 +256,7 @@ function Home() {
         <div className="category-section">
           <div className="category-header">
             {loading ? skeletonHeading() : <h5>Beauty product</h5>}
-            <Link to="/fashion/Beauty Product" className="arrow-link">
+            <Link to="" className="arrow-link">
               <span className="arrow-btn1">
                 <FaChevronRight />
               </span>
@@ -259,10 +268,12 @@ function Home() {
               ? renderSkeletonGrid()
               : beautyproduct.map((p) => (
                   <div className="product-box" key={p._id}>
-                    <img
-                      src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
-                      alt=""
-                    />
+                    <Link to={`/category/${p.category?._id}/${p.subCategory?._id}`}>
+                      <img
+                        src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                        alt={p.name}
+                      />
+                    </Link>
                     <h6>{p.name}</h6>
                     <p className="offer">Min. 30% Off</p>
                   </div>
@@ -287,10 +298,12 @@ function Home() {
               ? renderSkeletonGrid()
               : womenproduct.map((p) => (
                   <div className="product-box" key={p._id}>
-                    <img
-                      src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
-                      alt=""
-                    />
+                    <Link to={`/category/${p.category?._id}/${p.subCategory?._id}`}>
+                      <img
+                        src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                        alt={p.name}
+                      />
+                    </Link>
                     <h6>{p.name}</h6>
                     <p className="offer">Min. 40% Off</p>
                   </div>
@@ -298,7 +311,6 @@ function Home() {
           </div>
         </div>
 
-        {/* RIGHT – Home */}
         <div className="category-section">
           <div className="category-header">
             {loading ? skeletonHeading() : <h5>Men Wear and Footwear</h5>}
@@ -314,10 +326,12 @@ function Home() {
               ? renderSkeletonGrid()
               : menproduct.map((p) => (
                   <div className="product-box" key={p._id}>
-                    <img
-                      src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
-                      alt=""
-                    />
+                    <Link to={`/category/${p.category?._id}/${p.subCategory?._id}`}>
+                      <img
+                        src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                        alt={p.name}
+                      />
+                    </Link>
                     <h6>{p.name}</h6>
                     <p className="offer">Min. 28% Off</p>
                   </div>
@@ -327,11 +341,7 @@ function Home() {
 
         <div className="category-section">
           <div className="category-header">
-            {loading ? (
-              skeletonHeading()
-            ) : (
-              <h5>Mobiles, Tablets & Electronics</h5>
-            )}
+            {loading ? skeletonHeading() : <h5>Electronics Appliances</h5>}
             <Link to="/fashion/Beauty Product" className="arrow-link">
               <span className="arrow-btn1">
                 <FaChevronRight />
@@ -344,10 +354,12 @@ function Home() {
               ? renderSkeletonGrid()
               : mobileElectronics.map((p) => (
                   <div className="product-box" key={p._id}>
-                    <img
-                      src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
-                      alt=""
-                    />
+                    <Link to={`/category/${p.category?._id}/${p.subCategory?._id}`}>
+                      <img
+                        src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                        alt={p.name}
+                      />
+                    </Link>
                     <h6>{p.name}</h6>
                     <p className="offer">Min. 30% Off</p>
                   </div>
@@ -355,7 +367,7 @@ function Home() {
           </div>
         </div>
       </div>
-      {/* ===== HOME & FURNITURE HORIZONTAL SLIDER ===== */}
+     
       <div className="container-fluid mt-4 category-section">
         <div className="d-flex justify-content-between align-items-center mb-2 ">
           {loading ? skeletonHeading() : <h4>Home & Furniture</h4>}
@@ -380,7 +392,6 @@ function Home() {
               ))
             : homeFurnitureSlider.map((p) => (
                 <div key={p._id} className="hf-card">
-                  {/* PRODUCT IMAGE CAROUSEL (SAME AS YOUR CODE) */}
                   {p.image && (
                     <div
                       id={`carousel-${p._id}`}
@@ -396,18 +407,19 @@ function Home() {
                               index === 0 ? "active" : ""
                             }`}
                           >
-                            <img
-                              src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
-                              alt={p.name}
-                              className="d-block w-100"
-                            />
+                            {" "}
+                            <Link to={`/category/${p.category?._id}/${p.subCategory?._id}`}>
+                              <img
+                                src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
+                                alt={p.name}
+                                className="d-block w-100"
+                              />
+                            </Link>
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
-
-                  {/* PRODUCT INFO */}
                   <div className="text-center mt-2">
                     <p className="fw-semibold small mb-1">{p.name}</p>
                     <p className="text-success fw-bold mb-0">₹{p.price}</p>
@@ -417,7 +429,6 @@ function Home() {
         </div>
       </div>
 
-      {/* Scroll Buttons */}
       {showScroll && (
         <>
           <button
@@ -455,5 +466,4 @@ function Home() {
     </div>
   );
 }
-
 export default Home;
