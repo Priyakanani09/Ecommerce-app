@@ -22,7 +22,7 @@ function Login() {
 
       if (result.message === "Login successful" && result.user) {
         localStorage.setItem("user", JSON.stringify(result.user));
-        localStorage.setItem("token", result.token);
+        // localStorage.setItem("token", result.token);
         navigate("/", { replace: true });
       } else {
         localStorage.removeItem("user");

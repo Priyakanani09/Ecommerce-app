@@ -1,16 +1,21 @@
-// middleware/auth.js
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const SECRET_KEY = "cdmi";
 
 module.exports = (req, res, next) => {
-  const token = req.headers['authorization']?.split(' ')[1]; // Bearer <token>
-  if (!token) return res.status(401).json({ message: 'Token missing' });
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "Token missing" });
+  }
+
+  const token = authHeader.split(" ")[1];
 
   try {
-    const user = jwt.verify(token, SECRET_KEY);
-    req.user = user;
+    const decoded = jwt.verify(token, SECRET_KEY);
+    req.user = decoded;
+
     next();
-  } catch (err) {
-    return res.status(403).json({ message: 'Invalid token' });
+  } catch (error) {
+    return res.status(403).json({ message: "Invalid token" });
   }
 };

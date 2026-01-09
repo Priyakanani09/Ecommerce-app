@@ -24,11 +24,14 @@ function Home() {
   const sliderImages = [slider1, slider3, slider4, slider5];
   const [allProducts, setAllProducts] = useState([]);
 
-  useEffect(() => {
-    const fetchAllProducts = async () => {
+ useEffect(() => {
+  const fetchAllProducts = async () => {
+    setLoading(true);
+    try {
       let all = [];
       let currentPage = 1;
       let total = 1;
+
       while (currentPage <= total) {
         const res = await fetch(
           `https://ecommerce-app-1-igf3.onrender.com/products?page=${currentPage}`
@@ -38,14 +41,20 @@ function Home() {
         total = data.totalPages;
         currentPage++;
       }
-      setAllProducts(all);
-    };
 
-    fetchAllProducts();
-  }, []);
+      setAllProducts(all);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false); // 🔥 IMPORTANT
+    }
+  };
+
+  fetchAllProducts();
+}, []);
+
 
   useEffect(() => {
-    // setLoading(true);
     if (!allProducts.length) return;
     const mobileProducts = allProducts.filter(
       (p) =>

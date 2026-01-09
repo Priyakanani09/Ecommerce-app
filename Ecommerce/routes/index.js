@@ -6,7 +6,7 @@ const productController = require('../controller/productcontroller');
 const ordercontroller = require("../controller/ordercontroller");
 const maincategory = require("../controller/maincategorycontroller")
 const subCategoryController = require("../controller/subcategorycontroller");
-
+const recentlyViewed = require('../controller/recentlyViewedController')
 var jwtAuth = require('../middleware/authMiddleware');
 const admin = require('../middleware/admin');
 
@@ -37,7 +37,6 @@ router.post("/add-sub-category",jwtAuth,admin,subCategoryController.addSubCatego
 router.get("/sub-categories",subCategoryController.getAllSubCategories);
 router.delete("/sub-category/:id",jwtAuth,admin,subCategoryController.deleteSubCategory);
 
-
 //Product Upload Setup
 router.post('/add-product',jwtAuth, admin,upload.array('image',5), productController.addProduct);
 router.get('/products', productController.getProducts);
@@ -45,9 +44,13 @@ router.delete("/delete/:name",jwtAuth,admin,productController.deleteProduct);
 router.put('/update-product/:id',jwtAuth,admin, upload.array('image',5), productController.updateProduct);
 router.get("/search",productController.searchProduct);
 
-
 // User Order 
 router.post('/order',ordercontroller.order);
 router.get("/getorder",ordercontroller.getorder);
+
+//recently view product 
+router.post('/recently-view',jwtAuth,recentlyViewed.saveRecentlyViewed);
+router.get('/recently-get',jwtAuth ,recentlyViewed.getRecentlyViewed);
+
 
 module.exports = router;
