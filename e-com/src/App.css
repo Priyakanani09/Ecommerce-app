@@ -49,7 +49,8 @@ li a:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 65vh;
+  min-height: 80vh;   /* 65vh ❌ → 100vh ✅ */
+  padding: 15px;    
 }
 
 form {
@@ -338,14 +339,16 @@ form {
   .product-card .text-muted {
     display: none;
   }
+
   .product-card .btn {
     font-size: 0.75rem;
     padding: 4px 8px;
   }
 
   .carousel-item img {
-     min-height: 200px;
+    min-height: 200px;
   }
+
   .hf-card {
     min-width: 160px;
   }
@@ -448,6 +451,7 @@ form {
   font-size: 0.9rem;
   margin-bottom: 4px;
 }
+
 /* Product carousel image */
 .product-img {
   width: 100%;
@@ -459,6 +463,6 @@ form {
 @media (max-width: 576px) {
   .product-img {
     height: 150px;
-    object-fit: contain;   
+    object-fit: contain;
   }
 }

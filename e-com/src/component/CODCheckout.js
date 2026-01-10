@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
 import { cartcontext } from "../App";
 import { useNavigate } from "react-router-dom";
+import { Form, Button, Card } from "react-bootstrap";
 
 function CODCheckout() {
-  const { cartItems,setCartItems } = useContext(cartcontext);
+  const { cartItems, setCartItems } = useContext(cartcontext);
   const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
@@ -25,7 +26,7 @@ function CODCheckout() {
   };
 
   const placeOrder = async () => {
-     if (!user) {
+    if (!user) {
       alert("Please login first!");
       navigate("/login");
       return;
@@ -36,7 +37,7 @@ function CODCheckout() {
     }
 
     const data = {
-      userId: user.id,      
+      userId: user.id,
       username: user.name,
       name: form.name,
       phone: form.phone,
@@ -47,13 +48,16 @@ function CODCheckout() {
     };
 
     localStorage.setItem(`order_${user.id}`, JSON.stringify(data));
-     console.log("Sending order data:", data);
+    console.log("Sending order data:", data);
 
-     const response = await fetch("https://ecommerce-app-1-igf3.onrender.com/order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+    const response = await fetch(
+      "https://ecommerce-app-1-igf3.onrender.com/order",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      }
+    );
 
     const resData = await response.json();
     console.log("Response from server:", resData);
@@ -62,9 +66,7 @@ function CODCheckout() {
       localStorage.setItem("orderMessage", "Your order is confirmed!");
       setCartItems([]);
       navigate("/order-success");
-    } 
-    else
-    {
+    } else {
       localStorage.setItem("orderMessage", "Order failed! Please try again.");
       navigate("/order-success");
     }
@@ -72,40 +74,56 @@ function CODCheckout() {
 
   return (
     <div className="container mt-5">
-      <h2 className="fw-bold text-center mb-4">COD Checkout</h2>
+      <h2 className="fw-bold text-center">COD Checkout</h2>
 
       <div className="d-flex justify-content-center align-items-center mb-6">
-        <div className="card p-4 shadow w-50" style={{ maxWidth: "450px" }}>
-          <label>Name:</label>
-          <input
-            type="text"
-            className="form-control mb-3"
-            name="name"
-            onChange={handleChange}
-          />
+        <Form>
+          {/* Name */}
+          <Form.Group className="mb-3" controlId="name">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="name"
+              placeholder="Enter your name"
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
 
-          <label>Phone:</label>
-          <input
-            type="text"
-            className="form-control mb-3"
-            name="phone"
-            onChange={handleChange}
-          />
+          {/* Phone */}
+          <Form.Group className="mb-3" controlId="phone">
+            <Form.Label>Phone</Form.Label>
+            <Form.Control
+              type="tel"
+              name="phone"
+              placeholder="Enter phone number"
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
 
-          <label>Address:</label>
-          <textarea
-            className="form-control mb-3"
-            name="address"
-            rows="3"
-            onChange={handleChange}
-          ></textarea>
+          {/* Address */}
+          <Form.Group className="mb-3" controlId="address">
+            <Form.Label>Address</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              name="address"
+              placeholder="Enter delivery address"
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
 
-          <h4>Total Amount: ₹{total}</h4>
+          <div className="fw-bold fs-5 mb-3 text-center">
+            Total Amount: ₹{total}
+          </div>
 
-          <button className="btn btn-success mt-3" onClick={placeOrder}>
+          {/* Button */}
+          <Button variant="success" className="w-100" onClick={placeOrder}>
             Place COD Order
-          </button>
-        </div>
+          </Button>
+        </Form>
       </div>
     </div>
   );
