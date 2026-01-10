@@ -28,21 +28,32 @@ exports.saveRecentlyViewed = async (req, res) => {
       });
     }
 
-    res.status(200).json({ success: true, message: "Recently viewed product saved", duplicateRemove, newAdd });
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "Recently viewed product saved",
+        duplicateRemove,
+        newAdd,
+      });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-exports.getRecentlyViewed = async (req,res) => {
-	try{
-		const userId = req.user.id;
+exports.getRecentlyViewed = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    console.log("REQ.USER =>", req.user);
+    console.log("USER ID =>", req.user?.id);
 
-		const getproduct = await RecentlyViewed.find({userId}).sort({ viewedAt: -1 }).limit(8).populate("productId");
+    const getproduct = await RecentlyViewed.find({ userId })
+      .sort({ viewedAt: -1 })
+      .limit(8)
+      .populate("productId");
 
-		res.status(200).json({ success: true,getproduct});
-	}
-	catch (err) {
+    res.status(200).json({ success: true, getproduct });
+  } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };

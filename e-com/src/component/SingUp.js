@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Form, Button } from "react-bootstrap";
 
 function Signup() {
   const [name, setName] = useState("");
@@ -14,7 +15,9 @@ function Signup() {
       setError("Password don't match");
       return;
     }
+
     setError("");
+
     fetch("https://ecommerce-app-1-igf3.onrender.com/register", {
       method: "POST",
       headers: {
@@ -27,70 +30,73 @@ function Signup() {
         localStorage.setItem("user", JSON.stringify(data));
         navigate("/");
       })
-      .catch((err) => {
-        console.error("Error:", err);
+      .catch(() => {
         setError("Something went wrong. Please try again.");
       });
   };
 
   return (
     <div className="form-container">
-      <form
+      <Form
         onSubmit={(e) => {
           e.preventDefault();
           collectData();
         }}
       >
-        <h2 className="text-2xl font-bold text-center text-blue-600 pb-5">
+        <h2 className="text-center text-blue-600 pb-4">
           Register
         </h2>
 
-        <input
-          type="text"
-          placeholder="Username"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <br />
-        <br />
+        {/* Username */}
+        <Form.Group className="mb-4" controlId="formUsername">
+          <Form.Control
+            type="text"
+            placeholder="Enter username"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </Form.Group>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <br />
-        <br />
+        {/* Email */}
+        <Form.Group className="mb-4" controlId="formEmail">
+          <Form.Control
+            type="email"
+            placeholder="Enter email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </Form.Group>
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <br />
-        <br />
-        
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-        <br />
-        <br />
+        {/* Password */}
+        <Form.Group className="mb-4" controlId="formPassword">
+          <Form.Control
+            type="password"
+            placeholder="Enter password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </Form.Group>
 
-        {error && (
-          <p style={{ color: "red"}}>{error}</p>
-        )}
+        {/* Confirm Password */}
+        <Form.Group className="mb-4" controlId="formConfirmPassword">
+          <Form.Control
+            type="password"
+            placeholder="Confirm password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+        </Form.Group>
 
-        <button type="submit"  className="btn btn-primary">Sign Up</button>
-      </form>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+
+        <Button type="submit" className="w-36 mx-auto d-block" variant="primary">
+          Sign Up
+        </Button>
+      </Form>
     </div>
   );
 }

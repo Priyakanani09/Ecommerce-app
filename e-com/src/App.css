@@ -52,6 +52,7 @@ li a:hover {
 }
 
 form {
+  width: 380px;
   background: white;
   margin-top: 30px;
   padding: 30px 40px;
@@ -59,13 +60,9 @@ form {
   box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
 }
 
-input {
-  width: 300px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+.form-control{
+  height: 45px;
 }
-
 
 /* Product Cards */
 .card {
@@ -381,4 +378,20 @@ input {
   .main-img {
     max-height: 300px;
   }
+}
+.hf-slider {
+  display: flex;
+  overflow-x: auto;
+  gap: 15px;
+  scroll-behavior: smooth;
+  padding-bottom: 10px;
+}
+
+.hf-card {
+  min-width: 180px;
+  flex-shrink: 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 5px;
+  background: #fff;
 }

@@ -9,7 +9,12 @@ import slider1 from "./img/slider(1).png";
 import slider3 from "./img/slider(3).png";
 import slider4 from "./img/slider(4).png";
 import slider5 from "./img/slider(5).png";
-import { skeletonBlock, skeletonLine, skeletonHeading } from "../utils/skeletons";
+import {
+  skeletonBlock,
+  skeletonLine,
+  skeletonHeading,
+} from "../utils/skeletons";
+import RecentlyViewed from "./RecentlyViewed";
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -24,35 +29,34 @@ function Home() {
   const sliderImages = [slider1, slider3, slider4, slider5];
   const [allProducts, setAllProducts] = useState([]);
 
- useEffect(() => {
-  const fetchAllProducts = async () => {
-    setLoading(true);
-    try {
-      let all = [];
-      let currentPage = 1;
-      let total = 1;
+  useEffect(() => {
+    const fetchAllProducts = async () => {
+      setLoading(true);
+      try {
+        let all = [];
+        let currentPage = 1;
+        let total = 1;
 
-      while (currentPage <= total) {
-        const res = await fetch(
-          `https://ecommerce-app-1-igf3.onrender.com/products?page=${currentPage}`
-        );
-        const data = await res.json();
-        all = [...all, ...data.products];
-        total = data.totalPages;
-        currentPage++;
+        while (currentPage <= total) {
+          const res = await fetch(
+            `https://ecommerce-app-1-igf3.onrender.com/products?page=${currentPage}`
+          );
+          const data = await res.json();
+          all = [...all, ...data.products];
+          total = data.totalPages;
+          currentPage++;
+        }
+
+        setAllProducts(all);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false); // 🔥 IMPORTANT
       }
+    };
 
-      setAllProducts(all);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false); // 🔥 IMPORTANT
-    }
-  };
-
-  fetchAllProducts();
-}, []);
-
+    fetchAllProducts();
+  }, []);
 
   useEffect(() => {
     if (!allProducts.length) return;
@@ -64,7 +68,7 @@ function Home() {
           p.subCategory.name.toLowerCase().includes("mobile accessories") ||
           p.subCategory.name.toLowerCase().includes("smart watches"))
     );
-    
+
     const homeProducts = allProducts.filter(
       (p) =>
         p.category?.name &&
@@ -277,7 +281,9 @@ function Home() {
               ? renderSkeletonGrid()
               : beautyproduct.map((p) => (
                   <div className="product-box" key={p._id}>
-                    <Link to={`/category/${p.category?._id}/${p.subCategory?._id}`}>
+                    <Link
+                      to={`/category/${p.category?._id}/${p.subCategory?._id}`}
+                    >
                       <img
                         src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
                         alt={p.name}
@@ -307,7 +313,9 @@ function Home() {
               ? renderSkeletonGrid()
               : womenproduct.map((p) => (
                   <div className="product-box" key={p._id}>
-                    <Link to={`/category/${p.category?._id}/${p.subCategory?._id}`}>
+                    <Link
+                      to={`/category/${p.category?._id}/${p.subCategory?._id}`}
+                    >
                       <img
                         src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
                         alt={p.name}
@@ -335,7 +343,9 @@ function Home() {
               ? renderSkeletonGrid()
               : menproduct.map((p) => (
                   <div className="product-box" key={p._id}>
-                    <Link to={`/category/${p.category?._id}/${p.subCategory?._id}`}>
+                    <Link
+                      to={`/category/${p.category?._id}/${p.subCategory?._id}`}
+                    >
                       <img
                         src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
                         alt={p.name}
@@ -363,7 +373,9 @@ function Home() {
               ? renderSkeletonGrid()
               : mobileElectronics.map((p) => (
                   <div className="product-box" key={p._id}>
-                    <Link to={`/category/${p.category?._id}/${p.subCategory?._id}`}>
+                    <Link
+                      to={`/category/${p.category?._id}/${p.subCategory?._id}`}
+                    >
                       <img
                         src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
                         alt={p.name}
@@ -376,7 +388,7 @@ function Home() {
           </div>
         </div>
       </div>
-     
+
       <div className="container-fluid mt-4 category-section">
         <div className="d-flex justify-content-between align-items-center mb-2 ">
           {loading ? skeletonHeading() : <h4>Home & Furniture</h4>}
@@ -401,34 +413,14 @@ function Home() {
               ))
             : homeFurnitureSlider.map((p) => (
                 <div key={p._id} className="hf-card">
-                  {p.image && (
-                    <div
-                      id={`carousel-${p._id}`}
-                      className="carousel slide"
-                      data-bs-ride="carousel"
-                      data-bs-interval="2500"
-                    >
-                      <div className="carousel-inner ">
-                        {p.image.map((img, index) => (
-                          <div
-                            key={index}
-                            className={`carousel-item ${
-                              index === 0 ? "active" : ""
-                            }`}
-                          >
-                            {" "}
-                            <Link to={`/category/${p.category?._id}/${p.subCategory?._id}`}>
-                              <img
-                                src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
-                                alt={p.name}
-                                className="d-block w-100"
-                              />
-                            </Link>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  <Link
+                    to={`/category/${p.category?._id}/${p.subCategory?._id}`}
+                  >
+                    <img
+                      src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                      alt={p.name}
+                    />
+                  </Link>
                   <div className="text-center mt-2">
                     <p className="fw-semibold small mb-1">{p.name}</p>
                     <p className="text-success fw-bold mb-0">₹{p.price}</p>
@@ -437,6 +429,24 @@ function Home() {
               ))}
         </div>
       </div>
+
+      {showScroll && (
+        <div className="mt-4">
+          {loading ? (
+            <div className="hf-slider">
+              {Array.from({ length: 7 }).map((_, i) => (
+                <div className="hf-card" key={i}>
+                  {skeletonBlock("100%", 150)}
+                  {skeletonLine("80%", 14)}
+                  {skeletonLine("40%", 14)}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <RecentlyViewed />
+          )}
+        </div>
+      )}
 
       {showScroll && (
         <>

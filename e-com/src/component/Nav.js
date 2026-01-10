@@ -15,13 +15,12 @@ function Nav() {
 
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // 🔐 LOGOUT
   const logout = () => {
+    localStorage.removeItem("token"); 
     localStorage.removeItem("user");
-    navigate("/login");
+    navigate("/");
   };
 
-  // 🔍 SEARCH
   const handleSearch = (e) => {
     if (e.key === "Enter" && search.trim()) {
       navigate(`/search?query=${search}`);
@@ -29,7 +28,6 @@ function Nav() {
     }
   };
 
-  // ✅ FETCH MAIN CATEGORY
   useEffect(() => {
     axios
       .get("https://ecommerce-app-1-igf3.onrender.com/main-categories")
@@ -40,12 +38,11 @@ function Nav() {
       .catch((err) => console.log(err));
   }, []);
 
-  // ✅ FETCH ALL SUB CATEGORY
   useEffect(() => {
     axios
       .get("https://ecommerce-app-1-igf3.onrender.com/sub-categories")
       .then((res) => {
-        setSubCategories(res.data.subCategories); // ✅ correct key
+        setSubCategories(res.data.subCategories);
       })
       .catch((err) => console.log(err));
   }, []);

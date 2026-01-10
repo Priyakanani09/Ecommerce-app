@@ -50,7 +50,7 @@ router.get("/getorder",ordercontroller.getorder);
 
 //recently view product 
 router.post('/recently-view',jwtAuth,recentlyViewed.saveRecentlyViewed);
-router.get('/recently-get',jwtAuth ,recentlyViewed.getRecentlyViewed);
+router.get('/recently-get',jwtAuth,recentlyViewed.getRecentlyViewed);
 
 
 module.exports = router;

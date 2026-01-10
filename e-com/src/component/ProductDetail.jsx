@@ -7,13 +7,31 @@ import Breadcrumbs from "./Breadcrumbs";
 
 function ProductDetail() {
   const { id, mainCategory, subCategory } = useParams();
-
   const [allProducts, setAllProducts] = useState([]);
   const [product, setProduct] = useState(null);
   const navigate = useNavigate();
   const { addToCart } = useContext(cartcontext);
   const [mainCategoryName, setMainCategoryName] = useState("");
   const [subCategoryName, setSubCategoryName] = useState("");
+
+  const addGuestRecentlyViewed = (product) => {
+    let recent = JSON.parse(localStorage.getItem("guest_recent")) || [];
+
+    recent = recent.filter((p) => p._id !== product._id);
+
+    recent.unshift({
+      _id: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      category: product.category?._id,
+      subCategory: product.subCategory?._id,
+    });
+
+    recent = recent.slice(0, 8);
+
+    localStorage.setItem("guest_recent", JSON.stringify(recent));
+  };
 
   useEffect(() => {
     const fetchAllProducts = async () => {
@@ -42,6 +60,29 @@ function ProductDetail() {
       setProduct(found);
     }
   }, [id, allProducts]);
+
+  useEffect(() => {
+    if (!product) return;
+
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      // ✅ LOGIN USER
+      fetch("https://ecommerce-app-1-igf3.onrender.com/recently-view", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productId: product._id,
+        }),
+      }).catch((err) => console.log("Recently Viewed Save Error:", err));
+    } else {
+      // ✅ GUEST USER
+      addGuestRecentlyViewed(product);
+    }
+  }, [product]);
 
   useEffect(() => {
     const fetchCategoryNames = async () => {
