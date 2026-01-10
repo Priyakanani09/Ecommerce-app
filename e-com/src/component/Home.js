@@ -149,7 +149,7 @@ function Home() {
       </div>
     ));
   return (
-    <div className="container mt-2">
+    <div className="container mt-3">
       <div className="container-fluid px-0">
         <div
           id="carouselExampleIndicators"

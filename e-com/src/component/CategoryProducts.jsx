@@ -150,7 +150,7 @@ function CategoryProducts() {
           </div>
         ) : (
           products.map((p) => (
-            <div key={p._id} className="col-md-3 mb-3">
+            <div key={p._id} className="col-6 col-sm-6 col-md-3 mb-4">
               <div className="card p-3 h-100">
                 <Link
                   to={`/product/${p.category?._id}/${p.subCategory?._id}/${p._id}`}
@@ -187,12 +187,8 @@ function CategoryProducts() {
                           >
                             <img
                               src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
-                              className="d-block w-100"
+                              className="d-block product-img "
                               alt={`${p.name} ${index + 1}`}
-                              style={{
-                                height: "280px",
-                                objectFit: "contain",
-                              }}
                             />
                           </div>
                         ))}
@@ -200,7 +196,7 @@ function CategoryProducts() {
                     </div>
                   )}
                 </Link>
-                <div className="card-body text-center">
+                <div className="card-body text-center product-card">
                   <h5>{p.name}</h5>
                   <p className="text-muted">{p.description}</p>
                   <p className="fw-bold text-primary">₹{p.price}</p>
