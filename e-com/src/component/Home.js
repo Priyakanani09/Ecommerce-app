@@ -452,33 +452,16 @@ function Home() {
         <>
           <button
             onClick={scrollToTop}
-            className="btn btn-secondary d-flex align-items-center justify-content-center"
-            style={{
-              position: "fixed",
-              bottom: "80px",
-              right: "20px",
-              zIndex: 1000,
-              borderRadius: "50%",
-              width: "40px",
-              height: "40px",
-            }}
+            className="btn btn-secondary d-flex align-items-center justify-content-center scroll-btn-up"
           >
-            <FaArrowUp size={18} />
+            <FaArrowUp size={16} />
           </button>
+
           <button
             onClick={scrollToBottom}
-            className="btn btn-secondary d-flex align-items-center justify-content-center"
-            style={{
-              position: "fixed",
-              bottom: "30px",
-              right: "20px",
-              zIndex: 1000,
-              borderRadius: "50%",
-              width: "40px",
-              height: "40px",
-            }}
+            className="btn btn-secondary d-flex align-items-center justify-content-center scroll-btn-down "
           >
-            <FaArrowDown size={18} />
+            <FaArrowDown size={16} />
           </button>
         </>
       )}
