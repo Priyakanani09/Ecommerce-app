@@ -5,9 +5,9 @@ function RecentlyViewed() {
   const [recentlyViewed, setRecentlyViewed] = useState([]);
 
   useEffect(() => {
+    
     const token = localStorage.getItem("token");
 
-    // 🔐 LOGIN USER
     if (token) {
       fetch("https://ecommerce-app-1-igf3.onrender.com/recently-get", {
         headers: {
@@ -51,7 +51,6 @@ function RecentlyViewed() {
 
       <div className="hf-slider" id="recent-slider">
         {recentlyViewed.map((item) => {
-          // 🔐 login user product
           const product = item.productId || item;
 
           return (
@@ -62,7 +61,7 @@ function RecentlyViewed() {
                 <img
                   src={`https://ecommerce-app-1-igf3.onrender.com${product.image?.[0]}`}
                   alt={product.name}
-                  className="d-block w-100"
+                  className="d-block product-img"
                 />
               </Link>
 

@@ -4,6 +4,7 @@ import ImageGallery from "./ImageGallery";
 import { cartcontext } from "../App";
 import { FaShoppingCart, FaBolt } from "react-icons/fa";
 import Breadcrumbs from "./Breadcrumbs";
+import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 
 function ProductDetail() {
   const { id, mainCategory, subCategory } = useParams();
@@ -13,6 +14,11 @@ function ProductDetail() {
   const { addToCart } = useContext(cartcontext);
   const [mainCategoryName, setMainCategoryName] = useState("");
   const [subCategoryName, setSubCategoryName] = useState("");
+  const [showScroll, setShowScroll] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
 
   const addGuestRecentlyViewed = (product) => {
     let recent = JSON.parse(localStorage.getItem("guest_recent")) || [];
@@ -121,6 +127,19 @@ function ProductDetail() {
     fetchCategoryNames();
   }, [mainCategory, subCategory]);
 
+   useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setShowScroll(true);
+      } else {
+        setShowScroll(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   if (!product) return <h4 className="text-center mt-5">Loading...</h4>;
 
   const related = allProducts.filter(
@@ -139,6 +158,19 @@ function ProductDetail() {
     navigate("/checkout");
   };
 
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const scrollToBottom = () => {
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: "smooth",
+    });
+  };
   return (
     <div className="container bg-white p-4 mt-4">
       <div className="row">
@@ -247,6 +279,24 @@ function ProductDetail() {
           </div>
         ))}
       </div>
+
+      {showScroll && (
+        <>
+          <button
+            onClick={scrollToTop}
+            className="btn btn-secondary d-flex align-items-center justify-content-center scroll-btn-up"
+          >
+            <FaArrowUp size={16} />
+          </button>
+
+          <button
+            onClick={scrollToBottom}
+            className="btn btn-secondary d-flex align-items-center justify-content-center scroll-btn-down "
+          >
+            <FaArrowDown size={16} />
+          </button>
+        </>
+      )}
     </div>
   );
 }
