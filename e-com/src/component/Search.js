@@ -3,11 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { cartcontext } from "../App";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
-import {
-  skeletonBlock,
-  skeletonLine,
-} from "../utils/skeletons";
-
+import { skeletonBlock, skeletonLine } from "../utils/skeletons";
 
 function Search() {
   const [filtered, setFiltered] = useState([]);
@@ -69,15 +65,15 @@ function Search() {
       <h2>Search Results for "{query}"</h2>
       {loading ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-    {Array.from({ length: 8 }).map((_, i) => (
-      <div className="card p-3" key={i}>
-        {skeletonBlock("100%", 280)}
-        {skeletonLine("80%", 18)}
-        {skeletonLine("60%", 16)}
-        {skeletonBlock("100%", 36)}
-      </div>
-    ))}
-  </div>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div className="card p-3" key={i}>
+              {skeletonBlock("100%", 280)}
+              {skeletonLine("80%", 18)}
+              {skeletonLine("60%", 16)}
+              {skeletonBlock("100%", 36)}
+            </div>
+          ))}
+        </div>
       ) : filtered.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
           {filtered.map((p, index) => (
@@ -149,34 +145,16 @@ function Search() {
         <>
           <button
             onClick={scrollToTop}
-            className="btn btn-secondary d-flex align-items-center justify-content-center"
-            style={{
-              position: "fixed",
-              bottom: "80px",
-              right: "20px",
-              zIndex: 1000,
-              borderRadius: "50%",
-              width: "40px",
-              height: "40px",
-            }}
+            className="btn btn-secondary d-flex align-items-center justify-content-center scroll-btn-up"
           >
-            <FaArrowUp size={18} />
+            <FaArrowUp size={16} />
           </button>
 
           <button
             onClick={scrollToBottom}
-            className="btn btn-secondary d-flex align-items-center justify-content-center"
-            style={{
-              position: "fixed",
-              bottom: "30px",
-              right: "20px",
-              zIndex: 1000,
-              borderRadius: "50%",
-              width: "40px",
-              height: "40px",
-            }}
+            className="btn btn-secondary d-flex align-items-center justify-content-center scroll-btn-down "
           >
-            <FaArrowDown size={18} />
+            <FaArrowDown size={16} />
           </button>
         </>
       )}

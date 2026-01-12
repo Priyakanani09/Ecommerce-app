@@ -391,7 +391,7 @@ function Home() {
 
       <div className="container-fluid mt-4 category-section">
         <div className="d-flex justify-content-between align-items-center mb-2 ">
-          {loading ? skeletonHeading() : <h4>Home & Furniture</h4>}
+          {loading ? skeletonHeading() : <h5>Home & Furniture</h5>}
           <button
             className="btn btn-light slider-arrow"
             onClick={() =>

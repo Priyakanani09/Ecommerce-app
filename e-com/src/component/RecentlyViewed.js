@@ -38,7 +38,7 @@ function RecentlyViewed() {
   return (
     <div className="container-fluid mt-4 category-section">
       <div className="d-flex justify-content-between align-items-center mb-2">
-        <h4>Recently Viewed Products</h4>
+        <h5>Recently Viewed Products</h5>
         <button
           className="btn btn-light slider-arrow"
           onClick={() =>
