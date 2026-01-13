@@ -11,12 +11,21 @@ function Nav() {
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [openId, setOpenId] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const { cartItems } = useContext(cartcontext);
   const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem("user"));
 
+  useEffect(() => {
+  const handleResize = () => {
+    setIsMobile(window.innerWidth < 768);
+  };
+
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -115,7 +124,7 @@ function Nav() {
                 onClick={logout}
                 className="text-sm md:text-lg font-semibold text-gray-800 hover:text-blue-500"
               >
-                Logout
+                Logout {user.name}
               </button>
             ) : (
               <>
@@ -193,79 +202,68 @@ function Nav() {
       </header>
 
       {/* ================= CATEGORY BAR ================= */}
-      <div className="bg-white shadow-sm py-3 md:px-40 md:my-3">
-        {/* Mobile Horizontal Scroll */}
-        <div className="flex overflow-x-auto gap-4 md:hidden px-4">
-          {categories.map((cat) => (
-            <div
-              key={cat._id}
-              className="flex-shrink-0 w-32 flex flex-col items-center"
-            >
-              {cat.image && (
-                <img
-                  src={`https://ecommerce-app-1-igf3.onrender.com${cat.image}`}
-                  alt={cat.name}
-                  className="mb-2"
-                />
-              )}
-              <Link
-                to={`/category/${cat._id}`}
-                className="flex items-center text-gray-800 font-semibold hover:text-blue-500 space-x-1 no-underline text-sm text-center"
-              >
-                <span>{cat.name}</span>
-                <FaAngleDown className="" />
-              </Link>
-            </div>
-          ))}
-        </div>
+        <div className="bg-white shadow-sm py-3 md:px-40 md:my-3">
+          
+  <div className="flex sm:overflow-y-auto md:overflow-visible md:gap-24 my-2 justify-start md:justify-center">
+    {categories.map((cat) => (
+      <div
+        key={cat._id}
+        className="relative flex-shrink-0 w-32 md:w-auto flex flex-col items-center"
+        onMouseEnter={!isMobile ? () => setOpenId(cat._id) : undefined}
+        onMouseLeave={!isMobile ? () => setOpenId(null) : undefined}
+      >
+        {cat.image && (
+          <img
+            src={`https://ecommerce-app-1-igf3.onrender.com${cat.image}`}
+            alt={cat.name}
+            className="mb-2"
+          />
+        )}
 
-        {/* Desktop Grid */}
-        <div className="hidden md:flex flex-wrap items-center justify-center gap-24">
-          {categories.map((cat) => (
-            <div
-              key={cat._id}
-              className="relative flex flex-col items-center"
-              onMouseEnter={() => setOpenId(cat._id)}
-              onMouseLeave={() => setOpenId(null)}
-            >
-              {cat.image && (
-                <img
-                  src={`https://ecommerce-app-1-igf3.onrender.com${cat.image}`}
-                  alt={cat.name}
-                  className="mb-2"
-                />
-              )}
-              <Link
-                to={`/category/${cat._id}`}
-                className="flex items-center text-gray-800 font-semibold hover:text-blue-500 space-x-1 no-underline"
-              >
-                <span>{cat.name}</span>
-                <FaAngleDown
-                  className={`transition-transform ${
-                    openId === cat._id ? "rotate-180" : ""
-                  }`}
-                />
-              </Link>
+        {/* Category button */}
+        <button
+          onClick={() =>
+            isMobile
+              ? setOpenId(openId === cat._id ? null : cat._id)
+              : null
+          }
+          className="flex items-center  font-semibold text-gray-800 space-x-1"
+        >
+          <span>{cat.name}</span>
+          <FaAngleDown
+            className={`transition-transform ${
+              openId === cat._id ? "rotate-180" : ""
+            }`}
+          />
+        </button>
 
-              {openId === cat._id && (
-                <div className="absolute mt-24 left-1/2 -translate-x-1/2 font-medium bg-white shadow-lg rounded-lg p-2 w-52 z-10">
-                  {subCategories
-                    .filter((sub) => sub.mainCategory?._id === cat._id)
-                    .map((sub) => (
-                      <Link
-                        key={sub._id}
-                        to={`/category/${cat._id}/${sub._id}`}
-                        className="block px-3 py-1 text-gray-800 no-underline hover:bg-blue-100 rounded"
-                      >
-                        {sub.name}
-                      </Link>
-                    ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+        {/* Subcategory */}
+        {openId === cat._id && (
+          <div
+            className={`absolute ${
+              isMobile
+                ? "mt-2 w-full"
+                : "mt-24 left-1/2 -translate-x-1/2 w-52"
+            } bg-white shadow-lg rounded-lg p-2 z-50`}
+          >
+            {subCategories
+              .filter((sub) => sub.mainCategory?._id === cat._id)
+              .map((sub) => (
+                <Link
+                  key={sub._id}
+                  to={`/category/${cat._id}/${sub._id}`}
+                  className="block px-3 py-2 font-semibold text-gray-800 no-underline hover:bg-blue-100 rounded"
+                >
+                  {sub.name}
+                </Link>
+              ))}
+          </div>
+        )}
       </div>
+    ))}
+  </div>
+</div>
+
     </div>
   );
 }
