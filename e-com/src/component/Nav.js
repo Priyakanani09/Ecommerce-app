@@ -124,7 +124,7 @@ function Nav() {
                 onClick={logout}
                 className="text-sm md:text-lg font-semibold text-gray-800 hover:text-blue-500"
               >
-                Logout {user.name}
+               Hi,{user.name}  Logout
               </button>
             ) : (
               <>
