@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
+import { useContext } from "react";
+import { AuthContext } from "../App";
 
 function Signup() {
   const [name, setName] = useState("");
@@ -9,6 +11,7 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { setUser } = useContext(AuthContext);
 
   const collectData = () => {
     if (password !== confirmPassword) {
@@ -27,8 +30,14 @@ function Signup() {
     })
       .then((res) => res.json())
       .then((data) => {
-        localStorage.setItem("user", JSON.stringify(data));
-        navigate("/");
+        if (data.user) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+          localStorage.setItem("token", data.token);  
+          setUser(data.user);
+          navigate("/", { replace: true });
+        } else {
+          setError(data.message || "Signup failed");
+        }
       })
       .catch(() => {
         setError("Something went wrong. Please try again.");
@@ -43,9 +52,7 @@ function Signup() {
           collectData();
         }}
       >
-        <h2 className="text-center text-blue-600 pb-4">
-          Register
-        </h2>
+        <h2 className="text-center text-blue-600 pb-4">Register</h2>
 
         {/* Username */}
         <Form.Group className="mb-4" controlId="formUsername">
@@ -93,7 +100,11 @@ function Signup() {
 
         {error && <p style={{ color: "red" }}>{error}</p>}
 
-        <Button type="submit" className="w-36 mx-auto d-block" variant="primary">
+        <Button
+          type="submit"
+          className="w-36 mx-auto d-block"
+          variant="primary"
+        >
           Sign Up
         </Button>
       </Form>

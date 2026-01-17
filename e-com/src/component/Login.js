@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
+import { AuthContext } from "../App";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
+  const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -20,11 +21,11 @@ function Login() {
       });
 
       const result = await res.json();
-      console.log(result);
 
       if (result.message === "Login successful" && result.user) {
         localStorage.setItem("user", JSON.stringify(result.user));
         localStorage.setItem("token", result.token);
+        setUser(result.user);
         navigate("/", { replace: true });
       } else {
         localStorage.removeItem("user");
@@ -32,6 +33,7 @@ function Login() {
       }
     } catch (error) {
       console.error(error);
+      setUser(null);
       alert("Something went wrong");
     }
   };

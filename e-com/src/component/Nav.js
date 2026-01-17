@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaSearch, FaShoppingCart, FaAngleDown } from "react-icons/fa";
 import axios from "axios";
 import { cartcontext } from "../App";
+import { AuthContext } from "../App";
 
 function Nav() {
   const [search, setSearch] = useState("");
@@ -11,24 +12,14 @@ function Nav() {
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [openId, setOpenId] = useState(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
+  const { user, setUser } = useContext(AuthContext);
   const { cartItems } = useContext(cartcontext);
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  useEffect(() => {
-  const handleResize = () => {
-    setIsMobile(window.innerWidth < 768);
-  };
-
-  window.addEventListener("resize", handleResize);
-  return () => window.removeEventListener("resize", handleResize);
-}, []);
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    setUser(null);
     navigate("/");
   };
 
@@ -48,7 +39,7 @@ function Nav() {
 
         while (page <= totalPages) {
           const res = await fetch(
-            `https://ecommerce-app-1-igf3.onrender.com/products?page=${page}`
+            `https://ecommerce-app-1-igf3.onrender.com/products?page=${page}`,
           );
           const data = await res.json();
 
@@ -76,7 +67,7 @@ function Nav() {
         (p) =>
           p.name?.toLowerCase().includes(search.toLowerCase()) ||
           p.subCategory?.name?.toLowerCase().includes(search.toLowerCase()) ||
-          p.category?.name?.toLowerCase().includes(search.toLowerCase())
+          p.category?.name?.toLowerCase().includes(search.toLowerCase()),
       )
       .slice(0, 8);
 
@@ -124,7 +115,7 @@ function Nav() {
                 onClick={logout}
                 className="text-sm md:text-lg font-semibold text-gray-800 hover:text-blue-500"
               >
-               Hi,{user.name}  Logout
+              <span>Hi,{user?.name}</span> Logout
               </button>
             ) : (
               <>
@@ -202,68 +193,64 @@ function Nav() {
       </header>
 
       {/* ================= CATEGORY BAR ================= */}
-        <div className="bg-white shadow-sm py-3 md:px-40 md:my-3">
-          
-  <div className="flex sm:overflow-y-auto md:overflow-visible md:gap-24 my-2 justify-start md:justify-center">
-    {categories.map((cat) => (
-      <div
-        key={cat._id}
-        className="relative flex-shrink-0 w-32 md:w-auto flex flex-col items-center"
-        onMouseEnter={!isMobile ? () => setOpenId(cat._id) : undefined}
-        onMouseLeave={!isMobile ? () => setOpenId(null) : undefined}
-      >
-        {cat.image && (
-          <img
-            src={`https://ecommerce-app-1-igf3.onrender.com${cat.image}`}
-            alt={cat.name}
-            className="mb-2"
-          />
-        )}
-
-        {/* Category button */}
-        <button
-          onClick={() =>
-            isMobile
-              ? setOpenId(openId === cat._id ? null : cat._id)
-              : null
-          }
-          className="flex items-center  font-semibold text-gray-800 space-x-1"
+      <div className="bg-white shadow-sm py-3 md:px-40 md:my-3">
+        <div
+          className="
+          flex md:gap-24 sm:gap-6 px-4 my-2
+          sm:overflow-x-scroll scrollbar-hide
+          md:overflow-visible md:justify-center
+        "
         >
-          <span>{cat.name}</span>
-          <FaAngleDown
-            className={`transition-transform ${
-              openId === cat._id ? "rotate-180" : ""
-            }`}
-          />
-        </button>
+          {categories.map((cat) => (
+            <div
+              key={cat._id}
+              className="relative flex-shrink-0 w-32 md:w-auto flex flex-col items-center"
+              onMouseEnter={() => setOpenId(cat._id)}
+              onMouseLeave={() => setOpenId(null)}
+            >
+              {cat.image && (
+                <img
+                  src={`https://ecommerce-app-1-igf3.onrender.com${cat.image}`}
+                  alt={cat.name}
+                  className="mb-2 object-contain"
+                />
+              )}
 
-        {/* Subcategory */}
-        {openId === cat._id && (
-          <div
-            className={`absolute ${
-              isMobile
-                ? "mt-2 w-full"
-                : "mt-24 left-1/2 -translate-x-1/2 w-52"
-            } bg-white shadow-lg rounded-lg p-2 z-50`}
-          >
-            {subCategories
-              .filter((sub) => sub.mainCategory?._id === cat._id)
-              .map((sub) => (
-                <Link
-                  key={sub._id}
-                  to={`/category/${cat._id}/${sub._id}`}
-                  className="block px-3 py-2 font-semibold text-gray-800 no-underline hover:bg-blue-100 rounded"
-                >
-                  {sub.name}
-                </Link>
-              ))}
-          </div>
-        )}
+              <button
+                onClick={() =>
+                  window.innerWidth < 768
+                    ? setOpenId(openId === cat._id ? null : cat._id)
+                    : null
+                }
+                className="flex items-center font-semibold text-gray-800 space-x-1"
+              >
+                <span>{cat.name}</span>
+                <FaAngleDown
+                  className={`transition-transform ${
+                    openId === cat._id ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {openId === cat._id && window.innerWidth >= 768 && (
+                <div className="absolute mt-24 left-1/2 -translate-x-1/2 w-52 bg-white shadow-lg rounded-lg p-2 z-50">
+                  {subCategories
+                    .filter((sub) => sub.mainCategory?._id === cat._id)
+                    .map((sub) => (
+                      <Link
+                        key={sub._id}
+                        to={`/category/${cat._id}/${sub._id}`}
+                        className="block px-3 py-2 font-semibold  no-underline text-gray-800 hover:bg-blue-100 rounded"
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
-    ))}
-  </div>
-</div>
-
     </div>
   );
 }

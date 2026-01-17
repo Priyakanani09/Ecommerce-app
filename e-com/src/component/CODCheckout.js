@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { cartcontext } from "../App";
 import { useNavigate } from "react-router-dom";
-import { Form, Button, Card } from "react-bootstrap";
+import { Form, Button} from "react-bootstrap";
 
 function CODCheckout() {
   const { cartItems, setCartItems } = useContext(cartcontext);
@@ -11,6 +11,7 @@ function CODCheckout() {
     phone: "",
     address: "",
   });
+
 
   const user = JSON.parse(localStorage.getItem("user"));
 

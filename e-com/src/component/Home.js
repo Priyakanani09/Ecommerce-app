@@ -357,7 +357,7 @@ function Home() {
                 ))}
           </div>
         </div>
-
+        
         <div className="category-section">
           <div className="category-header">
             {loading ? skeletonHeading() : <h5>Electronics Appliances</h5>}

@@ -17,7 +17,7 @@ function ProductDetail() {
   const [showScroll, setShowScroll] = useState(false);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo(0,0);
   }, [id]);
 
   const addGuestRecentlyViewed = (product) => {

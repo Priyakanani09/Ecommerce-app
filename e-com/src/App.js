@@ -1,24 +1,33 @@
-import './App.css';
+import "./App.css";
 import "react-loading-skeleton/dist/skeleton.css";
-import Nav from './component/Nav';
-import { Route, Routes } from 'react-router-dom';
-import SingUp from './component/SingUp';
-import Login from './component/Login';
-import Home from './component/Home';
-import Cart from './component/Cart';
-import { createContext, useEffect, useState } from 'react';
-import Search from './component/Search';
-import Fashion from './component/Fashion';
-import CODCheckout from './component/CODCheckout';
-import OrderSuccess from './component/OrderSuccess';
-import Footer from './component/Footer';
+import Nav from "./component/Nav";
+import { Route, Routes } from "react-router-dom";
+import SingUp from "./component/SingUp";
+import Login from "./component/Login";
+import Home from "./component/Home";
+import Cart from "./component/Cart";
+import { createContext, useEffect, useState } from "react";
+import Search from "./component/Search";
+import Fashion from "./component/Fashion";
+import CODCheckout from "./component/CODCheckout";
+import OrderSuccess from "./component/OrderSuccess";
+import Footer from "./component/Footer";
 import CategoryProducts from "./component/CategoryProducts";
-import ProductDetail from './component/ProductDetail';
+import ProductDetail from "./component/ProductDetail";
 
 export const cartcontext = createContext();
+export const AuthContext = createContext();
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
 
   // Load cart items for logged-in user
   useEffect(() => {
@@ -38,7 +47,7 @@ function App() {
     let updatedCart;
     if (exist) {
       updatedCart = cartItems.map((item) =>
-        item._id === product._id ? { ...item, qty: item.qty + 1 } : item
+        item._id === product._id ? { ...item, qty: item.qty + 1 } : item,
       );
     } else {
       updatedCart = [...cartItems, { ...product, qty: 1 }];
@@ -61,26 +70,35 @@ function App() {
   }, [cartItems]);
 
   return (
-    <cartcontext.Provider value={{ cartItems, setCartItems, addToCart }}>
-      <Nav />
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/signup' element={<SingUp />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/cart' element={<Cart />} />
-        <Route path='/search' element={<Search />} />
-         <Route path='/fashion' element={<Fashion />} />
-        <Route path="/checkout" element={<CODCheckout />} />
-        <Route path="/order-success" element={<OrderSuccess />} />
-        <Route path="/category/:mainCategory" element={<CategoryProducts />} />
-        <Route path="/category/:mainCategory/:subCategory" element={<CategoryProducts />} />
-        <Route path="/product/:mainCategory/:subCategory/:id" element={<ProductDetail />} />
-
-      </Routes>
-      <Footer />
-    </cartcontext.Provider>
+    <AuthContext.Provider value={{ user, setUser }}>
+      <cartcontext.Provider value={{ cartItems, setCartItems, addToCart }}>
+        <Nav />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/signup" element={<SingUp />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/search" element={<Search />} />
+          <Route path="/fashion" element={<Fashion />} />
+          <Route path="/checkout" element={<CODCheckout />} />
+          <Route path="/order-success" element={<OrderSuccess />} />
+          <Route
+            path="/category/:mainCategory"
+            element={<CategoryProducts />}
+          />
+          <Route
+            path="/category/:mainCategory/:subCategory"
+            element={<CategoryProducts />}
+          />
+          <Route
+            path="/product/:mainCategory/:subCategory/:id"
+            element={<ProductDetail />}
+          />
+        </Routes>
+        <Footer />
+      </cartcontext.Provider>
+    </AuthContext.Provider>
   );
 }
 
 export default App;
-
