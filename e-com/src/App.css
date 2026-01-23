@@ -455,3 +455,18 @@ form {
     padding: 8px;
   }
 }
+
+.category-dropdown .dropdown-menu {
+  border: none !important;
+  box-shadow: none !important;
+  /* margin-top: 8px !important; */
+  padding: 10px;
+}
+
+.category-dropdown .dropdown-item:hover {
+  background-color: #e7f1ff;
+}
+
+.category-dropdown .dropdown-toggle::after {
+  display: none !important;
+}

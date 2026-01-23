@@ -17,7 +17,7 @@ function ProductDetail() {
   const [showScroll, setShowScroll] = useState(false);
 
   useEffect(() => {
-    window.scrollTo(0,0);
+    window.scrollTo(0, 0);
   }, [id]);
 
   const addGuestRecentlyViewed = (product) => {
@@ -47,7 +47,7 @@ function ProductDetail() {
 
       while (currentPage <= total) {
         const res = await fetch(
-          `https://ecommerce-app-1-igf3.onrender.com/products?page=${currentPage}`
+          `https://ecommerce-app-1-igf3.onrender.com/products?page=${currentPage}`,
         );
         const data = await res.json();
         all = [...all, ...data.products];
@@ -95,24 +95,24 @@ function ProductDetail() {
       try {
         if (mainCategory) {
           const res = await fetch(
-            `https://ecommerce-app-1-igf3.onrender.com/main-categories`
+            `https://ecommerce-app-1-igf3.onrender.com/main-categories`,
           );
           const data = await res.json();
 
           const objectMainCategory = data?.categories?.find(
-            (d1) => d1._id === mainCategory
+            (d1) => d1._id === mainCategory,
           );
           setMainCategoryName(objectMainCategory?.name);
         }
 
         if (subCategory) {
           const res = await fetch(
-            "https://ecommerce-app-1-igf3.onrender.com/sub-categories"
+            "https://ecommerce-app-1-igf3.onrender.com/sub-categories",
           );
           const data = await res.json();
 
           const objectSubCategory = data?.subCategories?.find(
-            (d1) => d1._id === subCategory
+            (d1) => d1._id === subCategory,
           );
 
           setSubCategoryName(objectSubCategory?.name);
@@ -127,7 +127,7 @@ function ProductDetail() {
     fetchCategoryNames();
   }, [mainCategory, subCategory]);
 
-   useEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 100) {
         setShowScroll(true);
@@ -144,7 +144,7 @@ function ProductDetail() {
 
   const related = allProducts.filter(
     (p) =>
-      p.subCategory?._id === product.subCategory?._id && p._id !== product._id
+      p.subCategory?._id === product.subCategory?._id && p._id !== product._id,
   );
   console.log({ related });
 
@@ -174,18 +174,32 @@ function ProductDetail() {
   return (
     <div className="container bg-white p-4 mt-4">
       <div className="row">
-        <div className="col-md-5">
+        <div className="col-md-5 position-relative">
+          {/* 📱 MOBILE BREADCRUMB (IMAGE ઉપર) */}
+          <div className="d-block d-md-none mb-2">
+            <Breadcrumbs
+              mainCategory={mainCategoryName}
+              subCategory={subCategoryName}
+              mainCategoryId={mainCategory}
+              subCategoryId={subCategory}
+              productName={product.name}
+            />
+          </div>
+
           <ImageGallery images={product.image} />
         </div>
 
         <div className="col-md-7">
-          <Breadcrumbs
-            mainCategory={mainCategoryName}
-            subCategory={subCategoryName}
-            mainCategoryId={mainCategory}
-            subCategoryId={subCategory}
-            productName={product.name}
-          />
+           <div className="d-none d-md-block mb-2">
+            <Breadcrumbs
+              mainCategory={mainCategoryName}
+              subCategory={subCategoryName}
+              mainCategoryId={mainCategory}
+              subCategoryId={subCategory}
+              productName={product.name}
+            />
+          </div>
+
 
           <h3 className="font-semibold">{product.name}</h3>
 
@@ -219,11 +233,10 @@ function ProductDetail() {
 
       <div className="row">
         {related.map((p) => (
-          <div key={p._id} className="col-md-3 mb-3">
+          <div key={p._id} className="col-6 col-sm-6 col-md-3 mb-4">
             <div className="card p-3 h-100">
               <Link
                 to={`/product/${p.category?._id}/${p.subCategory?._id}/${p._id}`}
-                key={p._id}
               >
                 {p.image && p.image.length > 0 && (
                   <div
@@ -257,12 +270,8 @@ function ProductDetail() {
                         >
                           <img
                             src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
-                            className="d-block w-100"
+                            className="d-block product-img "
                             alt={`${p.name} ${index + 1}`}
-                            style={{
-                              height: "250px",
-                              objectFit: "contain",
-                            }}
                           />
                         </div>
                       ))}
@@ -270,7 +279,7 @@ function ProductDetail() {
                   </div>
                 )}
               </Link>
-              <div className="card-body text-center">
+              <div className="card-body text-center product-card">
                 <h5>{p.name}</h5>
                 <p className="text-muted">{p.description}</p>
                 <p className="fw-bold text-primary">₹{p.price}</p>

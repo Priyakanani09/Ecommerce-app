@@ -25,7 +25,7 @@ function ImageGallery({ images = [] }) {
         />
       </div>
 
-      <div className="col-12 col-md-2 order-2 order-md-1 d-flex flex-row flex-md-column gap-2 justify-content-center">
+      <div className="col-12 col-md-2 order-2 order-md-1 my-4 d-flex flex-row flex-md-column gap-2 justify-content-center">
         {images.map((img, i) => (
           <img
             key={i}

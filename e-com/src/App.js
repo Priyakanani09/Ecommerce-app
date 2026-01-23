@@ -1,6 +1,5 @@
 import "./App.css";
 import "react-loading-skeleton/dist/skeleton.css";
-import Nav from "./component/Nav";
 import { Route, Routes } from "react-router-dom";
 import SingUp from "./component/SingUp";
 import Login from "./component/Login";
@@ -14,6 +13,7 @@ import OrderSuccess from "./component/OrderSuccess";
 import Footer from "./component/Footer";
 import CategoryProducts from "./component/CategoryProducts";
 import ProductDetail from "./component/ProductDetail";
+import NavBar from "./component/NavBar";
 
 export const cartcontext = createContext();
 export const AuthContext = createContext();
@@ -72,7 +72,7 @@ function App() {
   return (
     <AuthContext.Provider value={{ user, setUser }}>
       <cartcontext.Provider value={{ cartItems, setCartItems, addToCart }}>
-        <Nav />
+        <NavBar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<SingUp />} />

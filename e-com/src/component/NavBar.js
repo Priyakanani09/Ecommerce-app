@@ -5,7 +5,7 @@ import axios from "axios";
 import { cartcontext } from "../App";
 import { AuthContext } from "../App";
 
-function Nav() {
+function NavBar() {
   const [search, setSearch] = useState("");
   const [allProducts, setAllProducts] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
@@ -115,7 +115,7 @@ function Nav() {
                 onClick={logout}
                 className="text-sm md:text-lg font-semibold text-gray-800 hover:text-blue-500"
               >
-              <span>Hi,{user?.name}</span> Logout
+                <span>Hi,{user?.name}</span> Logout
               </button>
             ) : (
               <>
@@ -193,54 +193,63 @@ function Nav() {
       </header>
 
       {/* ================= CATEGORY BAR ================= */}
-      <div className="bg-white shadow-sm py-3 md:px-40 md:my-3">
+      <div className="bg-white shadow-sm py-3 md:px-40 md:my-4">
+        {/* CATEGORY BAR */}
         <div
           className="
-          flex md:gap-24 sm:gap-6 px-4 my-2
-          sm:overflow-x-scroll scrollbar-hide
-          md:overflow-visible md:justify-center
+          flex gap-6 px-4 my-2
+          sm:overflow-x-auto flex-nowrap
+          md:overflow-visible md:flex-wrap md:gap-24
+          md:justify-center md:px-0
+          hf-slider
         "
         >
           {categories.map((cat) => (
             <div
               key={cat._id}
-              className="relative flex-shrink-0 w-32 md:w-auto flex flex-col items-center"
-              onMouseEnter={() => setOpenId(cat._id)}
-              onMouseLeave={() => setOpenId(null)}
+              className="relative flex-shrink-0 w-28 md:w-auto flex flex-col items-center"
+              onMouseEnter={() =>
+                window.innerWidth >= 768 && setOpenId(cat._id)
+              }
+              onMouseLeave={() => window.innerWidth >= 768 && setOpenId(null)}
             >
+              {/* CATEGORY IMAGE */}
               {cat.image && (
                 <img
                   src={`https://ecommerce-app-1-igf3.onrender.com${cat.image}`}
                   alt={cat.name}
-                  className="mb-2 object-contain"
+                  className="h-12 mb-2 object-contain"
                 />
               )}
 
-              <button
-                onClick={() =>
-                  window.innerWidth < 768
-                    ? setOpenId(openId === cat._id ? null : cat._id)
-                    : null
-                }
-                className="flex items-center font-semibold text-gray-800 space-x-1"
-              >
-                <span>{cat.name}</span>
+              <div className="flex items-center gap-1 font-semibold text-gray-800">
+                <span
+                  onClick={() => navigate(`/category/${cat._id}`)}
+                  className="cursor-pointer hover:text-blue-600"
+                >
+                  {cat.name}
+                </span>
+
                 <FaAngleDown
-                  className={`transition-transform ${
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenId(openId === cat._id ? null : cat._id);
+                  }}
+                  className={`cursor-pointer transition-transform duration-200 ${
                     openId === cat._id ? "rotate-180" : ""
                   }`}
                 />
-              </button>
+              </div>
 
-              {openId === cat._id && window.innerWidth >= 768 && (
-                <div className="absolute mt-24 left-1/2 -translate-x-1/2 w-52 bg-white shadow-lg rounded-lg p-2 z-50">
+              {openId === cat._id && (
+                <div className="absolute top-16 mt-3 left-1/2 -translate-x-1/2 w-56 bg-white shadow-xl rounded-xl p-2 z-50">
                   {subCategories
                     .filter((sub) => sub.mainCategory?._id === cat._id)
                     .map((sub) => (
                       <Link
                         key={sub._id}
                         to={`/category/${cat._id}/${sub._id}`}
-                        className="block px-3 py-2 font-semibold  no-underline text-gray-800 hover:bg-blue-100 rounded"
+                        className="block px-4 py-2 font-medium text-gray-800 no-underline hover:bg-blue-100 rounded"
                       >
                         {sub.name}
                       </Link>
@@ -255,4 +264,4 @@ function Nav() {
   );
 }
 
-export default Nav;
+export default NavBar;

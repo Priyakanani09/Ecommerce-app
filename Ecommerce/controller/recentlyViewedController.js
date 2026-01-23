@@ -44,8 +44,6 @@ exports.saveRecentlyViewed = async (req, res) => {
 exports.getRecentlyViewed = async (req, res) => {
   try {
     const userId = req.user.id;
-    console.log("REQ.USER =>", req.user);
-    console.log("USER ID =>", req.user?.id);
 
     const getproduct = await RecentlyViewed.find({ userId })
       .sort({ viewedAt: -1 })
