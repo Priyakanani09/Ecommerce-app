@@ -20,12 +20,10 @@ function ProductDetail() {
 
   const [showScroll, setShowScroll] = useState(false);
 
-  /* ================= SCROLL TO TOP ON PRODUCT CHANGE ================= */
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  /* ================= FETCH ALL PRODUCTS (EXISTING LOGIC) ================= */
   useEffect(() => {
     const fetchAllProducts = async () => {
       let all = [];
@@ -34,7 +32,7 @@ function ProductDetail() {
 
       while (currentPage <= total) {
         const res = await fetch(
-          `https://ecommerce-app-1-igf3.onrender.com/products?page=${currentPage}`
+          `https://ecommerce-app-1-igf3.onrender.com/products?page=${currentPage}`,
         );
         const data = await res.json();
         all = [...all, ...data.products];
@@ -48,7 +46,6 @@ function ProductDetail() {
     fetchAllProducts();
   }, []);
 
-  /* ================= FIND CURRENT PRODUCT ================= */
   useEffect(() => {
     if (allProducts.length > 0) {
       const found = allProducts.find((p) => p._id === id);
@@ -56,7 +53,6 @@ function ProductDetail() {
     }
   }, [id, allProducts]);
 
-  /* ================= CATEGORY NAMES FROM CONTEXT ================= */
   useEffect(() => {
     const main = mainCategories.find((c) => c._id === mainCategory);
     setMainCategoryName(main?.name || "");
@@ -65,7 +61,6 @@ function ProductDetail() {
     setSubCategoryName(sub?.name || "");
   }, [mainCategory, subCategory, mainCategories, subCategories]);
 
-  /* ================= RECENTLY VIEWED ================= */
   useEffect(() => {
     if (!product) return;
 
@@ -88,7 +83,6 @@ function ProductDetail() {
     }
   }, [product]);
 
-  /* ================= SCROLL BUTTON ================= */
   useEffect(() => {
     const handleScroll = () => setShowScroll(window.scrollY > 100);
     window.addEventListener("scroll", handleScroll);
@@ -99,8 +93,7 @@ function ProductDetail() {
 
   const related = allProducts.filter(
     (p) =>
-      p.subCategory?._id === product.subCategory?._id &&
-      p._id !== product._id
+      p.subCategory?._id === product.subCategory?._id && p._id !== product._id,
   );
 
   const handleAddToCart = (item) => {
@@ -126,7 +119,7 @@ function ProductDetail() {
       behavior: "smooth",
     });
   };
-  
+
   return (
     <div className="container bg-white p-3 mt-4">
       <div className="row">
@@ -159,7 +152,7 @@ function ProductDetail() {
           <p className="text-muted">{product.description}</p>
           <h3 className="text-primary">₹{product.price}</h3>
 
-           <div className="mt-4 d-flex flex-column flex-md-row gap-3">
+          <div className="mt-4 d-flex flex-column flex-md-row gap-3">
             <button
               className="btn btn-warning text-white px-4 d-flex align-items-center justify-content-center fw-bold gap-2 "
               onClick={() => handleAddToCart(product)}

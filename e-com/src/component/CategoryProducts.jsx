@@ -1,9 +1,4 @@
-import React, {
-  useContext,
-  useEffect,
-  useState,
-  useCallback,
-} from "react";
+import React, { useContext,useEffect,useState,useCallback} from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Breadcrumbs from "./Breadcrumbs";
 import { cartcontext, CategoryContext } from "../App";
@@ -26,9 +21,6 @@ function CategoryProducts() {
   const [totalPages, setTotalPages] = useState(1);
   const [showScroll, setShowScroll] = useState(false);
 
-  /* ============================
-     FETCH PRODUCTS (MEMOIZED)
-     ============================ */
   const fetchData = useCallback(
     async (pageNumber) => {
       try {
