@@ -1,44 +1,31 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import ImageGallery from "./ImageGallery";
-import { cartcontext } from "../App";
-import { FaShoppingCart, FaBolt } from "react-icons/fa";
+import { cartcontext, CategoryContext } from "../App";
+import { FaShoppingCart, FaBolt, FaArrowUp, FaArrowDown } from "react-icons/fa";
 import Breadcrumbs from "./Breadcrumbs";
-import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 
 function ProductDetail() {
   const { id, mainCategory, subCategory } = useParams();
+  const navigate = useNavigate();
+
+  const { addToCart } = useContext(cartcontext);
+  const { mainCategories, subCategories } = useContext(CategoryContext);
+
   const [allProducts, setAllProducts] = useState([]);
   const [product, setProduct] = useState(null);
-  const navigate = useNavigate();
-  const { addToCart } = useContext(cartcontext);
+
   const [mainCategoryName, setMainCategoryName] = useState("");
   const [subCategoryName, setSubCategoryName] = useState("");
+
   const [showScroll, setShowScroll] = useState(false);
 
+  /* ================= SCROLL TO TOP ON PRODUCT CHANGE ================= */
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
 
-  const addGuestRecentlyViewed = (product) => {
-    let recent = JSON.parse(localStorage.getItem("guest_recent")) || [];
-
-    recent = recent.filter((p) => p._id !== product._id);
-
-    recent.unshift({
-      _id: product._id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      category: product.category?._id,
-      subCategory: product.subCategory?._id,
-    });
-
-    recent = recent.slice(0, 8);
-
-    localStorage.setItem("guest_recent", JSON.stringify(recent));
-  };
-
+  /* ================= FETCH ALL PRODUCTS (EXISTING LOGIC) ================= */
   useEffect(() => {
     const fetchAllProducts = async () => {
       let all = [];
@@ -47,19 +34,21 @@ function ProductDetail() {
 
       while (currentPage <= total) {
         const res = await fetch(
-          `https://ecommerce-app-1-igf3.onrender.com/products?page=${currentPage}`,
+          `https://ecommerce-app-1-igf3.onrender.com/products?page=${currentPage}`
         );
         const data = await res.json();
         all = [...all, ...data.products];
         total = data.totalPages;
         currentPage++;
       }
+
       setAllProducts(all);
     };
 
     fetchAllProducts();
   }, []);
 
+  /* ================= FIND CURRENT PRODUCT ================= */
   useEffect(() => {
     if (allProducts.length > 0) {
       const found = allProducts.find((p) => p._id === id);
@@ -67,75 +56,41 @@ function ProductDetail() {
     }
   }, [id, allProducts]);
 
+  /* ================= CATEGORY NAMES FROM CONTEXT ================= */
+  useEffect(() => {
+    const main = mainCategories.find((c) => c._id === mainCategory);
+    setMainCategoryName(main?.name || "");
+
+    const sub = subCategories.find((c) => c._id === subCategory);
+    setSubCategoryName(sub?.name || "");
+  }, [mainCategory, subCategory, mainCategories, subCategories]);
+
+  /* ================= RECENTLY VIEWED ================= */
   useEffect(() => {
     if (!product) return;
 
     const token = localStorage.getItem("token");
 
     if (token) {
-      // ✅ LOGIN USER
       fetch("https://ecommerce-app-1-igf3.onrender.com/recently-view", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          productId: product._id,
-        }),
-      }).catch((err) => console.log("Recently Viewed Save Error:", err));
+        body: JSON.stringify({ productId: product._id }),
+      }).catch(() => {});
     } else {
-      // ✅ GUEST USER
-      addGuestRecentlyViewed(product);
+      let recent = JSON.parse(localStorage.getItem("guest_recent")) || [];
+      recent = recent.filter((p) => p._id !== product._id);
+      recent.unshift(product);
+      localStorage.setItem("guest_recent", JSON.stringify(recent.slice(0, 8)));
     }
   }, [product]);
 
+  /* ================= SCROLL BUTTON ================= */
   useEffect(() => {
-    const fetchCategoryNames = async () => {
-      try {
-        if (mainCategory) {
-          const res = await fetch(
-            `https://ecommerce-app-1-igf3.onrender.com/main-categories`,
-          );
-          const data = await res.json();
-
-          const objectMainCategory = data?.categories?.find(
-            (d1) => d1._id === mainCategory,
-          );
-          setMainCategoryName(objectMainCategory?.name);
-        }
-
-        if (subCategory) {
-          const res = await fetch(
-            "https://ecommerce-app-1-igf3.onrender.com/sub-categories",
-          );
-          const data = await res.json();
-
-          const objectSubCategory = data?.subCategories?.find(
-            (d1) => d1._id === subCategory,
-          );
-
-          setSubCategoryName(objectSubCategory?.name);
-        } else {
-          setSubCategoryName("");
-        }
-      } catch (err) {
-        console.error("Category name error:", err);
-      }
-    };
-
-    fetchCategoryNames();
-  }, [mainCategory, subCategory]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 100) {
-        setShowScroll(true);
-      } else {
-        setShowScroll(false);
-      }
-    };
-
+    const handleScroll = () => setShowScroll(window.scrollY > 100);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -144,16 +99,16 @@ function ProductDetail() {
 
   const related = allProducts.filter(
     (p) =>
-      p.subCategory?._id === product.subCategory?._id && p._id !== product._id,
+      p.subCategory?._id === product.subCategory?._id &&
+      p._id !== product._id
   );
-  console.log({ related });
 
   const handleAddToCart = (item) => {
     addToCart(item);
     navigate("/cart");
   };
 
-  const CODCart = (item) => {
+  const buyNow = (item) => {
     addToCart(item);
     navigate("/checkout");
   };
@@ -171,11 +126,11 @@ function ProductDetail() {
       behavior: "smooth",
     });
   };
+  
   return (
     <div className="container bg-white p-3 mt-4">
       <div className="row">
-        <div className="col-md-5 position-relative">
-          {/* 📱 MOBILE BREADCRUMB (IMAGE ઉપર) */}
+        <div className="col-md-5">
           <div className="d-block d-md-none">
             <Breadcrumbs
               mainCategory={mainCategoryName}
@@ -190,7 +145,7 @@ function ProductDetail() {
         </div>
 
         <div className="col-md-7">
-           <div className="d-none d-md-block my-2">
+          <div className="d-none d-md-block my-2">
             <Breadcrumbs
               mainCategory={mainCategoryName}
               subCategory={subCategoryName}
@@ -200,16 +155,11 @@ function ProductDetail() {
             />
           </div>
 
+          <h3>{product.name}</h3>
+          <p className="text-muted">{product.description}</p>
+          <h3 className="text-primary">₹{product.price}</h3>
 
-          <h3 className="font-semibold">{product.name}</h3>
-
-          <p className=" text-gray-500 font-medium mt-2">
-            {product.description}
-          </p>
-
-          <h3 className="font-semibold text-4xl mt-3">₹{product.price}</h3>
-
-          <div className="mt-4 d-flex flex-column flex-md-row gap-3">
+           <div className="mt-4 d-flex flex-column flex-md-row gap-3">
             <button
               className="btn btn-warning text-white px-4 d-flex align-items-center justify-content-center fw-bold gap-2 "
               onClick={() => handleAddToCart(product)}
@@ -220,7 +170,7 @@ function ProductDetail() {
 
             <button
               className="btn btn-success fw-bold px-4 d-flex align-items-center justify-content-center gap-2"
-              onClick={() => CODCart(product)}
+              onClick={() => buyNow(product)}
             >
               <FaBolt size={18} />
               BUY NOW
@@ -229,7 +179,7 @@ function ProductDetail() {
         </div>
       </div>
 
-      <h4 className="mt-5 mb-3">Related Products</h4>
+      <h4 className="mt-5">Related Products</h4>
 
       <div className="row">
         {related.map((p) => (

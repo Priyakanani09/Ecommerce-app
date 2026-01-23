@@ -17,10 +17,13 @@ import NavBar from "./component/NavBar";
 
 export const cartcontext = createContext();
 export const AuthContext = createContext();
+export const CategoryContext = createContext();
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
   const [user, setUser] = useState(null);
+  const [mainCategories, setMainCategories] = useState([]);
+const [subCategories, setSubCategories] = useState([]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -61,6 +64,26 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try{
+        const mainRes = await fetch( "https://ecommerce-app-1-igf3.onrender.com/main-categories");
+         const mainData = await mainRes.json();
+      setMainCategories(mainData.categories || []);
+
+      const subRes = await fetch(
+        "https://ecommerce-app-1-igf3.onrender.com/sub-categories"
+      );
+      const subData = await subRes.json();
+      setSubCategories(subData.subCategories || []);
+      }
+      catch (err) {
+      console.error("Category fetch error", err);
+    }
+    }
+    fetchCategories();
+  },[]);
+
   // Save cart to localStorage on changes
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
@@ -71,7 +94,8 @@ function App() {
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>
-      <cartcontext.Provider value={{ cartItems, setCartItems, addToCart }}>
+      <cartcontext.Provider value={{ cartItems, setCartItems, addToCart}}>
+         <CategoryContext.Provider value={{ mainCategories, subCategories }}>
         <NavBar />
         <Routes>
           <Route path="/" element={<Home />} />
@@ -96,6 +120,7 @@ function App() {
           />
         </Routes>
         <Footer />
+        </CategoryContext.Provider>
       </cartcontext.Provider>
     </AuthContext.Provider>
   );

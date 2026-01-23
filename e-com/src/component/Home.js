@@ -208,7 +208,7 @@ function Home() {
         <div className="category-section">
           <div className="category-header">
             {loading ? skeletonHeading() : <h5>Best Gadgets & Appliances</h5>}
-            <Link to=" " className="arrow-link">
+            <Link to="" className="arrow-link">
               <span className="arrow-btn1">
                 <FaChevronRight />
               </span>

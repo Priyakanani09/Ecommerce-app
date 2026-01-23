@@ -1,7 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Breadcrumbs from "./Breadcrumbs";
-import { cartcontext } from "../App";
+import { cartcontext, CategoryContext } from "../App";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { skeletonBlock, skeletonLine } from "../utils/skeletons";
 
@@ -9,6 +14,7 @@ function CategoryProducts() {
   const { mainCategory, subCategory } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useContext(cartcontext);
+  const { mainCategories, subCategories } = useContext(CategoryContext);
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -20,70 +26,52 @@ function CategoryProducts() {
   const [totalPages, setTotalPages] = useState(1);
   const [showScroll, setShowScroll] = useState(false);
 
-  const fetchData = async (pageNumber) => {
-    try {
-      setLoading(true);
-      let url = `https://ecommerce-app-1-igf3.onrender.com/products?page=${pageNumber}`;
-
-      if (subCategory) {
-        url += `&subCategory=${subCategory}`;
-      } else if (mainCategory) {
-        url += `&mainCategory=${mainCategory}`;
-      }
-
-      const prodRes = await fetch(url);
-      const prodData = await prodRes.json();
-
-      setProducts(prodData.products);
-      setTotalPages(prodData.totalPages);
-    } catch (error) {
-      console.error("Fetch error:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const fetchCategoryNames = async () => {
+  /* ============================
+     FETCH PRODUCTS (MEMOIZED)
+     ============================ */
+  const fetchData = useCallback(
+    async (pageNumber) => {
       try {
-        if (mainCategory) {
-          const res = await fetch(
-            `https://ecommerce-app-1-igf3.onrender.com/main-categories`
-          );
-          const data = await res.json();
+        setLoading(true);
 
-          const objectMainCategory = data?.categories?.find(
-            (d1) => d1._id === mainCategory
-          );
-          setMainCategoryName(objectMainCategory?.name);
-        }
+        let url = `https://ecommerce-app-1-igf3.onrender.com/products?page=${pageNumber}`;
 
         if (subCategory) {
-          const res = await fetch(
-            "https://ecommerce-app-1-igf3.onrender.com/sub-categories"
-          );
-          const data = await res.json();
-
-          const objectSubCategory = data?.subCategories?.find(
-            (d1) => d1._id === subCategory
-          );
-
-          setSubCategoryName(objectSubCategory?.name);
-        } else {
-          setSubCategoryName("");
+          url += `&subCategory=${subCategory}`;
+        } else if (mainCategory) {
+          url += `&mainCategory=${mainCategory}`;
         }
-      } catch (err) {
-        console.error("Category name error:", err);
-      }
-    };
 
-    fetchCategoryNames();
+        const res = await fetch(url);
+        const data = await res.json();
+
+        setProducts(data.products || []);
+        setTotalPages(data.totalPages || 1);
+      } catch (err) {
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [mainCategory, subCategory]
+  );
+
+  useEffect(() => {
+    const main = mainCategories.find((c) => c._id === mainCategory);
+    setMainCategoryName(main?.name || "");
+
+    const sub = subCategories.find((c) => c._id === subCategory);
+    setSubCategoryName(sub?.name || "");
+  }, [mainCategory, subCategory, mainCategories, subCategories]);
+
+  useEffect(() => {
+    setPage(1);
   }, [mainCategory, subCategory]);
 
   useEffect(() => {
     fetchData(page);
-    window.scrollTo(0, 0);
-  }, [mainCategory, subCategory, page]);
+    window.scrollTo({ top: 0 });
+  }, [page, fetchData]);
 
   const handleAddToCart = (product) => {
     addToCart(product);
@@ -92,11 +80,7 @@ function CategoryProducts() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 100) {
-        setShowScroll(true);
-      } else {
-        setShowScroll(false);
-      }
+      setShowScroll(window.scrollY > 100);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -117,13 +101,9 @@ function CategoryProducts() {
     });
   };
 
-  const nextPage = () => {
-    if (page < totalPages) setPage(page + 1);
-  };
+  const nextPage = () => page < totalPages && setPage(page + 1);
+  const prevPage = () => page > 1 && setPage(page - 1);
 
-  const prevPage = () => {
-    if (page > 1) setPage(page - 1);
-  };
   return (
     <div className="container mt-4">
       <Breadcrumbs
@@ -212,6 +192,7 @@ function CategoryProducts() {
           ))
         )}
       </div>
+
       <div className="d-flex justify-content-center align-items-center my-4">
         <button
           className="btn btn-outline-primary mx-2"

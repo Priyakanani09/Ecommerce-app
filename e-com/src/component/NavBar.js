@@ -218,7 +218,7 @@ function NavBar() {
                 <img
                   src={`https://ecommerce-app-1-igf3.onrender.com${cat.image}`}
                   alt={cat.name}
-                  className="h-12 mb-2 object-contain"
+                  className="h-16 mb-2 object-contain"
                 />
               )}
 
@@ -242,7 +242,7 @@ function NavBar() {
               </div>
 
               {openId === cat._id && (
-                <div className="absolute top-16 mt-3 left-1/2 -translate-x-1/2 w-56 bg-white shadow-xl rounded-xl p-2 z-50">
+                <div className="absolute top-20 mt-3 left-1/2 -translate-x-1/2 w-56 bg-white shadow-xl rounded-xl p-2 z-50">
                   {subCategories
                     .filter((sub) => sub.mainCategory?._id === cat._id)
                     .map((sub) => (
