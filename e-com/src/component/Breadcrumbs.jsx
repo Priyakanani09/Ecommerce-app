@@ -10,7 +10,7 @@ function Breadcrumbs({
   productName,
 }) {
   return (
-    <nav className="text-sm mb-4 flex items-center gap-2 text-gray-600 font-medium">
+    <nav className="mb-4 flex items-center md:gap-2 gap-1 font-medium text-[10px]  md:text-[14px] text-gray-600">
       <Link
         to="/"
         className="no-underline text-gray-900 font-semibold hover:text-blue-500"
@@ -20,7 +20,7 @@ function Breadcrumbs({
 
       {mainCategory && (
         <>
-          <FaChevronRight className="text-gray-400 text-xs" />
+          <FaChevronRight className="text-gray-400 text-[10px] md:text-xs" />
           <Link
             to={`/category/${mainCategoryId}`}
             className="no-underline text-gray-800 font-bold hover:text-blue-500"
@@ -32,7 +32,7 @@ function Breadcrumbs({
 
       {subCategory && (
         <>
-          <FaChevronRight className="text-gray-400 text-xs" />
+          <FaChevronRight className="text-gray-400 text-[10px] md:text-xs" />
           <Link
             to={`/category/${mainCategoryId}/${subCategoryId}`}
             className="no-underline text-gray-800 font-bold hover:text-blue-500"
@@ -44,7 +44,7 @@ function Breadcrumbs({
 
       {productName && (
         <>
-          <FaChevronRight size={12} className="text-muted" />
+          <FaChevronRight className="text-gray-400 text-[10px] md:text-xs" />
           <span className="text-muted">{productName}</span>
         </>
       )}
