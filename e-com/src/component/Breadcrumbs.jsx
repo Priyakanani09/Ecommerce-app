@@ -10,7 +10,7 @@ function Breadcrumbs({
   productName,
 }) {
   return (
-    <nav className="mb-4 flex items-center md:gap-2 font-medium text-[10px] md:text-[14px] text-gray-600">
+    <nav className="mb-4 flex items-center md:gap-2 font-medium text-[11px] md:text-[14px] text-gray-600">
       <Link
         to="/"
         className="no-underline text-gray-900 font-semibold hover:text-blue-500"

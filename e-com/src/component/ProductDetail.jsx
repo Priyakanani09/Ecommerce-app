@@ -172,11 +172,11 @@ function ProductDetail() {
     });
   };
   return (
-    <div className="container bg-white p-4 mt-4">
+    <div className="container bg-white p-3 mt-4">
       <div className="row">
         <div className="col-md-5 position-relative">
           {/* 📱 MOBILE BREADCRUMB (IMAGE ઉપર) */}
-          <div className="d-block d-md-none mb-2">
+          <div className="d-block d-md-none">
             <Breadcrumbs
               mainCategory={mainCategoryName}
               subCategory={subCategoryName}
@@ -190,7 +190,7 @@ function ProductDetail() {
         </div>
 
         <div className="col-md-7">
-           <div className="d-none d-md-block mb-2">
+           <div className="d-none d-md-block my-2">
             <Breadcrumbs
               mainCategory={mainCategoryName}
               subCategory={subCategoryName}
