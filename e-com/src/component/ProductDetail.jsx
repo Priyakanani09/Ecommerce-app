@@ -26,22 +26,16 @@ function ProductDetail() {
 
   useEffect(() => {
     const fetchAllProducts = async () => {
-      let all = [];
-      let currentPage = 1;
-      let total = 1;
-
-      while (currentPage <= total) {
-        const res = await fetch(
-          `https://ecommerce-app-1-igf3.onrender.com/products?page=${currentPage}`,
-        );
-        const data = await res.json();
-        all = [...all, ...data.products];
-        total = data.totalPages;
-        currentPage++;
-      }
-
-      setAllProducts(all);
-    };
+      try {
+      const res = await fetch(
+        "https://ecommerce-app-1-igf3.onrender.com/products?allproduct=true"
+      );
+      const data = await res.json();
+      setAllProducts(data.products);
+    } catch (err) {
+      console.error(err);
+    } 
+  }
 
     fetchAllProducts();
   }, []);

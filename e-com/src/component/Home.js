@@ -34,7 +34,7 @@ function Home() {
     setLoading(true);
     try {
       const res = await fetch(
-        "https://ecommerce-app-1-igf3.onrender.com/products?home=true"
+        "https://ecommerce-app-1-igf3.onrender.com/products?allproduct=true"
       );
       const data = await res.json();
       setAllProducts(data.products);

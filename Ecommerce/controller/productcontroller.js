@@ -35,15 +35,15 @@ exports.addProduct = async (req, res) => {
 };
 exports.getProducts = async (req, res) => {
   try {
-     // 🔥 HOME PAGE SHORT-CIRCUIT
-    if (req.query.home === "true") {
+
+    if (req.query.allproduct === "true") {
       const products = await Product.find({})
-        .limit(200) // homepage mate limit
+        .limit(200)
         .populate("category", "name")
         .populate("subCategory", "name");
 
       return res.status(200).json({
-        message: "Home products",
+        message: "All products find successfully",
         products,
       });
     }
