@@ -77,7 +77,7 @@ function Search() {
       ) : filtered.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
           {filtered.map((p, index) => (
-            <div className="card p-3">
+            <div  key={p._id} className="card p-3">
               {p.image && p.image.length > 0 && (
                 <div
                   id={`carousel-${p._id}`}

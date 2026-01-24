@@ -37,6 +37,7 @@ router.post("/add-sub-category",jwtAuth,admin,subCategoryController.addSubCatego
 router.get("/sub-categories",subCategoryController.getAllSubCategories);
 router.delete("/sub-category/:id",jwtAuth,admin,subCategoryController.deleteSubCategory);
 
+
 //Product Upload Setup
 router.post('/add-product',jwtAuth, admin,upload.array('image',5), productController.addProduct);
 router.get('/products', productController.getProducts);

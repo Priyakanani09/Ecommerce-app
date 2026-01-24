@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { cartcontext } from "../App";
 import "../App.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 
 function Cart() {
@@ -94,44 +94,50 @@ function Cart() {
             return (
               <div key={index} className="col-md-3 mb-4">
                 <div className="card shadow p-3">
-                  {item.image && item.image.length > 0 && (
-                    <div
-                      id={`cart-carousel-${index}`}
-                      className="carousel slide"
-                      data-bs-ride="carousel"
-                    >
-                      <div className="carousel-indicators custom-indicators">
-                        {item.image.map((_, i) => (
-                          <button
-                            key={i}
-                            type="button"
-                            data-bs-target={`#cart-carousel-${index}`}
-                            data-bs-slide-to={i}
-                            className={i === 0 ? "active" : ""}
-                          ></button>
-                        ))}
-                      </div>
+                  <Link
+                    to={`/product/${item.category?._id}/${item.subCategory?._id}/${item._id}`}
+                  >
+                    {item.image && item.image.length > 0 && (
+                      <div
+                        id={`cart-carousel-${index}`}
+                        className="carousel slide"
+                        data-bs-ride="carousel"
+                      >
+                        <div className="carousel-indicators custom-indicators">
+                          {item.image.map((_, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              data-bs-target={`#cart-carousel-${index}`}
+                              data-bs-slide-to={i}
+                              className={i === 0 ? "active" : ""}
+                            ></button>
+                          ))}
+                        </div>
 
-                      <div className="carousel-inner">
-                        {item.image.map((img, i) => (
-                          <div
-                            key={i}
-                            className={`carousel-item ${
-                              i === 0 ? "active" : ""
-                            }`}
-                          >
-                            <img
-                              src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
-                              alt={item.name}
-                              className="d-block w-100"
-                              style={{ height: "280px", objectFit: "contain" }}
-                            />
-                          </div>
-                        ))}
+                        <div className="carousel-inner">
+                          {item.image.map((img, i) => (
+                            <div
+                              key={i}
+                              className={`carousel-item ${
+                                i === 0 ? "active" : ""
+                              }`}
+                            >
+                              <img
+                                src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
+                                alt={item.name}
+                                className="d-block w-100"
+                                style={{
+                                  height: "280px",
+                                  objectFit: "contain",
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
-
+                    )}
+                  </Link>
                   <div className="card-body text-center">
                     <h5 className="card-title">{item.name}</h5>
                     <p className="text-muted">{item.description}</p>

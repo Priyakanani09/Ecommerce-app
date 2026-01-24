@@ -30,30 +30,24 @@ function NavBar() {
   };
 
   useEffect(() => {
-  if (!search.trim()) {
-    setSuggestions([]);
-    return;
-  }
-
-  const fetchSuggestions = async () => {
-    try {
-      const res = await fetch(
-        `https://ecommerce-app-1-igf3.onrender.com/search?query=${search}`
-      );
-      const data = await res.json();
-
-      // 🔥 data is ARRAY
-      setSuggestions(data.products || []);
-
-    } catch (err) {
-      console.error("Search error", err);
+    if (!search.trim()) {
       setSuggestions([]);
+      return;
     }
-  };
 
-  fetchSuggestions();
-}, [search]);
-
+    const fetchSuggestions = async () => {
+      try {
+        const res = await fetch(
+          `https://ecommerce-app-1-igf3.onrender.com/search?query=${search}`,
+        );
+        const data = await res.json();
+       setSuggestions(data.slice(0, 8));
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchSuggestions();
+  }, [search]);
 
   return (
     <div>
