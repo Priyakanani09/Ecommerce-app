@@ -65,7 +65,7 @@ exports.getProducts = async (req, res) => {
     const totalProducts = await Product.countDocuments(query);
     const products = await Product.find(query).skip(skip).limit(limit).populate("category", "name").populate("subCategory", "name");
 
-    res.status(200).json({products,totalProducts,currentPage: page, totalPages: Math.ceil(totalProducts / limit)});
+    res.status(200).json({message: "Product find successfully",products,totalProducts,currentPage: page, totalPages: Math.ceil(totalProducts / limit)});
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Failed to fetch products" });
