@@ -29,34 +29,24 @@ function Home() {
   const sliderImages = [slider1, slider3, slider4, slider5];
   const [allProducts, setAllProducts] = useState([]);
 
-  useEffect(() => {
-    const fetchAllProducts = async () => {
-      setLoading(true);
-      try {
-        let all = [];
-        let currentPage = 1;
-        let total = 1;
+ useEffect(() => {
+  const fetchHomeProducts = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        "https://ecommerce-app-1-igf3.onrender.com/products?home=true"
+      );
+      const data = await res.json();
+      setAllProducts(data.products);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        while (currentPage <= total) {
-          const res = await fetch(
-            `https://ecommerce-app-1-igf3.onrender.com/products?page=${currentPage}`
-          );
-          const data = await res.json();
-          all = [...all, ...data.products];
-          total = data.totalPages;
-          currentPage++;
-        }
-
-        setAllProducts(all);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false); // 🔥 IMPORTANT
-      }
-    };
-
-    fetchAllProducts();
-  }, []);
+  fetchHomeProducts();
+}, []);
 
   useEffect(() => {
     if (!allProducts.length) return;

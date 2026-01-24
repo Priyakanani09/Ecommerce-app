@@ -1,19 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSearch, FaShoppingCart, FaAngleDown } from "react-icons/fa";
-import axios from "axios";
 import { cartcontext } from "../App";
 import { AuthContext } from "../App";
+import { CategoryContext } from "../App";
 
 function NavBar() {
   const [search, setSearch] = useState("");
-  const [allProducts, setAllProducts] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
   const [openId, setOpenId] = useState(null);
   const { user, setUser } = useContext(AuthContext);
   const { cartItems } = useContext(cartcontext);
+  const { mainCategories, subCategories } = useContext(CategoryContext);
   const navigate = useNavigate();
 
   const logout = () => {
@@ -27,34 +25,9 @@ function NavBar() {
     if (e.key === "Enter" && search.trim()) {
       navigate(`/search?query=${search}`);
       setSearch("");
+      setSuggestions([]);
     }
   };
-
-  useEffect(() => {
-    const fetchAllProducts = async () => {
-      try {
-        let all = [];
-        let page = 1;
-        let totalPages = 1;
-
-        while (page <= totalPages) {
-          const res = await fetch(
-            `https://ecommerce-app-1-igf3.onrender.com/products?page=${page}`,
-          );
-          const data = await res.json();
-
-          all = [...all, ...data.products];
-          totalPages = data.totalPages;
-          page++;
-        }
-
-        setAllProducts(all);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchAllProducts();
-  }, []);
 
   useEffect(() => {
     if (!search.trim()) {
@@ -62,36 +35,19 @@ function NavBar() {
       return;
     }
 
-    const filtered = allProducts
-      .filter(
-        (p) =>
-          p.name?.toLowerCase().includes(search.toLowerCase()) ||
-          p.subCategory?.name?.toLowerCase().includes(search.toLowerCase()) ||
-          p.category?.name?.toLowerCase().includes(search.toLowerCase()),
-      )
-      .slice(0, 8);
-
-    setSuggestions(filtered);
-  }, [search, allProducts]);
-
-  useEffect(() => {
-    axios
-      .get("https://ecommerce-app-1-igf3.onrender.com/main-categories")
-      .then((res) => {
-        setCategories(res.data.categories);
-      })
-
-      .catch((err) => console.log(err));
-  }, []);
-
-  useEffect(() => {
-    axios
-      .get("https://ecommerce-app-1-igf3.onrender.com/sub-categories")
-      .then((res) => {
-        setSubCategories(res.data.subCategories);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+    const fetchSuggestions = async () => {
+      try {
+        const res = await fetch(
+          `https://ecommerce-app-1-igf3.onrender.com/search?query=${search}`,
+        );
+        const data = await res.json();
+        setSuggestions(data.slice(0, 8));
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchSuggestions();
+  }, [search]);
 
   return (
     <div>
@@ -204,7 +160,7 @@ function NavBar() {
           hf-slider
         "
         >
-          {categories.map((cat) => (
+          {mainCategories.map((cat) => (
             <div
               key={cat._id}
               className="relative flex-shrink-0 w-28 md:w-auto flex flex-col items-center"

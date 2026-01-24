@@ -47,7 +47,7 @@ exports.getProducts = async (req, res) => {
         products,
       });
     }
-    
+
     const page = parseInt(req.query.page) || 1;
     const limit = 24;
     const skip = (page - 1) * limit;
@@ -179,8 +179,8 @@ exports.searchProduct = async (req, res) => {
     const products = await Product.find({
       $or: [
         { name: { $regex: query, $options: "i" } },
-        { category: { $in: categoryIds } },
-        { subCategory: { $in: subCategoryIds } }
+        { category: { $in: categoryIds, $options: "i"  } },
+        { subCategory: { $in: subCategoryIds, $options: "i"  } }
       ]
     }) 
     .populate("category")
