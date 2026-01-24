@@ -29,24 +29,24 @@ function Home() {
   const sliderImages = [slider1, slider3, slider4, slider5];
   const [allProducts, setAllProducts] = useState([]);
 
- useEffect(() => {
-  const fetchHomeProducts = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        "https://ecommerce-app-1-igf3.onrender.com/products?allproduct=true"
-      );
-      const data = await res.json();
-      setAllProducts(data.products);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => {
+    const fetchHomeProducts = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(
+          "https://ecommerce-app-1-igf3.onrender.com/products?allproduct=true",
+        );
+        const data = await res.json();
+        setAllProducts(data.products);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchHomeProducts();
-}, []);
+    fetchHomeProducts();
+  }, []);
 
   useEffect(() => {
     if (!allProducts.length) return;
@@ -56,34 +56,34 @@ function Home() {
         (p.subCategory.name.toLowerCase().includes("smart phone") ||
           p.subCategory.name.toLowerCase().includes("tablet") ||
           p.subCategory.name.toLowerCase().includes("mobile accessories") ||
-          p.subCategory.name.toLowerCase().includes("smart watches"))
+          p.subCategory.name.toLowerCase().includes("smart watches")),
     );
 
     const homeProducts = allProducts.filter(
       (p) =>
         p.category?.name &&
-        p.category.name.toLowerCase().includes("home & furniture")
+        p.category.name.toLowerCase().includes("home & furniture"),
     );
 
     const beautyProducts = allProducts.filter(
       (p) =>
         p.subCategory?.name &&
         (p.subCategory?.name?.toLowerCase().includes("beauty") ||
-          p.subCategory?.name?.toLowerCase().includes("bags"))
+          p.subCategory?.name?.toLowerCase().includes("bags")),
     );
 
     const womenProducts = allProducts.filter(
       (p) =>
         p.subCategory?.name &&
         (p.subCategory.name.toLowerCase().startsWith("women wear") ||
-          p.subCategory.name.toLowerCase().startsWith("women footwear"))
+          p.subCategory.name.toLowerCase().startsWith("women footwear")),
     );
 
     const menProducts = allProducts.filter(
       (p) =>
         p.subCategory?.name &&
         (p.subCategory.name.toLowerCase().startsWith("men wear") ||
-          p.subCategory.name.toLowerCase().startsWith("men footwear"))
+          p.subCategory.name.toLowerCase().startsWith("men footwear")),
     );
 
     const electronicsProducts = allProducts.filter(
@@ -92,7 +92,7 @@ function Home() {
         (p.subCategory.name.toLowerCase().includes("laptops") ||
           p.subCategory.name.toLowerCase().includes("speakear") ||
           p.subCategory.name.toLowerCase().includes("cameras") ||
-          p.subCategory.name.toLowerCase().includes("network components"))
+          p.subCategory.name.toLowerCase().includes("network components")),
     );
 
     setProducts(mobileProducts.slice(0, 4));
@@ -198,11 +198,16 @@ function Home() {
         <div className="category-section">
           <div className="category-header">
             {loading ? skeletonHeading() : <h5>Best Gadgets & Appliances</h5>}
-            <Link to="" className="arrow-link">
-              <span className="arrow-btn1">
-                <FaChevronRight />
-              </span>
-            </Link>
+            {products.length > 0 && (
+              <Link
+                to={`/category/${products[0].category?._id}`}
+                className="arrow-link"
+              >
+                <span className="arrow-btn1">
+                  <FaChevronRight />
+                </span>
+              </Link>
+            )}
           </div>
 
           <div className="product-grid">
@@ -229,11 +234,16 @@ function Home() {
         <div className="category-section">
           <div className="category-header">
             {loading ? skeletonHeading() : <h5>Make your home stylish</h5>}
-            <Link to="" className="arrow-link">
-              <span className="arrow-btn1">
-                <FaChevronRight />
-              </span>
-            </Link>
+            {homeproduct.length > 0 && (
+              <Link
+                to={`/category/${homeproduct[0].category?._id}`}
+                className="arrow-link"
+              >
+                <span className="arrow-btn1">
+                  <FaChevronRight />
+                </span>
+              </Link>
+            )}
           </div>
 
           <div className="product-grid">
@@ -259,11 +269,16 @@ function Home() {
         <div className="category-section">
           <div className="category-header">
             {loading ? skeletonHeading() : <h5>Beauty product</h5>}
-            <Link to="" className="arrow-link">
-              <span className="arrow-btn1">
-                <FaChevronRight />
-              </span>
-            </Link>
+            {beautyproduct.length > 0 && (
+              <Link
+                to={`/category/${beautyproduct[0].category?._id}`}
+                className="arrow-link"
+              >
+                <span className="arrow-btn1">
+                  <FaChevronRight />
+                </span>
+              </Link>
+            )}
           </div>
 
           <div className="product-grid">
@@ -291,11 +306,16 @@ function Home() {
         <div className="category-section">
           <div className="category-header">
             {loading ? skeletonHeading() : <h5>Women Wear and Footwear</h5>}
-            <Link to="" className="arrow-link">
-              <span className="arrow-btn1">
-                <FaChevronRight />
-              </span>
-            </Link>
+            {womenproduct.length > 0 && (
+              <Link
+                to={`/category/${womenproduct[0].category?._id}`}
+                className="arrow-link"
+              >
+                <span className="arrow-btn1">
+                  <FaChevronRight />
+                </span>
+              </Link>
+            )}
           </div>
 
           <div className="product-grid">
@@ -321,11 +341,16 @@ function Home() {
         <div className="category-section">
           <div className="category-header">
             {loading ? skeletonHeading() : <h5>Men Wear and Footwear</h5>}
-            <Link to="" className="arrow-link">
-              <span className="arrow-btn1">
-                <FaChevronRight />
-              </span>
-            </Link>
+            {menproduct.length > 0 && (
+              <Link
+                to={`/category/${menproduct[0].category?._id}`}
+                className="arrow-link"
+              >
+                <span className="arrow-btn1">
+                  <FaChevronRight />
+                </span>
+              </Link>
+            )}
           </div>
 
           <div className="product-grid">
@@ -347,15 +372,20 @@ function Home() {
                 ))}
           </div>
         </div>
-        
+
         <div className="category-section">
           <div className="category-header">
             {loading ? skeletonHeading() : <h5>Electronics Appliances</h5>}
-            <Link to="/fashion/Beauty Product" className="arrow-link">
-              <span className="arrow-btn1">
-                <FaChevronRight />
-              </span>
-            </Link>
+            {mobileElectronics.length > 0 && (
+              <Link
+                to={`/category/${mobileElectronics[0].category?._id}`}
+                className="arrow-link"
+              >
+                <span className="arrow-btn1">
+                  <FaChevronRight />
+                </span>
+              </Link>
+            )}
           </div>
 
           <div className="product-grid">
