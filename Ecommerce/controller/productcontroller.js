@@ -176,15 +176,16 @@ exports.searchProduct = async (req, res) => {
     const subCategoryIds = matchingSubCategories.map(sub => sub._id);
 
     // Search products by name, category ID, or subcategory ID
-    const products = await Product.find({
+   const products = await Product.find({
       $or: [
         { name: { $regex: query, $options: "i" } },
-        { category: { $in: categoryIds, $options: "i"  } },
-        { subCategory: { $in: subCategoryIds, $options: "i"  } }
+        { category: { $in: categoryIds } },
+        { subCategory: { $in: subCategoryIds } }
       ]
-    }) 
-    .populate("category")
-    .populate("subCategory");
+    })
+      .limit(8)
+      .populate("category", "name")
+      .populate("subCategory", "name");
 
     res.status(200).json(products);
   } catch (error) {
