@@ -35,6 +35,19 @@ exports.addProduct = async (req, res) => {
 };
 exports.getProducts = async (req, res) => {
   try {
+     // 🔥 HOME PAGE SHORT-CIRCUIT
+    if (req.query.home === "true") {
+      const products = await Product.find({})
+        .limit(200) // homepage mate limit
+        .populate("category", "name")
+        .populate("subCategory", "name");
+
+      return res.status(200).json({
+        message: "Home products",
+        products,
+      });
+    }
+    
     const page = parseInt(req.query.page) || 1;
     const limit = 24;
     const skip = (page - 1) * limit;
