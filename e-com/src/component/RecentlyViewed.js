@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+let recentCache = null;
 
 function RecentlyViewed() {
   const [recentlyViewed, setRecentlyViewed] = useState([]);
 
   useEffect(() => {
+    if (recentCache) {
+      setRecentlyViewed(recentCache);
+      return;
+    }
     
     const token = localStorage.getItem("token");
 
@@ -17,13 +22,12 @@ function RecentlyViewed() {
         .then((res) => res.json())
         .then((data) => {
           if (data?.getproduct?.length > 0) {
-            setRecentlyViewed(data.getproduct.slice(0, 8));
+            recentCache = data.getproduct.slice(0, 8);
+            setRecentlyViewed(recentCache);
           }
         })
         .catch((err) => console.log(err));
-    }
-
-    else {
+    } else {
       const guestRecent =
         JSON.parse(localStorage.getItem("guest_recent")) || [];
 
@@ -67,9 +71,7 @@ function RecentlyViewed() {
 
               <div className="text-center mt-2">
                 <p className="fw-semibold small mb-1">{product.name}</p>
-                <p className="text-success fw-bold mb-0">
-                  ₹{product.price}
-                </p>
+                <p className="text-success fw-bold mb-0">₹{product.price}</p>
               </div>
             </div>
           );
