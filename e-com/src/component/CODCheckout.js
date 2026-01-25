@@ -49,7 +49,7 @@ function CODCheckout() {
     }
 
     const orderData = {
-      userId: user.id,
+      userId: user._id,
       customer: {
         firstName: form.firstName,
         lastName: form.lastName,
