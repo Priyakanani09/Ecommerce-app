@@ -35,55 +35,84 @@ exports.addProduct = async (req, res) => {
 };
 exports.getProducts = async (req, res) => {
   try {
-
-    if (req.query.allproduct === "true") {
-      const products = await Product.find({})
-        .limit(200)
-        .populate("category", "name")
-        .populate("subCategory", "name");
-
-      return res.status(200).json({
-        message: "All products find successfully",
-        products,
-      });
-    }
-
     const page = parseInt(req.query.page) || 1;
     const limit = 24;
     const skip = (page - 1) * limit;
+
     const { mainCategory, subCategory } = req.query;
 
-    let query = {};
+    let matchStage = {};
+
+    // ✅ subCategory filter
     if (subCategory) {
       if (!mongoose.Types.ObjectId.isValid(subCategory)) {
         return res.status(400).json({ message: "Invalid subCategory ID" });
       }
-      query.subCategory = subCategory;
+      matchStage.subCategory = new mongoose.Types.ObjectId(subCategory);
     }
 
+    // ✅ mainCategory filter (NO extra query)
     if (mainCategory) {
       if (!mongoose.Types.ObjectId.isValid(mainCategory)) {
         return res.status(400).json({ message: "Invalid mainCategory ID" });
       }
-
-      const subCategories = await SubCategory.find(
-        { mainCategory },
-        "_id"
-      );
-
-      const subCategoryIds = subCategories.map(sc => sc._id);
-      query.subCategory = { $in: subCategoryIds };
+      matchStage.mainCategory = new mongoose.Types.ObjectId(mainCategory);
     }
-    
-    const totalProducts = await Product.countDocuments(query);
-    const products = await Product.find(query).skip(skip).limit(limit).populate("category", "name").populate("subCategory", "name");
 
-    res.status(200).json({message: "Product find successfully",products,totalProducts,currentPage: page, totalPages: Math.ceil(totalProducts / limit)});
+    const result = await Product.aggregate([
+      { $match: matchStage },
+
+      {
+        $lookup: {
+          from: "categories",
+          localField: "category",
+          foreignField: "_id",
+          as: "category"
+        }
+      },
+      { $unwind: "$category" },
+
+      {
+        $lookup: {
+          from: "subcategories",
+          localField: "subCategory",
+          foreignField: "_id",
+          as: "subCategory"
+        }
+      },
+      { $unwind: "$subCategory" },
+
+      {
+        $facet: {
+          products: [
+            { $sort: { createdAt: -1 } },
+            { $skip: skip },
+            { $limit: limit }
+          ],
+          totalCount: [
+            { $count: "count" }
+          ]
+        }
+      }
+    ]);
+
+    const products = result[0].products;
+    const totalProducts = result[0].totalCount[0]?.count || 0;
+
+    res.status(200).json({
+      message: "Products fetched successfully",
+      products,
+      totalProducts,
+      currentPage: page,
+      totalPages: Math.ceil(totalProducts / limit)
+    });
+
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error: "Failed to fetch products" });
   }
 };
+
 exports.deleteProduct = async (req, res) => {
   try {
     const { name } = req.params;
