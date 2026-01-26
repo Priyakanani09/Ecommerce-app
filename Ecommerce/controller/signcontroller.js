@@ -10,6 +10,16 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*\d)(?=.*[@#$%])[a-z\d@#$%]{12,}$/i;
+
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        message:
+          "Password must be at least 12 characters and include lowercase letter, numeric and 1 special symbol (@ # $ %)",
+      });
+    }
+
     // Check if user exists
     const existingUser = await Sign.findOne({ email });
     if (existingUser) return res.status(400).json({ message: 'Email already registered' });
