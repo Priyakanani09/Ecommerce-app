@@ -40,7 +40,8 @@ function Cart() {
   const increaseQty = async (item) => {
     try {
       const data = await updateCartApi(item.productId, item.qty + 1);
-      setCartItems(data?.items || []);
+      console.log("UPDATE CART RESPONSE:", data);
+      setCartItems(data?.items || data || []);
     } catch (err) {
       console.log("Increase qty error", err);
     }

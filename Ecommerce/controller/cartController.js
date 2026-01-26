@@ -42,7 +42,7 @@ exports.addToCart = async (req, res) => {
 exports.getCart = async (req, res) => {
   try {
     const cart = await Cart.findOne({ user: req.userId });
-    res.status(200).json(cart ? cart.items : []);
+    res.status(200).json(cart.items);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch cart" });
   }

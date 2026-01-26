@@ -42,12 +42,17 @@ function App() {
   // LOAD CART FROM BACKEND
   // =========================
   useEffect(() => {
-    if (user) {
-      getCartApi()
-        .then((data) => setCartItems(data?.items || []))
-        .catch((err) => console.log("Get cart error", err));
-    }
-  }, [user]);
+  const token = localStorage.getItem("token");
+  if (token) {
+    getCartApi()
+    
+      .then((data) => {
+        console.log(data.items)
+        setCartItems(data?.items || [])})
+      .catch((err) => console.log("Get cart error", err));
+  }
+}, []);
+
 
   // =========================
   // ADD TO CART (BACKEND)
