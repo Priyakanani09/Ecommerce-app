@@ -6,7 +6,8 @@ const productController = require('../controller/productcontroller');
 const ordercontroller = require("../controller/ordercontroller");
 const maincategory = require("../controller/maincategorycontroller")
 const subCategoryController = require("../controller/subcategorycontroller");
-const recentlyViewed = require('../controller/recentlyViewedController')
+const recentlyViewed = require('../controller/recentlyViewedController');
+const cart = require('../controller/cartController')
 var jwtAuth = require('../middleware/authMiddleware');
 const admin = require('../middleware/admin');
 
@@ -53,5 +54,11 @@ router.get("/getorder",ordercontroller.getorder);
 router.post('/recently-view',jwtAuth,recentlyViewed.saveRecentlyViewed);
 router.get('/recently-get',jwtAuth,recentlyViewed.getRecentlyViewed);
 
+// user add to cart
+router.post("/addtocart", jwtAuth, cart.addToCart);
+router.get("/getcart", jwtAuth, cart.getCart);
+router.put("/updatecart", jwtAuth, cart.updateQty);
+router.delete("/removecart/:id", jwtAuth, cart.removeItem);
+router.delete("/clearcart", jwtAuth, cart.clearCart);
 
 module.exports = router;

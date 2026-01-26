@@ -25,6 +25,7 @@ function Login() {
       if (result.message === "Login successful" && result.user) {
         localStorage.setItem("user", JSON.stringify(result.user));
         localStorage.setItem("token", result.token);
+        
         setUser(result.user);
         navigate("/", { replace: true });
       } else {
