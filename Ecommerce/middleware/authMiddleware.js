@@ -12,7 +12,9 @@ module.exports = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
-    req.user = decoded;
+     req.user = {
+      id: decoded.id || decoded._id,
+    };
 
     next();
   } catch (error) {

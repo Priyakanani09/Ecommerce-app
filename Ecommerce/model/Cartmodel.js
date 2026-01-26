@@ -6,7 +6,6 @@ const cartSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Sign", 
       required: true,
-      unique: true,
     },
 
     items: [
