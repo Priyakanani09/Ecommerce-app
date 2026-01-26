@@ -70,7 +70,7 @@ function App() {
         price: product.price,
         image: product.image,
       });
-
+      console.log("REQ.USER:", user);
       console.log("ADD TO CART RESPONSE:", data);
     setCartItems(data?.items || []);
     } catch (err) {

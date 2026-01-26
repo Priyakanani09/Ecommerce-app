@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const cartSchema = new mongoose.Schema(
   {
-    user: {
+    userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Sign", 
       required: true,
