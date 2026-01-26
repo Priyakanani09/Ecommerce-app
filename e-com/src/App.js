@@ -57,26 +57,28 @@ function App() {
   // =========================
   // ADD TO CART (BACKEND)
   // =========================
-  const addToCart = async (product) => {
-    if (!user) {
-      alert("Please login first");
-      return;
-    }
+const addToCart = async (product) => {
+  const token = localStorage.getItem("token");
 
-    try {
-      const data = await addToCartApi({
-        productId: product._id,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-      });
-      console.log("REQ.USER:", user);
-      console.log("ADD TO CART RESPONSE:", data);
+  if (!token) {
+    alert("Please login first");
+    return;
+  }
+
+  try {
+    const payload = {
+      productId: product._id,
+      name: product.name,
+      price: Number(product.price),
+      image: product.image || [],
+    };
+
+    const data = await addToCartApi(payload);
     setCartItems(data?.items || []);
-    } catch (err) {
-      console.log("Add to cart error", err);
-    }
-  };
+  } catch (err) {
+    console.log("Add to cart error", err);
+  }
+};
 
   // =========================
   // FETCH CATEGORIES

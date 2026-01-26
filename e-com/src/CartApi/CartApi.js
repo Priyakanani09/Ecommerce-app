@@ -16,16 +16,20 @@ export const getCartApi = async () => {
 // ADD TO CART
 // POST /addtocart
 export const addToCartApi = async (product) => {
+  const token = localStorage.getItem("token");
+
   const res = await fetch(`${API}/addtocart`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${getToken()}`,
+      Authorization: `Bearer ${token}`, // 🔥 REQUIRED
     },
     body: JSON.stringify(product),
   });
+
   return res.json();
 };
+
 
 // UPDATE QTY
 // PUT /updatecart
