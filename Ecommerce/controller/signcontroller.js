@@ -11,7 +11,7 @@ exports.register = async (req, res) => {
     const { name, email, password, role } = req.body;
 
     const passwordRegex =
-      /^(?=.*[a-z])(?=.*\d)(?=.*[@#$%])[a-z\d@#$%]{12,}$/i;
+      /^(?=.*[a-z])(?=.*\d)(?=.*[@#$%])[a-z\d@#$%]{1,12}$/i;
 
     if (!passwordRegex.test(password)) {
       return res.status(400).json({
