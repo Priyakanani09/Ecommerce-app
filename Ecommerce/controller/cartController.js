@@ -3,7 +3,7 @@ const Cart = require("../model/Cartmodel");
 /* ADD TO CART */
 exports.addToCart = async (req, res) => {
   try {
-    const userId = req.user.id; // ✅ correct
+    const userId = req.user._id; // ✅ correct
     const { productId, name, price, image } = req.body;
 
     let cart = await Cart.findOne({ user: userId }); // ✅ correct
@@ -40,7 +40,7 @@ exports.addToCart = async (req, res) => {
 /* GET USER CART */
 exports.getCart = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ user: req.user.id });
+    const cart = await Cart.findOne({ user: req.user._id });
 
     res.status(200).json({
       success: true,
@@ -55,7 +55,7 @@ exports.getCart = async (req, res) => {
 exports.updateQty = async (req, res) => {
   try {
     const { productId, qty } = req.body;
-    const cart = await Cart.findOne({ user: req.user.id });
+    const cart = await Cart.findOne({ user: req.user._id });
 
     if (!cart) {
       return res.json({ success: true, items: [] });
@@ -89,7 +89,7 @@ exports.updateQty = async (req, res) => {
 /* REMOVE ITEM */
 exports.removeItem = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ user: req.user.id });
+    const cart = await Cart.findOne({ user: req.user._id });
 
     if (!cart) {
       return res.json({ success: true, items: [] });
@@ -113,7 +113,7 @@ exports.removeItem = async (req, res) => {
 /* CLEAR CART */
 exports.clearCart = async (req, res) => {
   try {
-    await Cart.findOneAndDelete({ user: req.user.id });
+    await Cart.findOneAndDelete({ user: req.user._id });
 
     res.json({
       success: true,

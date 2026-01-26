@@ -71,7 +71,8 @@ function App() {
         image: product.image,
       });
 
-      setCartItems(data?.items || []);
+      console.log("ADD TO CART RESPONSE:", data);
+    setCartItems(data?.items || []);
     } catch (err) {
       console.log("Add to cart error", err);
     }
