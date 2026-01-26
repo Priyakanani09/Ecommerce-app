@@ -1,12 +1,12 @@
-const Cart = require("../model/Cartmodel")
+const Cart = require("../model/Cartmodel");
 
-// ADD TO CART
+/* ADD TO CART */
 exports.addToCart = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.user.id; // ✅ correct
     const { productId, name, price, image } = req.body;
 
-    let cart = await Cart.findOne({ user: userId });
+    let cart = await Cart.findOne({ user: userId }); // ✅ correct
 
     if (!cart) {
       cart = await Cart.create({
@@ -37,12 +37,15 @@ exports.addToCart = async (req, res) => {
   }
 };
 
-
-/* GET USER CART*/
+/* GET USER CART */
 exports.getCart = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ user: req.userId });
-    res.status(200).json(cart.items);
+    const cart = await Cart.findOne({ user: req.user.id });
+
+    res.status(200).json({
+      success: true,
+      items: cart ? cart.items : [],
+    });
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch cart" });
   }
@@ -52,19 +55,20 @@ exports.getCart = async (req, res) => {
 exports.updateQty = async (req, res) => {
   try {
     const { productId, qty } = req.body;
+    const cart = await Cart.findOne({ user: req.user.id });
 
-    const cart = await Cart.findOne({ user: req.userId });
-    if (!cart) return res.json([]);
+    if (!cart) {
+      return res.json({ success: true, items: [] });
+    }
 
     const item = cart.items.find(
-      (item) => item.productId.toString() === productId
+      (item) => item.productId.toString() === productId.toString()
     );
 
     if (item) {
       if (qty <= 0) {
-        // remove item if qty <= 0
         cart.items = cart.items.filter(
-          (i) => i.productId.toString() !== productId
+          (i) => i.productId.toString() !== productId.toString()
         );
       } else {
         item.qty = qty;
@@ -72,7 +76,11 @@ exports.updateQty = async (req, res) => {
     }
 
     await cart.save();
-    res.json(cart.items);
+
+    res.json({
+      success: true,
+      items: cart.items,
+    });
   } catch (error) {
     res.status(500).json({ message: "Update quantity failed" });
   }
@@ -81,15 +89,22 @@ exports.updateQty = async (req, res) => {
 /* REMOVE ITEM */
 exports.removeItem = async (req, res) => {
   try {
-    const cart = await Cart.findOne({ user: req.userId });
-    if (!cart) return res.json([]);
+    const cart = await Cart.findOne({ user: req.user.id });
+
+    if (!cart) {
+      return res.json({ success: true, items: [] });
+    }
 
     cart.items = cart.items.filter(
-      (item) => item.productId.toString() !== req.params.id
+      (item) => item.productId.toString() !== req.params.id.toString()
     );
 
     await cart.save();
-    res.json(cart.items);
+
+    res.json({
+      success: true,
+      items: cart.items,
+    });
   } catch (error) {
     res.status(500).json({ message: "Remove item failed" });
   }
@@ -98,8 +113,12 @@ exports.removeItem = async (req, res) => {
 /* CLEAR CART */
 exports.clearCart = async (req, res) => {
   try {
-    await Cart.findOneAndDelete({ user: req.userId });
-    res.json({ message: "Cart cleared successfully" });
+    await Cart.findOneAndDelete({ user: req.user.id });
+
+    res.json({
+      success: true,
+      items: [],
+    });
   } catch (error) {
     res.status(500).json({ message: "Clear cart failed" });
   }
