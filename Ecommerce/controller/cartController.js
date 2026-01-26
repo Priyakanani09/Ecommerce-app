@@ -8,16 +8,14 @@ exports.addToCart = async (req, res) => {
 
     let cart = await Cart.findOne({ user: userId });
 
-    // First time cart
     if (!cart) {
       cart = await Cart.create({
         user: userId,
         items: [{ productId, name, price, image, qty: 1 }],
       });
     } else {
-      // Product already exists?
       const index = cart.items.findIndex(
-        (item) => item.productId.toString() === productId
+        (item) => item.productId.toString() === productId.toString()
       );
 
       if (index > -1) {
@@ -29,11 +27,16 @@ exports.addToCart = async (req, res) => {
       await cart.save();
     }
 
-    res.status(200).json(cart.items);
+    res.status(200).json({
+      success: true,
+      items: cart.items,
+    });
   } catch (error) {
+    console.error("Add to cart error:", error);
     res.status(500).json({ message: "Add to cart failed" });
   }
 };
+
 
 /* GET USER CART*/
 exports.getCart = async (req, res) => {

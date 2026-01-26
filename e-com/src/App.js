@@ -1,11 +1,12 @@
 import "./App.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import { Route, Routes } from "react-router-dom";
+import { createContext, useEffect, useState } from "react";
+
 import SingUp from "./component/SingUp";
 import Login from "./component/Login";
 import Home from "./component/Home";
 import Cart from "./component/Cart";
-import { createContext, useEffect, useState } from "react";
 import Search from "./component/Search";
 import Fashion from "./component/Fashion";
 import CODCheckout from "./component/CODCheckout";
@@ -14,6 +15,8 @@ import Footer from "./component/Footer";
 import CategoryProducts from "./component/CategoryProducts";
 import ProductDetail from "./component/ProductDetail";
 import NavBar from "./component/NavBar";
+
+import { getCartApi, addToCartApi } from "./CartApi/CartApi";
 
 export const cartcontext = createContext();
 export const AuthContext = createContext();
@@ -25,6 +28,9 @@ function App() {
   const [mainCategories, setMainCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
 
+  // =========================
+  // LOAD USER
+  // =========================
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -32,49 +38,54 @@ function App() {
     }
   }, []);
 
-  // Load cart items for logged-in user
+  // =========================
+  // LOAD CART FROM BACKEND
+  // =========================
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user && user._id) {
-      const saved = localStorage.getItem(`cart_${user._id}`);
-      if (saved) {
-        setCartItems(JSON.parse(saved));
-      }
+    if (user) {
+      getCartApi()
+        .then((data) => setCartItems(data?.items || []))
+        .catch((err) => console.log("Get cart error", err));
     }
-  }, []);
+  }, [user]);
 
-  // Add item to cart
-  const addToCart = (product) => {
-    const exist = cartItems.find((item) => item._id === product._id);
-
-    let updatedCart;
-    if (exist) {
-      updatedCart = cartItems.map((item) =>
-        item._id === product._id ? { ...item, qty: item.qty + 1 } : item,
-      );
-    } else {
-      updatedCart = [...cartItems, { ...product, qty: 1 }];
+  // =========================
+  // ADD TO CART (BACKEND)
+  // =========================
+  const addToCart = async (product) => {
+    if (!user) {
+      alert("Please login first");
+      return;
     }
 
-    setCartItems(updatedCart);
+    try {
+      const data = await addToCartApi({
+        productId: product._id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+      });
 
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user && user._id) {
-      localStorage.setItem(`cart_${user._id}`, JSON.stringify(updatedCart));
+      setCartItems(data?.items || []);
+    } catch (err) {
+      console.log("Add to cart error", err);
     }
   };
 
+  // =========================
+  // FETCH CATEGORIES
+  // =========================
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const mainRes = await fetch(
-          "https://ecommerce-app-1-igf3.onrender.com/main-categories",
+          "https://ecommerce-app-1-igf3.onrender.com/main-categories"
         );
         const mainData = await mainRes.json();
         setMainCategories(mainData.categories || []);
 
         const subRes = await fetch(
-          "https://ecommerce-app-1-igf3.onrender.com/sub-categories",
+          "https://ecommerce-app-1-igf3.onrender.com/sub-categories"
         );
         const subData = await subRes.json();
         setSubCategories(subData.subCategories || []);
@@ -82,22 +93,16 @@ function App() {
         console.error("Category fetch error", err);
       }
     };
+
     fetchCategories();
   }, []);
-
-  // Save cart to localStorage on changes
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user && user._id) {
-      localStorage.setItem(`cart_${user._id}`, JSON.stringify(cartItems));
-    }
-  }, [cartItems]);
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>
       <cartcontext.Provider value={{ cartItems, setCartItems, addToCart }}>
         <CategoryContext.Provider value={{ mainCategories, subCategories }}>
           <NavBar />
+
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<SingUp />} />
@@ -107,6 +112,7 @@ function App() {
             <Route path="/fashion" element={<Fashion />} />
             <Route path="/checkout" element={<CODCheckout />} />
             <Route path="/order-success" element={<OrderSuccess />} />
+
             <Route
               path="/category/:mainCategory"
               element={<CategoryProducts />}
@@ -120,6 +126,7 @@ function App() {
               element={<ProductDetail />}
             />
           </Routes>
+
           <Footer />
         </CategoryContext.Provider>
       </cartcontext.Provider>

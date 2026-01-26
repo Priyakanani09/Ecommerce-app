@@ -3,6 +3,7 @@ import { cartcontext } from "../App";
 import "../App.css";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { updateCartApi, removeCartItemApi } from "../CartApi/CartApi"
 
 function Cart() {
   const { cartItems, setCartItems } = useContext(cartcontext);
@@ -36,20 +37,27 @@ function Cart() {
     });
   };
 
-  const increaseQty = (index) => {
-    const updated = [...cartItems];
-    updated[index].qty += 1;
-    setCartItems(updated);
+  const increaseQty = async (item) => {
+    try {
+      const data = await updateCartApi(item.productId, item.qty + 1);
+      setCartItems(data?.items || []);
+    } catch (err) {
+      console.log("Increase qty error", err);
+    }
   };
 
-  const decreaseQty = (index) => {
-    const updated = [...cartItems];
-    if (updated[index].qty > 1) {
-      updated[index].qty -= 1;
-    } else {
-      updated.splice(index, 1);
+   const decreaseQty = async (item) => {
+    try {
+      if (item.qty === 1) {
+        const data = await removeCartItemApi(item.productId);
+       setCartItems(data?.items || []);
+      } else {
+        const data = await updateCartApi(item.productId, item.qty - 1);
+        setCartItems(data?.items || []);
+      }
+    } catch (err) {
+      console.log("Decrease qty error", err);
     }
-    setCartItems(updated);
   };
 
   let total = 0;
@@ -95,7 +103,7 @@ function Cart() {
               <div key={index} className="col-md-3 mb-4">
                 <div className="card shadow p-3">
                   <Link
-                    to={`/product/${item.category?._id}/${item.subCategory?._id}/${item._id}`}
+                    to={`/product/${item.category?._id}/${item.subCategory?._id}/${item.productId }`}
                   >
                     {item.image && item.image.length > 0 && (
                       <div
@@ -146,7 +154,7 @@ function Cart() {
                     <div className="d-flex justify-content-center align-items-center gap-3 mt-2">
                       <button
                         className="btn btn-danger"
-                        onClick={() => decreaseQty(index)}
+                        onClick={() => decreaseQty(item)}
                       >
                         -
                       </button>
@@ -155,7 +163,7 @@ function Cart() {
 
                       <button
                         className="btn btn-success"
-                        onClick={() => increaseQty(index)}
+                        onClick={() => increaseQty(item)}
                       >
                         +
                       </button>
