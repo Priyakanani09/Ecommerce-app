@@ -49,8 +49,7 @@ function App() {
 }, [user]); // 👈 dependency add
 
   /* ================= ADD TO CART ================= */
-  /* ================= ADD TO CART ================= */
-const addToCart = async (product) => {
+const addToCart = async (productId) => {
   const token = localStorage.getItem("token");
 
   if (!token) {
@@ -67,9 +66,7 @@ const addToCart = async (product) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          productId: product._id, // 🔥 only productId is enough
-        }),
+        body: JSON.stringify({ productId }),
       }
     );
 
@@ -80,12 +77,12 @@ const addToCart = async (product) => {
       return;
     }
 
-    // 🔥 cart state update ONLY HERE
     setCartItems(data.items || []);
   } catch (error) {
     console.log("Add to cart error:", error);
   }
 };
+
 
 
   /* ================= FETCH CATEGORIES ================= */

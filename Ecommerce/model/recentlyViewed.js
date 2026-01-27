@@ -13,6 +13,7 @@ const recentlyViewedSchema = new mongoose.Schema(
       ref: "Product",
       required: true,
     },
+    
     viewedAt: {
       type: Date,
       default: Date.now,

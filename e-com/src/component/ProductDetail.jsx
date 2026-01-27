@@ -14,7 +14,7 @@ function ProductDetail() {
 
   const [allProducts, setAllProducts] = useState([]);
   const [product, setProduct] = useState(null);
-  
+
   const [mainCategoryName, setMainCategoryName] = useState("");
   const [subCategoryName, setSubCategoryName] = useState("");
 
@@ -90,8 +90,8 @@ function ProductDetail() {
       p.subCategory?._id === product.subCategory?._id && p._id !== product._id,
   );
 
-  const handleAddToCart = (item) => {
-    addToCart(item);
+  const handleAddToCart = (product) => {
+    addToCart(product._id);
     navigate("/cart");
   };
 

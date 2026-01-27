@@ -66,7 +66,7 @@ function CategoryProducts() {
   }, [page, fetchData]);
 
   const handleAddToCart = (product) => {
-    addToCart(product);
+    addToCart(product._id);
     navigate("/cart");
   };
 
