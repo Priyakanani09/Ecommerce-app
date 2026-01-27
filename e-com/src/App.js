@@ -16,8 +16,6 @@ import CategoryProducts from "./component/CategoryProducts";
 import ProductDetail from "./component/ProductDetail";
 import NavBar from "./component/NavBar";
 
-import { getCartApi, addToCartApi } from "./CartApi/CartApi";
-
 export const cartcontext = createContext();
 export const AuthContext = createContext();
 export const CategoryContext = createContext();
@@ -28,73 +26,81 @@ function App() {
   const [mainCategories, setMainCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
 
-  // =========================
-  // LOAD USER
-  // =========================
+  /* ================= LOAD USER ================= */
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    if (storedUser) setUser(JSON.parse(storedUser));
   }, []);
 
-  // =========================
-  // LOAD CART FROM BACKEND
-  // =========================
+  /* ================= GET CART (ONLY HERE) ================= */
   useEffect(() => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    getCartApi()
-    
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    fetch(`https://ecommerce-app-1-igf3.onrender.com/getcart`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
       .then((data) => {
-        console.log(data.items)
-        setCartItems(data?.items || [])})
+        setCartItems(data?.items || []);
+      })
       .catch((err) => console.log("Get cart error", err));
-  }
-}, []);
+  }, []);
 
+  /* ================= ADD TO CART ================= */
+  const addToCart = async (product) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login first");
+      return;
+    }
 
-  // =========================
-  // ADD TO CART (BACKEND)
-  // =========================
-const addToCart = async (product) => {
-  const token = localStorage.getItem("token");
+    try {
+      const payload = {
+        productId: product._id,
+        name: product.name,
+         price: Number(
+    product.price
+      .toString()
+      .replace(/[^0-9.]/g, "")
+  ),
+        image: product.image || [],
+      };
 
-  if (!token) {
-    alert("Please login first");
-    return;
-  }
+      const res = await fetch(`http://localhost:5002/addtocart`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
 
-  try {
-    const payload = {
-      productId: product._id,
-      name: product.name,
-      price: Number(product.price),
-      image: product.image || [],
-    };
+      const data = await res.json();
 
-    const data = await addToCartApi(payload);
-    setCartItems(data?.items || []);
-  } catch (err) {
-    console.log("Add to cart error", err);
-  }
-};
+      if (!res.ok) {
+        alert(data.message || "Add to cart failed");
+        return;
+      }
 
-  // =========================
-  // FETCH CATEGORIES
-  // =========================
+      // 🔥 STATE UPDATE HERE ONLY
+      setCartItems(data.items || []);
+    } catch (err) {
+      console.log("Add to cart error", err);
+    }
+  };
+
+  /* ================= FETCH CATEGORIES ================= */
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const mainRes = await fetch(
-          "https://ecommerce-app-1-igf3.onrender.com/main-categories"
-        );
+        const mainRes = await fetch(`https://ecommerce-app-1-igf3.onrender.com/main-categories`);
         const mainData = await mainRes.json();
         setMainCategories(mainData.categories || []);
 
-        const subRes = await fetch(
-          "https://ecommerce-app-1-igf3.onrender.com/sub-categories"
-        );
+        const subRes = await fetch(`https://ecommerce-app-1-igf3.onrender.com/sub-categories`);
         const subData = await subRes.json();
         setSubCategories(subData.subCategories || []);
       } catch (err) {
@@ -120,11 +126,7 @@ const addToCart = async (product) => {
             <Route path="/fashion" element={<Fashion />} />
             <Route path="/checkout" element={<CODCheckout />} />
             <Route path="/order-success" element={<OrderSuccess />} />
-
-            <Route
-              path="/category/:mainCategory"
-              element={<CategoryProducts />}
-            />
+            <Route path="/category/:mainCategory" element={<CategoryProducts />} />
             <Route
               path="/category/:mainCategory/:subCategory"
               element={<CategoryProducts />}

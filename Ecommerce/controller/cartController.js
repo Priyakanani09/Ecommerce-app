@@ -3,34 +3,54 @@ const Cart = require("../model/Cartmodel");
 /* ADD TO CART */
 exports.addToCart = async (req, res) => {
   try {
-    const userId = req.user.id; // ✅ correct
-    const { productId, name, price, image } = req.body;
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
-    let cart = await Cart.findOne({ userId }); // ✅ correct
-    console.log("USER:", req.user);
+    const userId = req.user.id;
+    const { productId } = req.body;
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    let cart = await Cart.findOne({ userId });
 
     if (!cart) {
       cart = await Cart.create({
         userId,
-        items: [{ productId, name, price, image, qty: 1 }],
+        items: [{
+          productId,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          qty: 1,
+        }],
       });
     } else {
-      const index = cart.items.findIndex(
-        (item) => item.productId.toString() === productId.toString()
+      const index = cart.items.findIndex(item =>
+        item.productId.equals(productId)
       );
 
       if (index > -1) {
         cart.items[index].qty += 1;
       } else {
-        cart.items.push({ productId, name, price, image, qty: 1 });
+        cart.items.push({
+          productId,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          qty: 1,
+        });
       }
-
       await cart.save();
     }
 
     res.status(200).json({
       success: true,
-      items: cart.items,
+      message: "Product added to cart",
+      cart,
     });
   } catch (error) {
     console.error("Add to cart error:", error);
@@ -38,17 +58,22 @@ exports.addToCart = async (req, res) => {
   }
 };
 
+
 /* GET USER CART */
 exports.getCart = async (req, res) => {
   try {
     const userId = req.user.id;
-    const cart = await Cart.findOne({ userId});
+
+    const cart = await Cart.findOne({ userId })
+      .populate("items.productId");
 
     res.status(200).json({
       success: true,
+      count: cart ? cart.items.length : 0,
       items: cart ? cart.items : [],
     });
   } catch (error) {
+    console.error("Get cart error:", error);
     res.status(500).json({ message: "Failed to fetch cart" });
   }
 };

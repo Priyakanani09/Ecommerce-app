@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const SECRET_KEY = "cdmi";
 
 module.exports = (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -11,10 +10,8 @@ module.exports = (req, res, next) => {
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, SECRET_KEY);
-     req.user = {
-      id: decoded.id || decoded._id,
-    };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
 
     next();
   } catch (error) {
