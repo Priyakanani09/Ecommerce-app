@@ -14,7 +14,7 @@ function ProductDetail() {
 
   const [allProducts, setAllProducts] = useState([]);
   const [product, setProduct] = useState(null);
-
+  
   const [mainCategoryName, setMainCategoryName] = useState("");
   const [subCategoryName, setSubCategoryName] = useState("");
 

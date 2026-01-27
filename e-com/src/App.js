@@ -34,73 +34,73 @@ function App() {
 
   /* ================= GET CART (ONLY HERE) ================= */
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
+  const token = localStorage.getItem("token");
+  if (!token) return;
 
-    fetch(`https://ecommerce-app-1-igf3.onrender.com/getcart`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setCartItems(data?.items || []);
-      })
-      .catch((err) => console.log("Get cart error", err));
-  }, []);
+  fetch(`https://ecommerce-app-1-igf3.onrender.com/getcart`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      setCartItems(data?.items || []);
+    });
+}, [user]); // 👈 dependency add
 
   /* ================= ADD TO CART ================= */
-  const addToCart = async (product) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Please login first");
-      return;
-    }
+  /* ================= ADD TO CART ================= */
+const addToCart = async (product) => {
+  const token = localStorage.getItem("token");
 
-    try {
-      const payload = {
-        productId: product._id,
-        name: product.name,
-         price: Number(
-    product.price
-      .toString()
-      .replace(/[^0-9.]/g, "")
-  ),
-        image: product.image || [],
-      };
+  if (!token) {
+    alert("Please login first");
+    return;
+  }
 
-      const res = await fetch(`http://localhost:5002/addtocart`, {
+  try {
+    const res = await fetch(
+      "https://ecommerce-app-1-igf3.onrender.com/addtocart",
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        alert(data.message || "Add to cart failed");
-        return;
+        body: JSON.stringify({
+          productId: product._id, // 🔥 only productId is enough
+        }),
       }
+    );
 
-      // 🔥 STATE UPDATE HERE ONLY
-      setCartItems(data.items || []);
-    } catch (err) {
-      console.log("Add to cart error", err);
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message || "Add to cart failed");
+      return;
     }
-  };
+
+    // 🔥 cart state update ONLY HERE
+    setCartItems(data.items || []);
+  } catch (error) {
+    console.log("Add to cart error:", error);
+  }
+};
+
 
   /* ================= FETCH CATEGORIES ================= */
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const mainRes = await fetch(`https://ecommerce-app-1-igf3.onrender.com/main-categories`);
+        const mainRes = await fetch(
+          `https://ecommerce-app-1-igf3.onrender.com/main-categories`,
+        );
         const mainData = await mainRes.json();
         setMainCategories(mainData.categories || []);
 
-        const subRes = await fetch(`https://ecommerce-app-1-igf3.onrender.com/sub-categories`);
+        const subRes = await fetch(
+          `https://ecommerce-app-1-igf3.onrender.com/sub-categories`,
+        );
         const subData = await subRes.json();
         setSubCategories(subData.subCategories || []);
       } catch (err) {
@@ -126,7 +126,10 @@ function App() {
             <Route path="/fashion" element={<Fashion />} />
             <Route path="/checkout" element={<CODCheckout />} />
             <Route path="/order-success" element={<OrderSuccess />} />
-            <Route path="/category/:mainCategory" element={<CategoryProducts />} />
+            <Route
+              path="/category/:mainCategory"
+              element={<CategoryProducts />}
+            />
             <Route
               path="/category/:mainCategory/:subCategory"
               element={<CategoryProducts />}

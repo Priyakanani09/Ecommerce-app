@@ -4,7 +4,6 @@ import "../App.css";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 
-
 function Cart() {
   const { cartItems, setCartItems } = useContext(cartcontext);
   const [showScroll, setShowScroll] = useState(false);
@@ -37,20 +36,46 @@ function Cart() {
     });
   };
 
-  const increaseQty = (index) => {
-    const updated = [...cartItems];
-    updated[index].qty += 1;
-    setCartItems(updated);
+  /* UPDATE QTY */
+  const increaseQty = async (productId, qty) => {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(
+      "https://ecommerce-app-1-igf3.onrender.com/update-qty",
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ productId, qty }),
+      },
+    );
+
+    const data = await res.json();
+    if (data.success) {
+      setCartItems(data.items || []);
+    }
   };
 
-  const decreaseQty = (index) => {
-    const updated = [...cartItems];
-    if (updated[index].qty > 1) {
-      updated[index].qty -= 1;
-    } else {
-      updated.splice(index, 1);
+  /* REMOVE ITEM */
+  const decreaseQty = async (productId) => {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(
+      `https://ecommerce-app-1-igf3.onrender.com/remove-item/${productId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const data = await res.json();
+    if (data.success) {
+      setCartItems(data.items || []);
     }
-    setCartItems(updated);
   };
 
   let total = 0;
@@ -147,7 +172,11 @@ function Cart() {
                     <div className="d-flex justify-content-center align-items-center gap-3 mt-2">
                       <button
                         className="btn btn-danger"
-                        onClick={() => decreaseQty(index)}
+                        onClick={() =>
+                          item.qty === 1
+                            ? decreaseQty(item.productId)
+                            : increaseQty(item.productId, item.qty - 1)
+                        }
                       >
                         -
                       </button>
@@ -156,7 +185,9 @@ function Cart() {
 
                       <button
                         className="btn btn-success"
-                        onClick={() => increaseQty(index)}
+                        onClick={() =>
+                          increaseQty(item.productId, item.qty + 1)
+                        }
                       >
                         +
                       </button>
