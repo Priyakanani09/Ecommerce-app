@@ -32,58 +32,66 @@ function App() {
     if (storedUser) setUser(JSON.parse(storedUser));
   }, []);
 
-  /* ================= GET CART (ONLY HERE) ================= */
   useEffect(() => {
-  const token = localStorage.getItem("token");
-  if (!token) return;
+    const token = localStorage.getItem("token");
+    if (!token || !user) return;
 
-  fetch(`https://ecommerce-app-1-igf3.onrender.com/getcart`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      setCartItems(data?.items || []);
-    });
-}, [user]); // 👈 dependency add
+    fetch("https://ecommerce-app-1-igf3.onrender.com/getcart", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        // 🔥 IMPORTANT CHANGE HERE
+        setCartItems(data?.cartItems || []);
+      })
+      .catch((err) => console.log("Get cart error", err));
+  }, [user]);
 
   /* ================= ADD TO CART ================= */
-const addToCart = async (productId) => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    alert("Please login first");
-    return;
-  }
-
-  try {
-    const res = await fetch(
-      "https://ecommerce-app-1-igf3.onrender.com/addtocart",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ productId }),
-      }
-    );
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.message || "Add to cart failed");
+  const addToCart = async (productId) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login first");
       return;
     }
 
-    setCartItems(data.items || []);
-  } catch (error) {
-    console.log("Add to cart error:", error);
-  }
-};
+    try {
+      const res = await fetch(
+        "https://ecommerce-app-1-igf3.onrender.com/addtocart",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ productId }),
+        },
+      );
 
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.message || "Add to cart failed");
+        return;
+      }
 
+      // 🔥 FETCH UPDATED CART
+      const cartRes = await fetch(
+        "https://ecommerce-app-1-igf3.onrender.com/getcart",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const cartData = await cartRes.json();
+      setCartItems(cartData.cartItems || []);
+    } catch (err) {
+      console.log("Add to cart error", err);
+    }
+  };
 
   /* ================= FETCH CATEGORIES ================= */
   useEffect(() => {

@@ -10,14 +10,30 @@ function NavBar() {
   const [suggestions, setSuggestions] = useState([]);
   const [openId, setOpenId] = useState(null);
   const { user, setUser } = useContext(AuthContext);
-  const { cartItems } = useContext(cartcontext);
+  const { cartItems, setCartItems } = useContext(cartcontext);
   const { mainCategories, subCategories } = useContext(CategoryContext);
   const navigate = useNavigate();
 
-  const logout = () => {
+  const logout = async () => {
+    const token = localStorage.getItem("token");
+
+    // 🔴 Backend cart clear (optional but best)
+    if (token) {
+      try {
+        await fetch("https://ecommerce-app-1-igf3.onrender.com/clearcart", {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } catch (err) {
+        console.error("Failed to clear cart on logout", err);
+      }
+    }
+
+    setCartItems([]);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    localStorage.clear();
     setUser(null);
     navigate("/");
   };
@@ -42,7 +58,7 @@ function NavBar() {
           `https://ecommerce-app-1-igf3.onrender.com/search?query=${search}`,
         );
         const data = await res.json();
-       setSuggestions(data.slice(0, 8));
+        setSuggestions(data.slice(0, 8));
       } catch (err) {
         console.error(err);
       }

@@ -25,8 +25,6 @@ function Login() {
       if (result.message === "Login successful" && result.user) {
         localStorage.setItem("user", JSON.stringify(result.user));
         localStorage.setItem("token", result.token);
-
-         console.log("TOKEN STORED =>", localStorage.getItem("token"));
         
         setUser(result.user);
         navigate("/", { replace: true });

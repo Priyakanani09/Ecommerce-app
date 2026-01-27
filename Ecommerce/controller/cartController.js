@@ -65,7 +65,7 @@ exports.updateQty = async (req, res) => {
       await Cart.findOneAndUpdate(
         { userId, productId },
         { qty },
-        { new: true }
+        { new: true },
       );
     }
 

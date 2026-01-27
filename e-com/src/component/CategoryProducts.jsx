@@ -1,4 +1,4 @@
-import React, { useContext,useEffect,useState,useCallback} from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Breadcrumbs from "./Breadcrumbs";
 import { cartcontext, CategoryContext } from "../App";
@@ -45,7 +45,7 @@ function CategoryProducts() {
         setLoading(false);
       }
     },
-    [mainCategory, subCategory]
+    [mainCategory, subCategory],
   );
 
   useEffect(() => {
@@ -66,6 +66,11 @@ function CategoryProducts() {
   }, [page, fetchData]);
 
   const handleAddToCart = (product) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     addToCart(product._id);
     navigate("/cart");
   };

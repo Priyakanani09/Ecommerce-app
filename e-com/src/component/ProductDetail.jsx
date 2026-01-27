@@ -91,6 +91,11 @@ function ProductDetail() {
   );
 
   const handleAddToCart = (product) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     addToCart(product._id);
     navigate("/cart");
   };

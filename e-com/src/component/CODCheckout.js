@@ -24,8 +24,8 @@ function CODCheckout() {
   const getCleanPrice = (price) =>
     parseFloat(price?.toString().replace(/[^0-9.]/g, "")) || 0;
 
-  const subtotal = cartItems.reduce((acc, item) => {
-    const price = getCleanPrice(item.price);
+ const subtotal = cartItems.reduce((acc, item) => {
+    const price = getCleanPrice(item.price || item.productId?.price);
     const qty = item.qty || 1;
     return acc + price * qty;
   }, 0);
@@ -63,10 +63,10 @@ function CODCheckout() {
           pin: form.pin,
         },
       },
-      items: cartItems.map((item) => ({
-        productId: item._id,
-        name: item.name,
-        price: getCleanPrice(item.price),
+     items: cartItems.map((item) => ({
+        productId: item.productId?._id || item.productId,
+        name: item.productId?.name,
+        price: getCleanPrice(item.price || item.productId?.price),
         qty: item.qty || 1,
       })),
       totalAmount: subtotal,
@@ -233,11 +233,11 @@ function CODCheckout() {
           {cartItems.map((item) => (
             <div key={item._id} className="flex justify-between text-sm mb-2">
               <span>
-                {item.name} × {item.qty || 1}
+               {item.productId?.name} × {item.qty || 1}
               </span>
               <span className="text-green-600 flex items-center">
                 <MdCurrencyRupee size={14} className="-mr-1 mt-1" />
-                {(getCleanPrice(item.price) * (item.qty || 1)).toLocaleString(
+                {(getCleanPrice(item.productId?.price) * (item.qty || 1)).toLocaleString(
                   "en-IN",
                 )}
               </span>

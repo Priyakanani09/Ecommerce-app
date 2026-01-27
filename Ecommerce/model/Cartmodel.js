@@ -22,4 +22,9 @@ const cartSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+cartSchema.index(
+  { userId: 1, productId: 1 },
+  { unique: true }
+);
+  
 module.exports = mongoose.model("Cart", cartSchema);
