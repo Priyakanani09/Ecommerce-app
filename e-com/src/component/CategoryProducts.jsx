@@ -4,11 +4,12 @@ import Breadcrumbs from "./Breadcrumbs";
 import { cartcontext, CategoryContext } from "../App";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { skeletonBlock, skeletonLine } from "../utils/skeletons";
+import { toast } from "react-toastify";
 
 function CategoryProducts() {
   const { mainCategory, subCategory } = useParams();
   const navigate = useNavigate();
-  const { addToCart } = useContext(cartcontext);
+  const { addToCart, cartItems } = useContext(cartcontext);
   const { mainCategories, subCategories } = useContext(CategoryContext);
 
   const [products, setProducts] = useState([]);
@@ -20,6 +21,9 @@ function CategoryProducts() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [showScroll, setShowScroll] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const fetchData = useCallback(
     async (pageNumber) => {
@@ -68,11 +72,22 @@ function CategoryProducts() {
   const handleAddToCart = (product) => {
     const token = localStorage.getItem("token");
     if (!token) {
+      alert("Please login first");
       navigate("/login");
       return;
     }
+
+    const alreadyInCart = cartItems.some(
+      (item) => item.productId?._id === product._id,
+    );
+
+    if (alreadyInCart) {
+      toast.info("Already in cart");
+      setSelectedProduct(product);
+      setShowModal(true); 
+      return;
+    }
     addToCart(product._id);
-    navigate("/cart");
   };
 
   useEffect(() => {

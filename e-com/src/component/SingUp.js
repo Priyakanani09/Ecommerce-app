@@ -32,7 +32,7 @@ function Signup() {
       .then((data) => {
         if (data.user) {
           localStorage.setItem("user", JSON.stringify(data.user));
-          localStorage.setItem("token", data.token);  
+          localStorage.setItem("token", data.token);
           setUser(data.user);
           navigate("/", { replace: true });
         } else {
@@ -98,18 +98,22 @@ function Signup() {
           />
         </Form.Group>
 
-        {error && (
-  Array.isArray(error) ? (
-    <ul style={{ color: "red", paddingLeft: "20px" }}>
-      {error.map((msg, index) => (
-        <li key={index}>{msg}</li>
-      ))}
-    </ul>
-  ) : (
-    <p style={{ color: "red" }}>{error}</p>
-  )
-)}
-
+        {error && Array.isArray(error) && (
+          <ul
+            style={{
+              color: "red",
+              paddingLeft: "15px",
+              listStyleType: "disc",
+              display: "block",
+            }}
+          >
+            {error.map((msg, index) => (
+              <li key={index} style={{ marginBottom: "6px" }}>
+                {msg}
+              </li>
+            ))}
+          </ul>
+        )}
 
         <Button
           type="submit"

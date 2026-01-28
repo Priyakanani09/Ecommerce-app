@@ -203,28 +203,16 @@ function Cart() {
         <>
           <button
             onClick={scrollToTop}
-            className="btn btn-secondary"
-            style={{
-              position: "fixed",
-              bottom: "80px",
-              right: "20px",
-              borderRadius: "50%",
-            }}
+            className="btn btn-secondary d-flex align-items-center justify-content-center scroll-btn-up"
           >
-            <FaArrowUp />
+            <FaArrowUp size={16} />
           </button>
 
           <button
             onClick={scrollToBottom}
-            className="btn btn-secondary"
-            style={{
-              position: "fixed",
-              bottom: "30px",
-              right: "20px",
-              borderRadius: "50%",
-            }}
+            className="btn btn-secondary d-flex align-items-center justify-content-center scroll-btn-down "
           >
-            <FaArrowDown />
+            <FaArrowDown size={16} />
           </button>
         </>
       )}

@@ -1,5 +1,8 @@
 import "./App.css";
 import "react-loading-skeleton/dist/skeleton.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { Route, Routes } from "react-router-dom";
 import { createContext, useEffect, useState } from "react";
 
@@ -76,6 +79,8 @@ function App() {
         return;
       }
 
+      toast.success("Product added to cart");
+
       // 🔥 FETCH UPDATED CART
       const cartRes = await fetch(
         "https://ecommerce-app-1-igf3.onrender.com/getcart",
@@ -89,6 +94,7 @@ function App() {
       const cartData = await cartRes.json();
       setCartItems(cartData.cartItems || []);
     } catch (err) {
+      toast.error("Something went wrong");
       console.log("Add to cart error", err);
     }
   };
@@ -121,6 +127,14 @@ function App() {
       <cartcontext.Provider value={{ cartItems, setCartItems, addToCart }}>
         <CategoryContext.Provider value={{ mainCategories, subCategories }}>
           <NavBar />
+          <ToastContainer
+            position="bottom-left"
+            autoClose={1000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            pauseOnHover
+          />
 
           <Routes>
             <Route path="/" element={<Home />} />

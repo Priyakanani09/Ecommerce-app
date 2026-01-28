@@ -15,22 +15,6 @@ function NavBar() {
   const navigate = useNavigate();
 
   const logout = async () => {
-    const token = localStorage.getItem("token");
-
-    // 🔴 Backend cart clear (optional but best)
-    if (token) {
-      try {
-        await fetch("https://ecommerce-app-1-igf3.onrender.com/clearcart", {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-      } catch (err) {
-        console.error("Failed to clear cart on logout", err);
-      }
-    }
-
     setCartItems([]);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
