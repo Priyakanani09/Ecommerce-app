@@ -7,6 +7,7 @@ const ordercontroller = require("../controller/ordercontroller");
 const maincategory = require("../controller/maincategorycontroller")
 const subCategoryController = require("../controller/subcategorycontroller");
 const recentlyViewed = require('../controller/recentlyViewedController');
+const watchlist = require('../controller/watchlistController')
 const cart = require('../controller/cartController')
 var jwtAuth = require('../middleware/authMiddleware');
 const admin = require('../middleware/admin');
@@ -60,5 +61,11 @@ router.get("/getcart", jwtAuth, cart.getCart);
 router.put("/updatecart", jwtAuth, cart.updateQty);
 router.delete("/removecart/:id", jwtAuth, cart.removeItem);
 router.delete("/clearcart", jwtAuth, cart.clearCart);
+
+//watchlist api
+router.post("/add-watchlist", jwtAuth, watchlist.addToWatchlist);
+router.get("/get-watchlist", jwtAuth, watchlist.getWatchlist);
+router.delete("/remove-watchlist/:productId", jwtAuth,watchlist.removeFromWatchlist);
+
 
 module.exports = router;

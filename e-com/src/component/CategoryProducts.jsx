@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState, useCallback } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Breadcrumbs from "./Breadcrumbs";
 import { cartcontext, CategoryContext } from "../App";
-import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { FaArrowUp, FaArrowDown, FaHeart } from "react-icons/fa";
 import { skeletonBlock, skeletonLine } from "../utils/skeletons";
 import { toast } from "react-toastify";
 
@@ -21,9 +21,6 @@ function CategoryProducts() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [showScroll, setShowScroll] = useState(false);
-
-  const [showModal, setShowModal] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
 
   const fetchData = useCallback(
     async (pageNumber) => {
@@ -64,6 +61,38 @@ function CategoryProducts() {
     setPage(1);
   }, [mainCategory, subCategory]);
 
+  const handleAddToWatchlist = async (productId) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        "https://ecommerce-app-1-igf3.onrender.com/add-watchlist",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ productId }),
+        },
+      );
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.info(data.message);
+        return;
+      }
+
+      toast.success("Added to watchlist ❤️");
+    } catch (err) {
+      toast.error("Something went wrong");
+    }
+  };
   useEffect(() => {
     fetchData(page);
     window.scrollTo({ top: 0 });
@@ -83,8 +112,6 @@ function CategoryProducts() {
 
     if (alreadyInCart) {
       toast.info("Already in cart");
-      setSelectedProduct(product);
-      setShowModal(true); 
       return;
     }
     addToCart(product._id);
@@ -143,7 +170,23 @@ function CategoryProducts() {
         ) : (
           products.map((p) => (
             <div key={p._id} className="col-6 col-sm-6 col-md-3 mb-4">
-              <div className="card p-3 h-100">
+              <div className="card p-3 h-100 position-relative">
+                <button
+                  className="btn position-absolute top-0 end-0 m-2"
+                  style={{
+                    background: "none",
+                    border: "none",
+                    zIndex: 10, // ⭐ IMPORTANT
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault(); // ⭐ IMPORTANT
+                    e.stopPropagation();
+                    handleAddToWatchlist(p._id);
+                  }}
+                >
+                  <FaHeart color="gray" size={18} />
+                </button>
+
                 <Link
                   to={`/product/${p.category?._id}/${p.subCategory?._id}/${p._id}`}
                 >

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaSearch, FaShoppingCart, FaAngleDown } from "react-icons/fa";
+import { FaHeart, FaSearch, FaShoppingCart, FaAngleDown } from "react-icons/fa";
 import { cartcontext } from "../App";
 import { AuthContext } from "../App";
 import { CategoryContext } from "../App";
@@ -91,6 +91,10 @@ function NavBar() {
               </>
             )}
 
+            <Link to="/watchlist" className="relative">
+              <FaHeart className="text-xl md:text-2xl text-red-500 hover:text-red-600" />
+            </Link>
+            
             <Link to="/cart" className="relative">
               <FaShoppingCart className="text-xl md:text-2xl text-gray-700  hover:text-blue-500" />
               <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-1.5 rounded-full">

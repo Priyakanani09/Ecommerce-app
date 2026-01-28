@@ -93,7 +93,7 @@ function Cart() {
 
       <h4 className="text-center text-success mb-1">Subtotal: ₹{total}</h4>
       <h6 className="text-center text-muted mb-3">Delivery: FREE</h6>
-
+    
       {cartItems.length > 0 && (
         <div className="d-flex justify-content-center gap-3 mb-4">
           <button
