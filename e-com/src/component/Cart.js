@@ -2,6 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { cartcontext } from "../App";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { toast } from "react-toastify";
+
 
 function Cart() {
   const { cartItems, setCartItems } = useContext(cartcontext);
@@ -69,6 +71,7 @@ function Cart() {
       const data = await res.json();
       if (data.success) {
         setCartItems(data.items || data.cartItems || []);
+        toast.error("Item removed from cart");
       }
     } catch (err) {
       console.error(err);

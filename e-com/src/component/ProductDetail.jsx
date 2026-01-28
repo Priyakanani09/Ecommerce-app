@@ -4,12 +4,13 @@ import ImageGallery from "./ImageGallery";
 import { cartcontext, CategoryContext } from "../App";
 import { FaShoppingCart, FaBolt, FaArrowUp, FaArrowDown } from "react-icons/fa";
 import Breadcrumbs from "./Breadcrumbs";
+import { toast } from "react-toastify";
 
 function ProductDetail() {
   const { id, mainCategory, subCategory } = useParams();
   const navigate = useNavigate();
 
-  const { addToCart } = useContext(cartcontext);
+  const { addToCart,cartItems } = useContext(cartcontext);
   const { mainCategories, subCategories } = useContext(CategoryContext);
 
   const [allProducts, setAllProducts] = useState([]);
@@ -19,6 +20,9 @@ function ProductDetail() {
   const [subCategoryName, setSubCategoryName] = useState("");
 
   const [showScroll, setShowScroll] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -91,15 +95,26 @@ function ProductDetail() {
   );
 
   const handleAddToCart = (product) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Please login first");
-      navigate("/login");
-      return;
-    }
-    addToCart(product._id);
-    navigate("/cart");
-  };
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please login first");
+        navigate("/login");
+        return;
+      }
+  
+      const alreadyInCart = cartItems.some(
+        (item) => item.productId?._id === product._id,
+      );
+  
+      if (alreadyInCart) {
+        toast.info("Already in cart");
+        setSelectedProduct(product);
+        setShowModal(true); 
+        return;
+      }
+      addToCart(product._id);
+    };
+  
 
   const buyNow = (item) => {
    const token = localStorage.getItem("token");
