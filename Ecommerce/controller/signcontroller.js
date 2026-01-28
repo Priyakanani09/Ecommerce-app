@@ -14,12 +14,13 @@ exports.register = async (req, res) => {
 
     if (!passwordRegex.test(password)) {
       return res.status(400).json({
-        message: `
-          • Password must be at least 12 characters
-          • Include 1 uppercase letter (A–Z)
-          • Include lowercase letter (a–z)
-          • Include number (0–9)
-          • Include 1 special symbol (@ # $ %)`,
+       message: [
+    "Password must be at least 12 characters",
+    "Include 1 uppercase letter (A–Z)",
+    "Include 1 lowercase letter (a–z)",
+    "Include 1 number (0–9)",
+    "Include 1 special symbol (@ # $ %)",
+  ],
       });
     }
 

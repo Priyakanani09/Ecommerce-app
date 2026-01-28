@@ -98,7 +98,18 @@ function Signup() {
           />
         </Form.Group>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && (
+  Array.isArray(error) ? (
+    <ul style={{ color: "red", paddingLeft: "20px" }}>
+      {error.map((msg, index) => (
+        <li key={index}>{msg}</li>
+      ))}
+    </ul>
+  ) : (
+    <p style={{ color: "red" }}>{error}</p>
+  )
+)}
+
 
         <Button
           type="submit"
