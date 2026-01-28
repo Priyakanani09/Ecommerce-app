@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { AuthContext } from "../App";
 
@@ -12,20 +12,23 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("https://ecommerce-app-1-igf3.onrender.com/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const res = await fetch(
+        "https://ecommerce-app-1-igf3.onrender.com/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
         },
-        body: JSON.stringify({ email, password }),
-      });
+      );
 
       const result = await res.json();
 
       if (result.message === "Login successful" && result.user) {
         localStorage.setItem("user", JSON.stringify(result.user));
         localStorage.setItem("token", result.token);
-        
+
         setUser(result.user);
         navigate("/", { replace: true });
       } else {
@@ -67,12 +70,22 @@ function Login() {
         </Form.Group>
 
         {/* Button */}
-        <Button variant="primary" type="submit"  className="w-36 mx-auto d-block">
+        <Button
+          variant="primary"
+          type="submit"
+          className="w-36 mx-auto d-block"
+        >
           Login
         </Button>
+
+        <div className="text-center mt-3">
+          <span>Don’t have an account? </span>
+          <Link to="/signup" className="text-primary fw-bold">
+            Register here
+          </Link>
+        </div>
       </Form>
     </div>
-
   );
 }
 

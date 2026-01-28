@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { useContext } from "react";
 import { AuthContext } from "../App";
@@ -88,7 +88,7 @@ function Signup() {
         </Form.Group>
 
         {/* Confirm Password */}
-        <Form.Group className="mb-4" controlId="formConfirmPassword">
+        <Form.Group className="mb-3" controlId="formConfirmPassword">
           <Form.Control
             type="password"
             placeholder="Confirm password"
@@ -107,6 +107,13 @@ function Signup() {
         >
           Sign Up
         </Button>
+
+        <div className="text-center mt-3">
+          <span>Already registered? </span>
+          <Link to="/login" className="text-primary fw-bold">
+            Login here
+          </Link>
+        </div>
       </Form>
     </div>
   );
