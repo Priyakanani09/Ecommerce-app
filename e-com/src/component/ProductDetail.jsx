@@ -93,6 +93,7 @@ function ProductDetail() {
   const handleAddToCart = (product) => {
     const token = localStorage.getItem("token");
     if (!token) {
+      alert("Please login first");
       navigate("/login");
       return;
     }
@@ -101,6 +102,12 @@ function ProductDetail() {
   };
 
   const buyNow = (item) => {
+   const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login first");
+      navigate("/login");
+      return;
+    }
     addToCart(item);
     navigate("/checkout");
   };
