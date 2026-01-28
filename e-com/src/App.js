@@ -18,6 +18,7 @@ import Footer from "./component/Footer";
 import CategoryProducts from "./component/CategoryProducts";
 import ProductDetail from "./component/ProductDetail";
 import NavBar from "./component/NavBar";
+import Watchlist from "./component/Watchlist";
 
 export const cartcontext = createContext();
 export const AuthContext = createContext();
@@ -143,6 +144,7 @@ function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/search" element={<Search />} />
             <Route path="/fashion" element={<Fashion />} />
+            <Route path="/watchlist" element={ <Watchlist />} />
             <Route path="/checkout" element={<CODCheckout />} />
             <Route path="/order-success" element={<OrderSuccess />} />
             <Route

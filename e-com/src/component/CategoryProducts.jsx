@@ -18,6 +18,9 @@ function CategoryProducts() {
   const [mainCategoryName, setMainCategoryName] = useState("");
   const [subCategoryName, setSubCategoryName] = useState("");
 
+   const [watchlistIds, setWatchlistIds] = useState([]);
+
+
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [showScroll, setShowScroll] = useState(false);
@@ -65,6 +68,7 @@ function CategoryProducts() {
     const token = localStorage.getItem("token");
 
     if (!token) {
+      alert("Please login first");
       navigate("/login");
       return;
     }
@@ -87,12 +91,13 @@ function CategoryProducts() {
         toast.info(data.message);
         return;
       }
-
-      toast.success("Added to watchlist ❤️");
+      setWatchlistIds((prev) => [...prev, productId]);
+      toast.success("Added to watchlist");
     } catch (err) {
       toast.error("Something went wrong");
     }
   };
+
   useEffect(() => {
     fetchData(page);
     window.scrollTo({ top: 0 });
@@ -184,7 +189,14 @@ function CategoryProducts() {
                     handleAddToWatchlist(p._id);
                   }}
                 >
-                  <FaHeart color="gray" size={18} />
+                  <FaHeart
+                    size={18}
+                    color={
+                      watchlistIds.includes(p._id)
+                        ? "red"
+                        : "gray"
+                    }
+                  />
                 </button>
 
                 <Link

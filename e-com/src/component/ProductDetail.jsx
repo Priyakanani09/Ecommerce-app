@@ -2,7 +2,13 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import ImageGallery from "./ImageGallery";
 import { cartcontext, CategoryContext } from "../App";
-import { FaShoppingCart, FaBolt, FaArrowUp, FaArrowDown } from "react-icons/fa";
+import {
+  FaShoppingCart,
+  FaBolt,
+  FaArrowUp,
+  FaArrowDown,
+  FaHeart,
+} from "react-icons/fa";
 import Breadcrumbs from "./Breadcrumbs";
 import { toast } from "react-toastify";
 
@@ -10,7 +16,7 @@ function ProductDetail() {
   const { id, mainCategory, subCategory } = useParams();
   const navigate = useNavigate();
 
-  const { addToCart,cartItems } = useContext(cartcontext);
+  const { addToCart, cartItems } = useContext(cartcontext);
   const { mainCategories, subCategories } = useContext(CategoryContext);
 
   const [allProducts, setAllProducts] = useState([]);
@@ -21,9 +27,6 @@ function ProductDetail() {
 
   const [showScroll, setShowScroll] = useState(false);
 
-  const [showModal, setShowModal] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState(null);
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
@@ -31,15 +34,15 @@ function ProductDetail() {
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
-      const res = await fetch(
-        "https://ecommerce-app-1-igf3.onrender.com/products?allproduct=true"
-      );
-      const data = await res.json();
-      setAllProducts(data.products);
-    } catch (err) {
-      console.error(err);
-    } 
-  }
+        const res = await fetch(
+          "https://ecommerce-app-1-igf3.onrender.com/products?allproduct=true",
+        );
+        const data = await res.json();
+        setAllProducts(data.products);
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
     fetchAllProducts();
   }, []);
@@ -87,6 +90,39 @@ function ProductDetail() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const handleAddToWatchlist = async (productId) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        "https://ecommerce-app-1-igf3.onrender.com/add-watchlist",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ productId }),
+        },
+      );
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.info(data.message);
+        return;
+      }
+
+      toast.success("Added to watchlist");
+    } catch (err) {
+      toast.error("Something went wrong");
+    }
+  };
+
   if (!product) return <h4 className="text-center mt-5">Loading...</h4>;
 
   const related = allProducts.filter(
@@ -95,29 +131,26 @@ function ProductDetail() {
   );
 
   const handleAddToCart = (product) => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Please login first");
-        navigate("/login");
-        return;
-      }
-  
-      const alreadyInCart = cartItems.some(
-        (item) => item.productId?._id === product._id,
-      );
-  
-      if (alreadyInCart) {
-        toast.info("Already in cart");
-        setSelectedProduct(product);
-        setShowModal(true); 
-        return;
-      }
-      addToCart(product._id);
-    };
-  
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login first");
+      navigate("/login");
+      return;
+    }
+
+    const alreadyInCart = cartItems.some(
+      (item) => item.productId?._id === product._id,
+    );
+
+    if (alreadyInCart) {
+      toast.info("Already in cart");
+      return;
+    }
+    addToCart(product._id);
+  };
 
   const buyNow = (item) => {
-   const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
     if (!token) {
       alert("Please login first");
       navigate("/login");
@@ -155,7 +188,26 @@ function ProductDetail() {
             />
           </div>
 
-          <ImageGallery images={product.image} />
+          <div className="position-relative">
+            {/* ❤️ WATCHLIST ICON ON IMAGE */}
+            <button
+              className="btn position-absolute top-3 end-3 m-2 p-2"
+              style={{
+                background: "rgba(255,255,255,0.9)",
+                borderRadius: "50%",
+                zIndex: 10,
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleAddToWatchlist(product._id);
+              }}
+            >
+              <FaHeart color="red" size={18} />
+            </button>
+
+            <ImageGallery images={product.image} />
+          </div>
         </div>
 
         <div className="col-md-7">
@@ -199,6 +251,22 @@ function ProductDetail() {
         {related.map((p) => (
           <div key={p._id} className="col-6 col-sm-6 col-md-3 mb-4">
             <div className="card p-3 h-100">
+              <button
+                 className="btn position-absolute top-3 end-3 m-2 p-2"
+                style={{
+                  background: "rgba(255,255,255,0.9)",
+                  borderRadius: "50%",
+                  border: "none",
+                  zIndex: 10, // ⭐ IMPORTANT
+                }}
+                onClick={(e) => {
+                  e.preventDefault(); // ⭐ IMPORTANT
+                  e.stopPropagation();
+                  handleAddToWatchlist(p._id);
+                }}
+              >
+                <FaHeart color="gray" size={18} />
+              </button>
               <Link
                 to={`/product/${p.category?._id}/${p.subCategory?._id}/${p._id}`}
               >

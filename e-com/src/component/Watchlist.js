@@ -51,7 +51,6 @@ function Watchlist() {
       prev.filter((item) => item.productId._id !== productId)
     );
 
-    toast.info("Removed from watchlist");
   };
 
   // 🔹 ADD TO CART
@@ -154,7 +153,7 @@ function Watchlist() {
                   className="btn btn-outline-danger btn-sm"
                   onClick={() => removeFromWatchlist(product._id)}
                 >
-                  <FaHeartBroken /> Remove
+                  Remove
                 </button>
               </div>
             </div>
