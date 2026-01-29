@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { FaHeartBroken } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { cartcontext } from "../App";
 
@@ -79,7 +78,7 @@ function Watchlist() {
   if (loading) return <h4 className="text-center">Loading...</h4>;
 
   if (watchlist.length === 0)
-    return <h4 className="text-center mt-5">No items in watchlist ❤️</h4>;
+    return <h4 className="text-center mt-5">No items in watchlist</h4>;
 
   return (
     <div className="container mt-4">

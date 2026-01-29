@@ -18,13 +18,13 @@ function CategoryProducts() {
   const [mainCategoryName, setMainCategoryName] = useState("");
   const [subCategoryName, setSubCategoryName] = useState("");
 
-   const [watchlistIds, setWatchlistIds] = useState([]);
-
+  const [watchlistIds, setWatchlistIds] = useState([]);
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [showScroll, setShowScroll] = useState(false);
 
+  /* ================= FETCH PRODUCTS ================= */
   const fetchData = useCallback(
     async (pageNumber) => {
       try {
@@ -32,11 +32,8 @@ function CategoryProducts() {
 
         let url = `https://ecommerce-app-1-igf3.onrender.com/products?page=${pageNumber}`;
 
-        if (subCategory) {
-          url += `&subCategory=${subCategory}`;
-        } else if (mainCategory) {
-          url += `&mainCategory=${mainCategory}`;
-        }
+        if (subCategory) url += `&subCategory=${subCategory}`;
+        else if (mainCategory) url += `&mainCategory=${mainCategory}`;
 
         const res = await fetch(url);
         const data = await res.json();
@@ -44,14 +41,44 @@ function CategoryProducts() {
         setProducts(data.products || []);
         setTotalPages(data.totalPages || 1);
       } catch (err) {
-        console.error("Fetch error:", err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
     },
-    [mainCategory, subCategory],
+    [mainCategory, subCategory]
   );
 
+  /* ================= FETCH WATCHLIST ================= */
+  const fetchWatchlist = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(
+        "https://ecommerce-app-1-igf3.onrender.com/get-watchlist",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await res.json();
+
+      const ids = (data.watchlist || []).map(
+        (item) => item.productId._id
+      );
+      setWatchlistIds(ids);
+    } catch (err) {
+      console.error("Watchlist fetch error");
+    }
+  };
+
+  useEffect(() => {
+    fetchWatchlist();
+  }, []);
+
+  /* ================= CATEGORY NAME ================= */
   useEffect(() => {
     const main = mainCategories.find((c) => c._id === mainCategory);
     setMainCategoryName(main?.name || "");
@@ -64,17 +91,45 @@ function CategoryProducts() {
     setPage(1);
   }, [mainCategory, subCategory]);
 
-  const handleAddToWatchlist = async (productId) => {
-    const token = localStorage.getItem("token");
+  useEffect(() => {
+    fetchData(page);
+    window.scrollTo({ top: 0 });
+  }, [page, fetchData]);
 
+  /* ================= TOGGLE WATCHLIST ================= */
+  const toggleWatchlist = async (productId) => {
+    const token = localStorage.getItem("token");
     if (!token) {
-      alert("Please login first");
       navigate("/login");
       return;
     }
 
+    // REMOVE
+    if (watchlistIds.includes(productId)) {
+      try {
+        await fetch(
+          `https://ecommerce-app-1-igf3.onrender.com/remove-watchlist/${productId}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setWatchlistIds((prev) =>
+          prev.filter((id) => id !== productId)
+        );
+        toast.info("Removed from watchlist");
+      } catch {
+        toast.error("Remove failed");
+      }
+      return;
+    }
+
+    // ADD
     try {
-      const res = await fetch(
+      await fetch(
         "https://ecommerce-app-1-igf3.onrender.com/add-watchlist",
         {
           method: "POST",
@@ -83,67 +138,52 @@ function CategoryProducts() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ productId }),
-        },
+        }
       );
-      const data = await res.json();
 
-      if (!res.ok) {
-        toast.info(data.message);
-        return;
-      }
       setWatchlistIds((prev) => [...prev, productId]);
       toast.success("Added to watchlist");
-    } catch (err) {
-      toast.error("Something went wrong");
+    } catch {
+      toast.error("Add failed");
     }
   };
 
-  useEffect(() => {
-    fetchData(page);
-    window.scrollTo({ top: 0 });
-  }, [page, fetchData]);
-
+  /* ================= ADD TO CART ================= */
   const handleAddToCart = (product) => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Please login first");
       navigate("/login");
       return;
     }
 
-    const alreadyInCart = cartItems.some(
-      (item) => item.productId?._id === product._id,
+    const exists = cartItems.some(
+      (item) => item.productId?._id === product._id
     );
 
-    if (alreadyInCart) {
+    if (exists) {
       toast.info("Already in cart");
       return;
     }
+
     addToCart(product._id);
+    toast.success("Added to cart");
   };
 
+  /* ================= SCROLL ================= */
   useEffect(() => {
-    const handleScroll = () => {
-      setShowScroll(window.scrollY > 100);
-    };
-
+    const handleScroll = () => setShowScroll(window.scrollY > 100);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
+  const scrollToTop = () =>
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
-  const scrollToBottom = () => {
+  const scrollToBottom = () =>
     window.scrollTo({
       top: document.documentElement.scrollHeight,
       behavior: "smooth",
     });
-  };
 
   const nextPage = () => page < totalPages && setPage(page + 1);
   const prevPage = () => page > 1 && setPage(page - 1);
@@ -157,12 +197,13 @@ function CategoryProducts() {
       />
 
       <h4 className="mb-4">
-        {(subCategoryName || mainCategoryName || "Products") + " Products"}
+        {(subCategoryName || mainCategoryName || "Products") +
+          " Products"}
       </h4>
 
       <div className="row">
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {Array.from({ length: 8 }).map((_, i) => (
               <div className="card p-3" key={i}>
                 {skeletonBlock("100%", 280)}
@@ -174,19 +215,16 @@ function CategoryProducts() {
           </div>
         ) : (
           products.map((p) => (
-            <div key={p._id} className="col-6 col-sm-6 col-md-3 mb-4">
+            <div key={p._id} className="col-6 col-md-3 mb-4">
               <div className="card p-3 h-100 position-relative">
+                {/* ❤️ HEART */}
                 <button
                   className="btn position-absolute top-0 end-0 m-2"
-                  style={{
-                    background: "none",
-                    border: "none",
-                    zIndex: 10, // ⭐ IMPORTANT
-                  }}
+                  style={{ background: "none", border: "none" }}
                   onClick={(e) => {
-                    e.preventDefault(); // ⭐ IMPORTANT
+                    e.preventDefault();
                     e.stopPropagation();
-                    handleAddToWatchlist(p._id);
+                    toggleWatchlist(p._id);
                   }}
                 >
                   <FaHeart
@@ -203,47 +241,48 @@ function CategoryProducts() {
                   to={`/product/${p.category?._id}/${p.subCategory?._id}/${p._id}`}
                 >
                   {p.image && p.image.length > 0 && (
-                    <div
-                      id={`carousel-${p._id}`}
-                      className="carousel slide"
-                      data-bs-ride="carousel"
-                      data-bs-interval="3000"
-                      data-bs-pause="hover"
-                    >
-                      <div className="carousel-indicators custom-indicators">
-                        {p.image.map((_, index) => (
-                          <button
-                            key={index}
-                            type="button"
-                            data-bs-target={`#carousel-${p._id}`}
-                            data-bs-slide-to={index}
-                            className={index === 0 ? "active" : ""}
-                            aria-current={index === 0 ? "true" : "false"}
-                            aria-label={`Slide ${index + 1}`}
-                          ></button>
-                        ))}
-                      </div>
-
-                      <div className="carousel-inner">
-                        {p.image.map((img, index) => (
-                          <div
-                            key={index}
-                            className={`carousel-item ${
-                              index === 0 ? "active" : ""
-                            }`}
-                          >
-                            <img
-                              src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
-                              className="d-block product-img "
-                              alt={`${p.name} ${index + 1}`}
-                            />
-                          </div>
-                        ))}
-                      </div>
+                  <div
+                    id={`carousel-${p._id}`}
+                    className="carousel slide"
+                    data-bs-ride="carousel"
+                    data-bs-interval="3000"
+                    data-bs-pause="hover"
+                  >
+                    <div className="carousel-indicators custom-indicators">
+                      {p.image.map((_, index) => (
+                        <button
+                          key={index}
+                          type="button"
+                          data-bs-target={`#carousel-${p._id}`}
+                          data-bs-slide-to={index}
+                          className={index === 0 ? "active" : ""}
+                          aria-current={index === 0 ? "true" : "false"}
+                          aria-label={`Slide ${index + 1}`}
+                        ></button>
+                      ))}
                     </div>
-                  )}
+
+                    <div className="carousel-inner">
+                      {p.image.map((img, index) => (
+                        <div
+                          key={index}
+                          className={`carousel-item ${
+                            index === 0 ? "active" : ""
+                          }`}
+                        >
+                          <img
+                            src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
+                            className="d-block product-img "
+                            alt={`${p.name} ${index + 1}`}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 </Link>
-                <div className="card-body text-center product-card">
+
+                <div className="card-body text-center">
                   <h5>{p.name}</h5>
                   <p className="text-muted">{p.description}</p>
                   <p className="fw-bold text-primary">₹{p.price}</p>
@@ -284,14 +323,14 @@ function CategoryProducts() {
         <>
           <button
             onClick={scrollToTop}
-            className="btn btn-secondary d-flex align-items-center justify-content-center scroll-btn-up"
+            className="btn btn-secondary scroll-btn-up"
           >
             <FaArrowUp size={16} />
           </button>
 
           <button
             onClick={scrollToBottom}
-            className="btn btn-secondary d-flex align-items-center justify-content-center scroll-btn-down "
+            className="btn btn-secondary scroll-btn-down"
           >
             <FaArrowDown size={16} />
           </button>
