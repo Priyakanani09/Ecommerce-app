@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { toast } from "react-toastify";
 
-
 function Cart() {
   const { cartItems, setCartItems } = useContext(cartcontext);
   const [showScroll, setShowScroll] = useState(false);
@@ -93,7 +92,7 @@ function Cart() {
 
       <h4 className="text-center text-success mb-1">Subtotal: ₹{total}</h4>
       <h6 className="text-center text-muted mb-3">Delivery: FREE</h6>
-    
+
       {cartItems.length > 0 && (
         <div className="d-flex justify-content-center gap-3 mb-4">
           <button
@@ -121,7 +120,7 @@ function Cart() {
             if (!product) return null;
 
             return (
-              <div key={item._id} className="col-md-3 mb-4">
+              <div key={item._id} className="col-6 col-md-3 mb-4">
                 <div className="card shadow p-3 h-100">
                   <Link
                     to={`/product/${product.category}/${product.subCategory}/${product._id}`}
@@ -168,7 +167,7 @@ function Cart() {
                     )}
                   </Link>
 
-                  <div className="card-body text-center">
+                  <div className="card-body text-center product-card">
                     <h5>{product.name}</h5>
                     <p className="text-muted">{product.description}</p>
                     <p className="fw-bold text-primary">₹{product.price}</p>

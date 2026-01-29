@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { cartcontext } from "../App";
+import { FaHeart } from "react-icons/fa";
 
 function Watchlist() {
   const [watchlist, setWatchlist] = useState([]);
@@ -15,6 +16,7 @@ function Watchlist() {
     const token = localStorage.getItem("token");
 
     if (!token) {
+      alert("Please login first");
       navigate("/login");
       return;
     }
@@ -36,20 +38,30 @@ function Watchlist() {
   const removeFromWatchlist = async (productId) => {
     const token = localStorage.getItem("token");
 
-    await fetch(
-      `https://ecommerce-app-1-igf3.onrender.com/remove-watchlist/${productId}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
+    try {
+      const res = await fetch(
+        "https://ecommerce-app-1-igf3.onrender.com/add-watchlist",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ productId }),
         },
+      );
+
+      const data = await res.json();
+
+      if (data.action === "removed") {
+        setWatchlist((prev) =>
+          prev.filter((item) => item.productId._id !== productId),
+        );
+        toast.info("Removed from watchlist");
       }
-    );
-
-    setWatchlist((prev) =>
-      prev.filter((item) => item.productId._id !== productId)
-    );
-
+    } catch {
+      toast.error("Failed to update watchlist");
+    }
   };
 
   // 🔹 ADD TO CART
@@ -63,7 +75,7 @@ function Watchlist() {
     }
 
     const alreadyInCart = cartItems.some(
-      (item) => item.productId?._id === product._id
+      (item) => item.productId?._id === product._id,
     );
 
     if (alreadyInCart) {
@@ -91,6 +103,17 @@ function Watchlist() {
           return (
             <div key={item._id} className="col-6 col-md-3 mb-4">
               <div className="card h-100 p-3 position-relative">
+                <button
+                  className="btn position-absolute top-0 end-0 m-2"
+                  style={{ background: "none", border: "none", zIndex: 10 }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    removeFromWatchlist(product._id);
+                  }}
+                >
+                  <FaHeart size={18} color="red" />
+                </button>
 
                 <Link
                   to={`/product/${product.category?._id}/${product.subCategory?._id}/${product._id}`}
@@ -147,13 +170,6 @@ function Watchlist() {
                     Add to Cart
                   </button>
                 </div>
-
-                <button
-                  className="btn btn-outline-danger btn-sm"
-                  onClick={() => removeFromWatchlist(product._id)}
-                >
-                  Remove
-                </button>
               </div>
             </div>
           );

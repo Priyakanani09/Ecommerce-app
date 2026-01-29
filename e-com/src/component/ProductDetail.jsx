@@ -19,6 +19,8 @@ function ProductDetail() {
   const { addToCart, cartItems } = useContext(cartcontext);
   const { mainCategories, subCategories } = useContext(CategoryContext);
 
+  const [watchlistIds, setWatchlistIds] = useState([]);
+
   const [allProducts, setAllProducts] = useState([]);
   const [product, setProduct] = useState(null);
 
@@ -90,10 +92,10 @@ function ProductDetail() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleAddToWatchlist = async (productId) => {
+  const toggleWatchlist = async (productId) => {
     const token = localStorage.getItem("token");
-
     if (!token) {
+      alert("Please login first");
       navigate("/login");
       return;
     }
@@ -110,19 +112,48 @@ function ProductDetail() {
           body: JSON.stringify({ productId }),
         },
       );
+
       const data = await res.json();
 
-      if (!res.ok) {
-        toast.info(data.message);
-        return;
+      if (data.action === "added") {
+        setWatchlistIds((prev) => [...prev, productId]);
+        toast.success("Added to watchlist");
       }
 
-      toast.success("Added to watchlist");
+      if (data.action === "removed") {
+        setWatchlistIds((prev) => prev.filter((id) => id !== productId));
+        toast.info("Removed from watchlist");
+      }
     } catch (err) {
-      toast.error("Something went wrong");
+      toast.error("Watchlist update failed");
     }
   };
 
+  const fetchWatchlist = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const res = await fetch(
+        "https://ecommerce-app-1-igf3.onrender.com/get-watchlist",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      const data = await res.json();
+
+      const ids = (data.watchlist || []).map((item) => item.productId._id);
+      setWatchlistIds(ids);
+    } catch (err) {
+      console.error("Watchlist fetch error");
+    }
+  };
+
+  useEffect(() => {
+    fetchWatchlist();
+  }, []);
   if (!product) return <h4 className="text-center mt-5">Loading...</h4>;
 
   const related = allProducts.filter(
@@ -191,21 +222,19 @@ function ProductDetail() {
           <div className="position-relative">
             {/* ❤️ WATCHLIST ICON ON IMAGE */}
             <button
-              className="btn position-absolute top-3 end-3 m-2 p-2"
-              style={{
-                background: "rgba(255,255,255,0.9)",
-                borderRadius: "50%",
-                zIndex: 10,
-              }}
+              className="btn position-absolute top-0 end-0 m-2"
+              style={{ background: "none", border: "none", zIndex: 10 }}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                handleAddToWatchlist(product._id);
+                toggleWatchlist(product._id);
               }}
             >
-              <FaHeart color="red" size={18} />
+              <FaHeart
+                size={18}
+                color={watchlistIds.includes(product._id) ? "red" : "gray"}
+              />
             </button>
-
             <ImageGallery images={product.image} />
           </div>
         </div>
@@ -252,20 +281,18 @@ function ProductDetail() {
           <div key={p._id} className="col-6 col-sm-6 col-md-3 mb-4">
             <div className="card p-3 h-100">
               <button
-                 className="btn position-absolute top-3 end-3 m-2 p-2"
-                style={{
-                  background: "rgba(255,255,255,0.9)",
-                  borderRadius: "50%",
-                  border: "none",
-                  zIndex: 10, // ⭐ IMPORTANT
-                }}
+                className="btn position-absolute top-0 end-0 m-2"
+                style={{ background: "none", border: "none", zIndex: 10 }}
                 onClick={(e) => {
-                  e.preventDefault(); // ⭐ IMPORTANT
+                  e.preventDefault();
                   e.stopPropagation();
-                  handleAddToWatchlist(p._id);
+                  toggleWatchlist(p._id);
                 }}
               >
-                <FaHeart color="gray" size={18} />
+                <FaHeart
+                  size={18}
+                  color={watchlistIds.includes(p._id) ? "red" : "gray"}
+                />
               </button>
               <Link
                 to={`/product/${p.category?._id}/${p.subCategory?._id}/${p._id}`}

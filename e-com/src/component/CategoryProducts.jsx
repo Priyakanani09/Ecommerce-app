@@ -46,7 +46,7 @@ function CategoryProducts() {
         setLoading(false);
       }
     },
-    [mainCategory, subCategory]
+    [mainCategory, subCategory],
   );
 
   /* ================= FETCH WATCHLIST ================= */
@@ -61,13 +61,11 @@ function CategoryProducts() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       const data = await res.json();
 
-      const ids = (data.watchlist || []).map(
-        (item) => item.productId._id
-      );
+      const ids = (data.watchlist || []).map((item) => item.productId._id);
       setWatchlistIds(ids);
     } catch (err) {
       console.error("Watchlist fetch error");
@@ -98,54 +96,53 @@ function CategoryProducts() {
 
   /* ================= TOGGLE WATCHLIST ================= */
   const toggleWatchlist = async (productId) => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    navigate("/login");
-    return;
-  }
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please login first");
+      navigate("/login");
+      return;
+    }
 
-  try {
-    const res = await fetch(
-      "https://ecommerce-app-1-igf3.onrender.com/add-watchlist",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+    try {
+      const res = await fetch(
+        "https://ecommerce-app-1-igf3.onrender.com/add-watchlist",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ productId }),
         },
-        body: JSON.stringify({ productId }),
-      }
-    );
-
-    const data = await res.json();
-
-    if (data.action === "added") {
-      setWatchlistIds((prev) => [...prev, productId]);
-      toast.success("Added to watchlist");
-    }
-
-    if (data.action === "removed") {
-      setWatchlistIds((prev) =>
-        prev.filter((id) => id !== productId)
       );
-      toast.info("Removed from watchlist");
-    }
-  } catch (err) {
-    toast.error("Watchlist update failed");
-  }
-};
 
+      const data = await res.json();
+
+      if (data.action === "added") {
+        setWatchlistIds((prev) => [...prev, productId]);
+        toast.success("Added to watchlist");
+      }
+
+      if (data.action === "removed") {
+        setWatchlistIds((prev) => prev.filter((id) => id !== productId));
+        toast.info("Removed from watchlist");
+      }
+    } catch (err) {
+      toast.error("Watchlist update failed");
+    }
+  };
 
   /* ================= ADD TO CART ================= */
   const handleAddToCart = (product) => {
     const token = localStorage.getItem("token");
     if (!token) {
+      alert("Please login first");
       navigate("/login");
       return;
     }
 
     const exists = cartItems.some(
-      (item) => item.productId?._id === product._id
+      (item) => item.productId?._id === product._id,
     );
 
     if (exists) {
@@ -164,8 +161,7 @@ function CategoryProducts() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollToTop = () =>
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   const scrollToBottom = () =>
     window.scrollTo({
@@ -185,8 +181,7 @@ function CategoryProducts() {
       />
 
       <h4 className="mb-4">
-        {(subCategoryName || mainCategoryName || "Products") +
-          " Products"}
+        {(subCategoryName || mainCategoryName || "Products") + " Products"}
       </h4>
 
       <div className="row">
@@ -204,11 +199,10 @@ function CategoryProducts() {
         ) : (
           products.map((p) => (
             <div key={p._id} className="col-6 col-md-3 mb-4">
-              <div className="card p-3 h-100 position-relative">
-                {/* ❤️ HEART */}
+              <div className="card p-3 h-100 position-relative0">
                 <button
                   className="btn position-absolute top-0 end-0 m-2"
-                  style={{ background: "none", border: "none" }}
+                  style={{ background: "none", border: "none", zIndex: 10 }}
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -217,11 +211,7 @@ function CategoryProducts() {
                 >
                   <FaHeart
                     size={18}
-                    color={
-                      watchlistIds.includes(p._id)
-                        ? "red"
-                        : "gray"
-                    }
+                    color={watchlistIds.includes(p._id) ? "red" : "gray"}
                   />
                 </button>
 
@@ -229,48 +219,48 @@ function CategoryProducts() {
                   to={`/product/${p.category?._id}/${p.subCategory?._id}/${p._id}`}
                 >
                   {p.image && p.image.length > 0 && (
-                  <div
-                    id={`carousel-${p._id}`}
-                    className="carousel slide"
-                    data-bs-ride="carousel"
-                    data-bs-interval="3000"
-                    data-bs-pause="hover"
-                  >
-                    <div className="carousel-indicators custom-indicators">
-                      {p.image.map((_, index) => (
-                        <button
-                          key={index}
-                          type="button"
-                          data-bs-target={`#carousel-${p._id}`}
-                          data-bs-slide-to={index}
-                          className={index === 0 ? "active" : ""}
-                          aria-current={index === 0 ? "true" : "false"}
-                          aria-label={`Slide ${index + 1}`}
-                        ></button>
-                      ))}
-                    </div>
+                    <div
+                      id={`carousel-${p._id}`}
+                      className="carousel slide"
+                      data-bs-ride="carousel"
+                      data-bs-interval="3000"
+                      data-bs-pause="hover"
+                    >
+                      <div className="carousel-indicators custom-indicators">
+                        {p.image.map((_, index) => (
+                          <button
+                            key={index}
+                            type="button"
+                            data-bs-target={`#carousel-${p._id}`}
+                            data-bs-slide-to={index}
+                            className={index === 0 ? "active" : ""}
+                            aria-current={index === 0 ? "true" : "false"}
+                            aria-label={`Slide ${index + 1}`}
+                          ></button>
+                        ))}
+                      </div>
 
-                    <div className="carousel-inner">
-                      {p.image.map((img, index) => (
-                        <div
-                          key={index}
-                          className={`carousel-item ${
-                            index === 0 ? "active" : ""
-                          }`}
-                        >
-                          <img
-                            src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
-                            className="d-block product-img "
-                            alt={`${p.name} ${index + 1}`}
-                          />
-                        </div>
-                      ))}
+                      <div className="carousel-inner">
+                        {p.image.map((img, index) => (
+                          <div
+                            key={index}
+                            className={`carousel-item ${
+                              index === 0 ? "active" : ""
+                            }`}
+                          >
+                            <img
+                              src={`https://ecommerce-app-1-igf3.onrender.com${img}`}
+                              className="d-block product-img "
+                              alt={`${p.name} ${index + 1}`}
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
                 </Link>
 
-                <div className="card-body text-center">
+                <div className="card-body text-center product-card">
                   <h5>{p.name}</h5>
                   <p className="text-muted">{p.description}</p>
                   <p className="fw-bold text-primary">₹{p.price}</p>
