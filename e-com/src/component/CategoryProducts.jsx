@@ -98,55 +98,43 @@ function CategoryProducts() {
 
   /* ================= TOGGLE WATCHLIST ================= */
   const toggleWatchlist = async (productId) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+  const token = localStorage.getItem("token");
+  if (!token) {
+    navigate("/login");
+    return;
+  }
 
-    // REMOVE
-    if (watchlistIds.includes(productId)) {
-      try {
-        await fetch(
-          `https://ecommerce-app-1-igf3.onrender.com/remove-watchlist/${productId}`,
-          {
-            method: "DELETE",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setWatchlistIds((prev) =>
-          prev.filter((id) => id !== productId)
-        );
-        toast.info("Removed from watchlist");
-      } catch {
-        toast.error("Remove failed");
+  try {
+    const res = await fetch(
+      "https://ecommerce-app-1-igf3.onrender.com/add-watchlist",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ productId }),
       }
-      return;
-    }
+    );
 
-    // ADD
-    try {
-      await fetch(
-        "https://ecommerce-app-1-igf3.onrender.com/add-watchlist",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ productId }),
-        }
-      );
+    const data = await res.json();
 
+    if (data.action === "added") {
       setWatchlistIds((prev) => [...prev, productId]);
       toast.success("Added to watchlist");
-    } catch {
-      toast.error("Add failed");
     }
-  };
+
+    if (data.action === "removed") {
+      setWatchlistIds((prev) =>
+        prev.filter((id) => id !== productId)
+      );
+      toast.info("Removed from watchlist");
+    }
+  } catch (err) {
+    toast.error("Watchlist update failed");
+  }
+};
+
 
   /* ================= ADD TO CART ================= */
   const handleAddToCart = (product) => {
