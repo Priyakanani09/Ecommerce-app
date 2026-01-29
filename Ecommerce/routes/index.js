@@ -65,7 +65,6 @@ router.delete("/clearcart", jwtAuth, cart.clearCart);
 //watchlist api
 router.post("/add-watchlist", jwtAuth, watchlist.addToWatchlist);
 router.get("/get-watchlist", jwtAuth, watchlist.getWatchlist);
-router.delete("/remove-watchlist/:productId", jwtAuth,watchlist.removeFromWatchlist);
 
 
 module.exports = router;
