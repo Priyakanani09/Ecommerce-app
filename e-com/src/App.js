@@ -11,7 +11,6 @@ import Login from "./component/Login";
 import Home from "./component/Home";
 import Cart from "./component/Cart";
 import Search from "./component/Search";
-import Fashion from "./component/Fashion";
 import CODCheckout from "./component/CODCheckout";
 import OrderSuccess from "./component/OrderSuccess";
 import Footer from "./component/Footer";
@@ -143,7 +142,6 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/search" element={<Search />} />
-            <Route path="/fashion" element={<Fashion />} />
             <Route path="/watchlist" element={ <Watchlist />} />
             <Route path="/checkout" element={<CODCheckout />} />
             <Route path="/order-success" element={<OrderSuccess />} />

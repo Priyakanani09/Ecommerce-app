@@ -301,14 +301,14 @@ function CategoryProducts() {
         <>
           <button
             onClick={scrollToTop}
-            className="btn btn-secondary scroll-btn-up"
+            className="btn btn-secondary d-flex align-items-center justify-content-center scroll-btn-up"
           >
             <FaArrowUp size={16} />
           </button>
 
           <button
             onClick={scrollToBottom}
-            className="btn btn-secondary scroll-btn-down"
+            className="btn btn-secondary d-flex align-items-center justify-content-center scroll-btn-down "
           >
             <FaArrowDown size={16} />
           </button>

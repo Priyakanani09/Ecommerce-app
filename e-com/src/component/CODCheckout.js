@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { cartcontext } from "../App";
 import { useNavigate } from "react-router-dom";
 import { MdCurrencyRupee } from "react-icons/md";
@@ -18,6 +18,11 @@ function CODCheckout() {
     pin: "",
     phone: "",
   });
+
+  useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+  
 
   const user = JSON.parse(localStorage.getItem("user"));
 
