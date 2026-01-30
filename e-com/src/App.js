@@ -2,10 +2,8 @@ import "./App.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 import { Route, Routes } from "react-router-dom";
 import { createContext, useEffect, useState } from "react";
-
 import SingUp from "./component/SingUp";
 import Login from "./component/Login";
 import Home from "./component/Home";
@@ -46,7 +44,6 @@ function App() {
     })
       .then((res) => res.json())
       .then((data) => {
-        // 🔥 IMPORTANT CHANGE HERE
         setCartItems(data?.cartItems || []);
       })
       .catch((err) => console.log("Get cart error", err));

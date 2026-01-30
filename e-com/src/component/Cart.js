@@ -44,7 +44,7 @@ function Cart() {
 
       const data = await res.json();
       if (data.success) {
-        setCartItems(data.items || data.cartItems || []); // 🔥 DB → UI sync
+        setCartItems(data.items || data.cartItems || []);
       }
     } catch (err) {
       console.error(err);

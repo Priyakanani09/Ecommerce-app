@@ -14,13 +14,13 @@ exports.register = async (req, res) => {
 
     if (!passwordRegex.test(password)) {
       return res.status(400).json({
-       message: [
-    "Password must be at least 12 characters",
-    "Include 1 uppercase letter (A–Z)",
-    "Include 1 lowercase letter (a–z)",
-    "Include 1 number (0–9)",
-    "Include 1 special symbol (@ # $ %)",
-  ],
+        message: [
+          "Password must be at least 12 characters",
+          "Include 1 uppercase letter (A–Z)",
+          "Include lowercase letter (a–z)",
+          "Include number (0–9)",
+          "Include 1 special symbol (@ # $ %)",
+        ],
       });
     }
 
@@ -119,5 +119,45 @@ exports.getuser = async (req, res) => {
     res.status(200).json({ message: "Find Successfully", data });
   } catch (err) {
     res.status(400).json({ message: "user not find", error: err.message });
+  }
+};
+exports.forgotpassword = async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+    if (!email || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "Email and new password required" });
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*\d)(?=.*[@#$%])[a-z\d@#$%]{1,12}$/i;
+
+    if (!passwordRegex.test(newPassword)) {
+      return res.status(400).json({
+        message: [
+          "Password must be at least 12 characters",
+          "Include 1 uppercase letter (A–Z)",
+          "Include lowercase letter (a–z)",
+          "Include number (0–9)",
+          "Include 1 special symbol (@ # $ %)",
+        ],
+      });
+    }
+
+    const user = await Sign.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword,10);
+
+    user.password = hashedPassword;
+    await user.save();
+
+     res.status(200).json({
+      message: "Password reset successful. Please login with new password."
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Forgot password failed", error });
   }
 };

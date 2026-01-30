@@ -22,6 +22,7 @@ const upload = multer({ storage });
 //User Registration and Login
 router.post('/register', signController.register);
 router.post('/login', signController.login);
+router.post('/forgot-password', signController.forgotpassword);
 router.get("/getuser",signController.getuser);
 router.post("/refresh", signController.refreshToken);
 

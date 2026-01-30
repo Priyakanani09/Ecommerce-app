@@ -1,5 +1,4 @@
 const Watchlist = require("../model/watchlistmodel");
-const Product = require("../model/productmodel");
 
 exports.addToWatchlist = async (req, res) => {
   try {
@@ -23,13 +22,8 @@ exports.addToWatchlist = async (req, res) => {
 
     const watchlist = await Watchlist.create({ userId, productId });
 
-    res
-      .status(201)
-      .json({ message: "Added to Watchlist", action: "added", watchlist });
+    res.status(201).json({ message: "Added to Watchlist", action: "added", watchlist });
   } catch (err) {
-    if (err.code === 11000) {
-      return res.status(409).json({ message: "Product already in watchlist" });
-    }
     res.status(500).json({ message: err.message });
   }
 };
