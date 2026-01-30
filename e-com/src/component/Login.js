@@ -58,8 +58,7 @@ function Login() {
             required
           />
         </Form.Group>
-        <Form.Group className="mb-4" controlId="formPassword">
-          {/* <Form.Label>Password</Form.Label> */}
+        <Form.Group className="mb-2">
           <Form.Control
             type="password"
             placeholder="Enter your password"
@@ -69,12 +68,16 @@ function Login() {
           />
         </Form.Group>
 
-        {/* Button */}
-        <Button
-          variant="primary"
-          type="submit"
-          className="w-36 mx-auto d-block"
-        >
+        <div className="text-end mt-1 mb-3">
+          <Link
+            to="/forgot-password"
+            className="text-primary no-underline font-semibold"
+          >
+            Forgot Password?
+          </Link>
+        </div>
+
+        <Button variant="primary" type="submit" className="w-52 mx-auto d-block">
           Login
         </Button>
 

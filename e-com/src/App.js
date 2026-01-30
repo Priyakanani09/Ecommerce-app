@@ -16,6 +16,7 @@ import CategoryProducts from "./component/CategoryProducts";
 import ProductDetail from "./component/ProductDetail";
 import NavBar from "./component/NavBar";
 import Watchlist from "./component/Watchlist";
+import ForgotPassword from "./component/ForgotPassword";
 
 export const cartcontext = createContext();
 export const AuthContext = createContext();
@@ -137,6 +138,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/signup" element={<SingUp />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={ <ForgotPassword />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/search" element={<Search />} />
             <Route path="/watchlist" element={ <Watchlist />} />

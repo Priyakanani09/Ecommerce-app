@@ -121,6 +121,7 @@ exports.getuser = async (req, res) => {
     res.status(400).json({ message: "user not find", error: err.message });
   }
 };
+
 exports.forgotpassword = async (req, res) => {
   try {
     const { email, newPassword } = req.body;
