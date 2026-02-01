@@ -1,6 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaHeart, FaSearch, FaShoppingCart, FaAngleDown } from "react-icons/fa";
+import {
+  FaHeart,
+  FaSearch,
+  FaShoppingCart,
+  FaAngleDown,
+  FaUser,
+  FaBox,
+  FaSignOutAlt,
+} from "react-icons/fa";
 import { cartcontext } from "../App";
 import { AuthContext } from "../App";
 import { CategoryContext } from "../App";
@@ -13,12 +21,14 @@ function NavBar() {
   const { cartItems, setCartItems } = useContext(cartcontext);
   const { mainCategories, subCategories } = useContext(CategoryContext);
   const navigate = useNavigate();
+  const [loginMenu, setLoginMenu] = useState(false);
 
   const logout = async () => {
     setCartItems([]);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
+    setLoginMenu(false);
     navigate("/");
   };
 
@@ -66,35 +76,89 @@ function NavBar() {
           </Link>
 
           {/* Right Actions */}
-          <div className="flex items-center gap-3">
-            {user ? (
-              <button
-                onClick={logout}
-                className="text-sm md:text-lg font-semibold text-gray-800 hover:text-blue-500"
-              >
-                <span>Hi,{user?.name}</span> Logout
-              </button>
-            ) : (
-              <>
-                <Link
-                  to="/signup"
-                  className="text-sm md:text-lg font-semibold no-underline text-gray-800 hover:text-blue-500"
-                >
-                  Sign Up
-                </Link>
-                <Link
-                  to="/login"
-                  className="text-sm md:text-lg font-semibold no-underline text-gray-800 hover:text-blue-500"
+          <div className="flex items-center gap-6">
+            <div
+              className="relative"
+              onMouseEnter={() => setLoginMenu(true)}
+              onMouseLeave={() => setLoginMenu(false)}
+            >
+              {!user ? (
+                <div
+                  onClick={() => setLoginMenu(!loginMenu)}
+                  className="flex items-center gap-1 cursor-pointer text-black hover:!text-blue-600 text-lg font-semibold"
                 >
                   Login
-                </Link>
-              </>
-            )}
+                  <FaAngleDown
+                    className={`transition-transform duration-200 ${
+                      loginMenu ? "rotate-180" : ""
+                    }`}
+                  />
+                </div>
+              ) : (
+                <button
+                  onClick={() => setLoginMenu(!loginMenu)}
+                  className="flex items-center gap-1 text-lg font-semibold"
+                >
+                  Hi, {user.name}
+                  <FaAngleDown
+                    className={`transition-transform duration-200 ${
+                      loginMenu ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+              )}
+              {loginMenu && (
+                <div className="absolute left-1/2 -translate-x-1/2 w-56 bg-white shadow-2xl border rounded-md z-50">
+                  {!user && (
+                    <div className="flex justify-between items-center px-3 py-3 border-b">
+                      <span className="">New customer?</span>
+                      <Link
+                        to="/signup"
+                        className="text-blue-600 font-bold no-underline"
+                      >
+                        Sign Up
+                      </Link>
+                    </div>
+                  )}
 
-            <Link to="/watchlist" className="relative">
+                  <Link
+                    to={user ? "/profile" : "/login"}
+                    className="flex items-center gap-3 px-4 py-2  hover:bg-gray-100 no-underline text-gray-700"
+                  >
+                    <FaUser /> My Profile
+                  </Link>
+
+                  <Link
+                    to={user ? "/orders" : "/login"}
+                    className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 no-underline text-gray-700"
+                  >
+                    <FaBox /> Orders
+                  </Link>
+
+                  <Link
+                    to={user ? "/watchlist" : "/login"}
+                    className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 no-underline text-gray-700"
+                  >
+                    <FaHeart /> Wishlist
+                  </Link>
+
+                  {user && (
+                    <button
+                      onClick={logout}
+                      className="w-full flex items-center gap-3 px-4 py-2 text-red-600 border-t hover:bg-red-50"
+                    >
+                      <FaSignOutAlt className="text-lg" />
+                      Logout
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* <Link to="/watchlist" className="relative">
               <FaHeart className="text-xl md:text-2xl text-red-500 hover:text-red-600" />
-            </Link>
-            
+            </Link> */}
+
             <Link to="/cart" className="relative">
               <FaShoppingCart className="text-xl md:text-2xl text-gray-700  hover:text-blue-500" />
               <span className="absolute -top-2 -right-3 bg-red-500 text-white text-xs px-1.5 rounded-full">
