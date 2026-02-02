@@ -83,13 +83,22 @@ function NavBar() {
               onMouseLeave={() => setLoginMenu(false)}
             >
               {!user ? (
-                <div
-                  onClick={() => setLoginMenu(!loginMenu)}
-                  className="flex items-center gap-1 cursor-pointer text-black hover:!text-blue-600 text-lg font-semibold"
-                >
-                  Login
+                <div className="flex items-center gap-1 text-lg font-semibold text-black">
+                  {/* LOGIN LINK */}
+                  <Link
+                    to="/login"
+                    className="no-underline text-black hover:!text-blue-600"
+                  >
+                    Login
+                  </Link>
+
+                  {/* DROPDOWN ARROW */}
                   <FaAngleDown
-                    className={`transition-transform duration-200 ${
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setLoginMenu(!loginMenu);
+                    }}
+                    className={`cursor-pointer transition-transform duration-200 ${
                       loginMenu ? "rotate-180" : ""
                     }`}
                   />
