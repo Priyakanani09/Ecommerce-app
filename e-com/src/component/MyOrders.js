@@ -73,21 +73,40 @@ function MyOrders() {
 
               {/* ITEMS */}
               <div className="divide-y">
-                {order.items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between py-3 text-sm"
-                  >
-                    <span className="pr-4">
-                      {item.name} × {item.qty}
-                    </span>
-                    <span className="flex items-center font-medium">
-                      <MdCurrencyRupee size={14} className="-mr-1" />
-                      {(item.price * item.qty).toLocaleString("en-IN")}
-                    </span>
-                  </div>
-                ))}
-              </div>
+  {order.items.map((item, index) => (
+    <div
+      key={index}
+      className="flex items-center justify-between py-3 gap-3"
+    >
+      {/* LEFT : IMAGE + NAME */}
+      <div className="flex items-center gap-3">
+        <img
+          src={
+            `https://ecommerce-app-1-igf3.onrender.com${item.productId.image}`
+          }
+          alt={item.name}
+          className="w-12 h-12 object-cover rounded border"
+        />
+
+        <div className="text-sm">
+          <p className="font-medium leading-tight">
+            {item.name}
+          </p>
+          <p className="text-gray-500 text-xs">
+            Qty: {item.qty}
+          </p>
+        </div>
+      </div>
+
+      {/* RIGHT : PRICE */}
+      <span className="flex items-center text-sm font-medium">
+        <MdCurrencyRupee size={14} className="-mr-1" />
+        {(item.price * item.qty).toLocaleString("en-IN")}
+      </span>
+    </div>
+  ))}
+</div>
+
 
               {/* TOTAL */}
               <div className="flex justify-between items-center mt-4 font-bold text-lg">

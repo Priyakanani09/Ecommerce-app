@@ -35,7 +35,7 @@ exports.getorder = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const orders = await Order.find({ userId })
+    const orders = await Order.find({ userId }).populate("items.productId")
       .sort({ createdAt: -1 });
 
     res.status(200).json({

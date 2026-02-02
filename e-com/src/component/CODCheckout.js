@@ -53,7 +53,6 @@ function CODCheckout() {
     }
 
     const orderData = {
-      userId: user._id,
       customer: {
         firstName: form.firstName,
         lastName: form.lastName,
@@ -72,6 +71,7 @@ function CODCheckout() {
         name: item.productId?.name,
         price: getCleanPrice(item.price || item.productId?.price),
         qty: item.qty || 1,
+        image: item.productId?.image,
       })),
       totalAmount: subtotal,
       paymentMethod: "COD",
