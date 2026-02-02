@@ -2,7 +2,8 @@ const Order = require("../model/ordermodel");
 
 exports.order = async (req, res) => {
   try {
-    const { userId, customer, items, totalAmount, paymentMethod } = req.body;
+    const userId = req.user.id;
+    const { customer, items, totalAmount, paymentMethod } = req.body;
 
     if (!userId || !customer || !items?.length || totalAmount == null) {
       return res.status(400).json({
@@ -32,13 +33,14 @@ exports.order = async (req, res) => {
 
 exports.getorder = async (req, res) => {
   try {
-    const data = await Order.find()
-      .populate("userId")
+    const userId = req.user.id;
+
+    const orders = await Order.find({ userId })
       .sort({ createdAt: -1 });
 
     res.status(200).json({
       message: "Find Successfully",
-      data,
+      orders,
     });
   } catch (err) {
     res.status(500).json({

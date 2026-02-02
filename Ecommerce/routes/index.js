@@ -49,8 +49,8 @@ router.put('/update-product/:id',jwtAuth,admin, upload.array('image',5), product
 router.get("/search",productController.searchProduct);
 
 // User Order 
-router.post('/order',ordercontroller.order);
-router.get("/getorder",ordercontroller.getorder);
+router.post('/order',jwtAuth,ordercontroller.order);
+router.get("/getorder",jwtAuth,ordercontroller.getorder);
 
 //recently view product 
 router.post('/recently-view',jwtAuth,recentlyViewed.saveRecentlyViewed);

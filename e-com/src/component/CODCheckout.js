@@ -20,16 +20,15 @@ function CODCheckout() {
   });
 
   useEffect(() => {
-      window.scrollTo(0, 0);
-    }, []);
-  
+    window.scrollTo(0, 0);
+  }, []);
 
   const user = JSON.parse(localStorage.getItem("user"));
 
   const getCleanPrice = (price) =>
     parseFloat(price?.toString().replace(/[^0-9.]/g, "")) || 0;
 
- const subtotal = cartItems.reduce((acc, item) => {
+  const subtotal = cartItems.reduce((acc, item) => {
     const price = getCleanPrice(item.price || item.productId?.price);
     const qty = item.qty || 1;
     return acc + price * qty;
@@ -68,7 +67,7 @@ function CODCheckout() {
           pin: form.pin,
         },
       },
-     items: cartItems.map((item) => ({
+      items: cartItems.map((item) => ({
         productId: item.productId?._id || item.productId,
         name: item.productId?.name,
         price: getCleanPrice(item.price || item.productId?.price),
@@ -82,7 +81,10 @@ function CODCheckout() {
       "https://ecommerce-app-1-igf3.onrender.com/order",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
         body: JSON.stringify(orderData),
       },
     );
@@ -238,13 +240,13 @@ function CODCheckout() {
           {cartItems.map((item) => (
             <div key={item._id} className="flex justify-between text-sm mb-2">
               <span>
-               {item.productId?.name} × {item.qty || 1}
+                {item.productId?.name} × {item.qty || 1}
               </span>
               <span className="text-green-600 flex items-center">
                 <MdCurrencyRupee size={14} className="-mr-1 mt-1" />
-                {(getCleanPrice(item.productId?.price) * (item.qty || 1)).toLocaleString(
-                  "en-IN",
-                )}
+                {(
+                  getCleanPrice(item.productId?.price) * (item.qty || 1)
+                ).toLocaleString("en-IN")}
               </span>
             </div>
           ))}
