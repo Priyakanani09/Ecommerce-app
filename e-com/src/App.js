@@ -78,8 +78,6 @@ function App() {
         return;
       }
 
-      toast.success("Product added to cart");
-
       // 🔥 FETCH UPDATED CART
       const cartRes = await fetch(
         "https://ecommerce-app-1-igf3.onrender.com/getcart",

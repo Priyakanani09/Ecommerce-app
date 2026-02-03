@@ -10,6 +10,7 @@ function MyOrders() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
+      alert("Please login first");
       navigate("/login");
       return;
     }
@@ -27,23 +28,23 @@ function MyOrders() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        <p className="text-gray-500">Loading orders...</p>
+      <div className="mt-10 flex justify-center items-center">
+        <h3 className="text-gray-500">Loading orders...</h3>
       </div>
     );
   }
 
   return (
     <div className="bg-gray-50 py-6">
-      <div className="max-w- mx-auto px-4">
-        <h1 className="text-xl md:text-2xl font-bold mb-5">My Orders</h1>
+      <div className="max-w-7xl  mx-auto px-4">
+        <h1 className="text-xl md:text-2xl font-bold mb-5 text-center">My Orders</h1>
 
         {orders.length === 0 ? (
           <div className="bg-white p-6 rounded-lg shadow text-center text-gray-600">
             You have not placed any orders yet.
           </div>
         ) : (
-          <div className="space-y-5">
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {orders.map((order) => (
               <div
                 key={order._id}
