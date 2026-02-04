@@ -87,14 +87,20 @@ function Watchlist() {
     toast.success("Added to cart");
   };
 
-  if (loading) return <h4 className="text-center">Loading...</h4>;
+  if (loading) {
+    return (
+      <div className="mt-10 flex justify-center">
+        <h3>Loading...</h3>
+      </div>
+    );
+  }
 
   if (watchlist.length === 0)
     return <h4 className="text-center mt-5">No items in watchlist</h4>;
 
   return (
     <div className="container mt-4">
-      <h3 className="mb-4">My Watchlist</h3>
+      <h3 className="text-xl md:text-2xl mb-4">My Watchlist</h3>
 
       <div className="row">
         {watchlist.map((item) => {

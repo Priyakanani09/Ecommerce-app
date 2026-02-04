@@ -29,7 +29,7 @@ function MyOrders() {
   if (loading) {
     return (
       <div className="mt-10 flex justify-center">
-        <p className="text-gray-500">Loading orders...</p>
+        <h3>Loading orders...</h3>
       </div>
     );
   }
@@ -37,9 +37,9 @@ function MyOrders() {
   return (
     <div className="bg-gray-50 py-6">
       <div className="max-w-6xl mx-auto px-4">
-        <h1 className="text-xl md:text-2xl font-bold mb-6 text-center">
+        <h3 className="text-xl md:text-2xl mb-6">
           My Orders
-        </h1>
+        </h3>
 
         {orders.length === 0 ? (
           <div className="bg-white p-6 rounded-lg shadow text-center text-gray-600">
@@ -53,7 +53,7 @@ function MyOrders() {
                 className="bg-white rounded-xl shadow-sm p-4 md:p-6"
               >
                 {/* ORDER HEADER */}
-                <div className="flex justify-between items-start border-b pb-3 mb-4">
+                <div className="flex justify-between items-start border-b pb-3 md:mb-4">
                   <div>
                     <p className="text-xs text-gray-500">Order ID</p>
                     <p className="text-sm font-semibold break-all">
@@ -103,7 +103,7 @@ function MyOrders() {
                         {item.name}
                       </p>
 
-                      <p className="text-sm flex items-center gap-1">
+                      <p className="text-sm flex items-center">
                         <span className="font-semibold">Price :</span>
                         <MdCurrencyRupee size={14} className="-mr-1 mt-1" />
                         {item.price.toLocaleString("en-IN")}

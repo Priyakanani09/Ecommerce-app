@@ -8,6 +8,7 @@ const maincategory = require("../controller/maincategorycontroller")
 const subCategoryController = require("../controller/subcategorycontroller");
 const recentlyViewed = require('../controller/recentlyViewedController');
 const watchlist = require('../controller/watchlistController')
+const userprofile = require('../controller/userProfileController')
 const cart = require('../controller/cartController')
 var jwtAuth = require('../middleware/authMiddleware');
 const admin = require('../middleware/admin');
@@ -29,6 +30,12 @@ router.post("/refresh", signController.refreshToken);
 router.get('/admin-data', jwtAuth, admin, (req, res) => {
   res.json({ message: 'This is admin only data' });
 });
+
+//user Profile
+router.post("/add-user-profile",jwtAuth,upload.single('image'),userprofile.createUserProfile)
+router.get("/user-profile",jwtAuth,userprofile.getUserProfile);
+router.put("/update-user-profile",jwtAuth,upload.single("image"),userprofile.updateUserProfile);
+router.delete("/delete-user-profile/:name",jwtAuth,userprofile.deleteUserProfile);
 
 // Add Main Category
 router.post( '/add-main-category',jwtAuth,admin, upload.single('image'),maincategory.addCategory);
