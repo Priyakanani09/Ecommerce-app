@@ -18,6 +18,7 @@ import NavBar from "./component/NavBar";
 import Watchlist from "./component/Watchlist";
 import ForgotPassword from "./component/ForgotPassword";
 import MyOrders from "./component/MyOrders";
+import UserProfile from "./component/UserProfile";
 
 export const cartcontext = createContext();
 export const AuthContext = createContext();
@@ -140,7 +141,7 @@ function App() {
             <Route path="/forgot-password" element={ <ForgotPassword />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/orders" element={<MyOrders />} />
-
+            {/* <Route path="/profile" element={<UserProfile /> } /> */}
             <Route path="/search" element={<Search />} />
             <Route path="/watchlist" element={ <Watchlist />} />
             <Route path="/checkout" element={<CODCheckout />} />

@@ -1,0 +1,229 @@
+import React, { useEffect, useState } from "react";
+
+function UserProfile() {
+  const [profile, setProfile] = useState({
+    phone: "",
+    gender: "",
+    birthday: "",
+    age: "",
+    address1: "",
+    address2: "",
+    city: "",
+    pincode: "",
+  });
+
+  const [imagePreview, setImagePreview] = useState(
+    "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+  );
+  const [imageFile, setImageFile] = useState(null);
+
+  /* ======================
+     FETCH PROFILE (AUTO FILL)
+     ====================== */
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    fetch("https://ecommerce-app-1-igf3.onrender.com/user-profile", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.profile) {
+          setProfile({
+            phone: data.profile.phone || "",
+            gender: data.profile.gender || "",
+            birthday: data.profile.birthday
+              ? data.profile.birthday.split("T")[0]
+              : "",
+            age: data.profile.age || "",
+            address1: data.profile.address1 || "",
+            address2: data.profile.address2 || "",
+            city: data.profile.city || "",
+            pincode: data.profile.pincode || "",
+          });
+
+          if (data.profile.profileImage) {
+            setImagePreview(
+              `https://ecommerce-app-1-igf3.onrender.com${data.profile.profileImage}`
+            );
+          }
+        }
+      });
+  }, []);
+
+  /* ======================
+     HANDLE INPUT
+     ====================== */
+  const handleChange = (e) => {
+    setProfile({ ...profile, [e.target.name]: e.target.value });
+  };
+
+  /* ======================
+     IMAGE UPLOAD
+     ====================== */
+  const handleImage = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  /* ======================
+     SAVE PROFILE
+     ====================== */
+  const saveProfile = async () => {
+    const formData = new FormData();
+    Object.keys(profile).forEach((key) =>
+      formData.append(key, profile[key])
+    );
+    if (imageFile) {
+      formData.append("profileImage", imageFile);
+    }
+
+    const res = await fetch(
+      "https://ecommerce-app-1-igf3.onrender.com/user-profile",
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: formData,
+      }
+    );
+
+    if (res.ok) {
+      alert("Profile updated successfully");
+    } else {
+      alert("Profile update failed");
+    }
+  };
+
+  return (
+    <div className="bg-gray-100 min-h-screen py-10 px-4">
+      <div className="max-w-5xl mx-auto bg-white rounded-xl shadow p-6">
+
+        <h2 className="text-2xl font-bold mb-6">My Profile</h2>
+
+        <div className="grid md:grid-cols-3 gap-8">
+
+          {/* ================= PROFILE IMAGE ================= */}
+          <div className="flex flex-col items-center">
+            <label className="relative cursor-pointer group">
+              <img
+                src={imagePreview}
+                alt="profile"
+                className="w-36 h-36 rounded-full object-cover border-4 border-gray-200"
+              />
+
+              {/* Hover overlay */}
+              <div className="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                <span className="text-white text-sm font-semibold">
+                  Change Photo
+                </span>
+              </div>
+
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={handleImage}
+              />
+            </label>
+
+            <p className="text-xs text-gray-500 mt-2">
+              Click image to upload
+            </p>
+          </div>
+
+          {/* ================= PROFILE FORM ================= */}
+          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <input
+              name="phone"
+              placeholder="Phone Number"
+              value={profile.phone}
+              onChange={handleChange}
+              className="input"
+            />
+
+            <select
+              name="gender"
+              value={profile.gender}
+              onChange={handleChange}
+              className="input"
+            >
+              <option value="">Select Gender</option>
+              <option>Male</option>
+              <option>Female</option>
+              <option>Other</option>
+            </select>
+
+            <input
+              type="date"
+              name="birthday"
+              value={profile.birthday}
+              onChange={handleChange}
+              className="input"
+            />
+
+            <input
+              name="age"
+              placeholder="Age"
+              value={profile.age}
+              readOnly
+              className="input bg-gray-100"
+            />
+
+            <input
+              name="address1"
+              placeholder="Address Line 1"
+              value={profile.address1}
+              onChange={handleChange}
+              className="input col-span-2"
+            />
+
+            <input
+              name="address2"
+              placeholder="Address Line 2"
+              value={profile.address2}
+              onChange={handleChange}
+              className="input col-span-2"
+            />
+
+            <input
+              name="city"
+              placeholder="City"
+              value={profile.city}
+              onChange={handleChange}
+              className="input"
+            />
+
+            <input
+              name="pincode"
+              placeholder="Pincode"
+              value={profile.pincode}
+              onChange={handleChange}
+              className="input"
+            />
+          </div>
+        </div>
+
+        {/* ================= SAVE BUTTON ================= */}
+        <div className="mt-8 text-right">
+          <button
+            onClick={saveProfile}
+            className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold"
+          >
+            Save Profile
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default UserProfile;
