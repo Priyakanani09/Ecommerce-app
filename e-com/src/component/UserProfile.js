@@ -10,11 +10,12 @@ function UserProfile() {
     address1: "",
     address2: "",
     city: "",
+    state: "",
     pincode: "",
   });
 
   const [imagePreview, setImagePreview] = useState(
-    "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+    "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
   );
   const [imageFile, setImageFile] = useState(null);
   const [profileExists, setProfileExists] = useState(false);
@@ -66,12 +67,13 @@ function UserProfile() {
             address1: data.profile.address1 || "",
             address2: data.profile.address2 || "",
             city: data.profile.city || "",
+            state: data.profile.state || "",
             pincode: data.profile.pincode || "",
           });
 
           if (data.profile.profileImage) {
             setImagePreview(
-              `https://ecommerce-app-1-igf3.onrender.com${data.profile.profileImage}`
+              `https://ecommerce-app-1-igf3.onrender.com${data.profile.profileImage}`,
             );
           }
         }
@@ -115,9 +117,7 @@ function UserProfile() {
     }
 
     const formData = new FormData();
-    Object.keys(profile).forEach((key) =>
-      formData.append(key, profile[key])
-    );
+    Object.keys(profile).forEach((key) => formData.append(key, profile[key]));
 
     if (imageFile) {
       formData.append("image", imageFile);
@@ -173,79 +173,121 @@ function UserProfile() {
                 onChange={handleImage}
               />
             </label>
-            <p className="text-xs text-gray-500 mt-2">
-              Click image to upload
-            </p>
+            <p className="text-xs text-gray-500 mt-2">Click image to upload</p>
           </div>
 
           {/* PROFILE FORM */}
           <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              name="phone"
-              placeholder="Phone Number"
-              value={profile.phone}
-              onChange={handleChange}
-              className="border p-2 rounded"
-            />
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Phone Number
+              </label>
+              <input
+                placeholder="Enter phone number"
+                name="phone"
+                value={profile.phone}
+                onChange={handleChange}
+                className="w-full border p-2 rounded focus:ring-2 focus:ring-green-500 outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Gender</label>
+              <select
+                name="gender"
+                value={profile.gender}
+                onChange={handleChange}
+                className="w-full border p-2 rounded focus:ring-2 focus:ring-green-500 outline-none"
+              >
+                <option value="">Select Gender</option>
+                <option>Male</option>
+                <option>Female</option>
+                <option>Other</option>
+              </select>
+            </div>
 
-            <select
-              name="gender"
-              value={profile.gender}
-              onChange={handleChange}
-              className="border p-2 rounded"
-            >
-              <option value="">Select Gender</option>
-              <option>Male</option>
-              <option>Female</option>
-              <option>Other</option>
-            </select>
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Date of Birth
+              </label>
+              <input
+                type="date"
+                name="birthday"
+                value={profile.birthday}
+                onChange={handleChange}
+                className="w-full border p-2 rounded focus:ring-2 focus:ring-green-500 outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Age</label>
+              <input
+                name="age"
+                value={profile.age}
+                readOnly
+                className="w-full border p-2 rounded bg-gray-100"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-1">
+                Address Line 1
+              </label>
+              <input
+                placeholder="House number & street name"
+                name="address1"
+                value={profile.address1}
+                onChange={handleChange}
+                className="w-full border p-2 rounded focus:ring-2 focus:ring-green-500 outline-none"
+              />
+            </div>
 
-            <input
-              type="date"
-              name="birthday"
-              value={profile.birthday}
-              onChange={handleChange}
-              className="border p-2 rounded"
-            />
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-1">
+                Address Line 2
+              </label>
+              <input
+                placeholder="Apartment, suite, etc."
+                name="address2"
+                value={profile.address2}
+                onChange={handleChange}
+                className="w-full border p-2 rounded focus:ring-2 focus:ring-green-500 outline-none"
+              />
+            </div>
+            {/* City + State + Pincode in one line */}
+            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">City</label>
+                <input
+                  placeholder="Enter City"
+                  name="city"
+                  value={profile.city}
+                  onChange={handleChange}
+                  className="w-full border p-2 rounded focus:ring-2 focus:ring-green-500 outline-none"
+                />
+              </div>
 
-            <input
-              name="age"
-              value={profile.age}
-              readOnly
-              className="border p-2 rounded bg-gray-100"
-            />
+              <div>
+                <label className="block text-sm font-medium mb-1">State</label>
+                <input
+                  placeholder="Enter State"
+                  name="state"
+                  value={profile.state}
+                  onChange={handleChange}
+                  className="w-full border p-2 rounded focus:ring-2 focus:ring-green-500 outline-none"
+                />
+              </div>
 
-            <input
-              name="address1"
-              placeholder="Address Line 1"
-              value={profile.address1}
-              onChange={handleChange}
-              className="border p-2 rounded md:col-span-2"
-            />
-
-            <input
-              name="address2"
-              placeholder="Address Line 2"
-              value={profile.address2}
-              onChange={handleChange}
-              className="border p-2 rounded md:col-span-2"
-            />
-
-            <input
-              name="city"
-              placeholder="City"
-              value={profile.city}
-              onChange={handleChange}
-              className="border p-2 rounded"
-            />
-
-            <input
-              name="pincode"
-              placeholder="Pincode"
-              value={profile.pincode}
-              onChange={handleChange}
-              className="border p-2 rounded"
-            />
+              <div>
+                <label className="block text-sm font-medium mb-1">
+                  Pincode
+                </label>
+                <input
+                  placeholder="Enter 6-digit pincode"
+                  name="pincode"
+                  value={profile.pincode}
+                  onChange={handleChange}
+                  className="w-full border p-2 rounded focus:ring-2 focus:ring-green-500 outline-none"
+                />
+              </div>
+            </div>
           </div>
         </div>
 

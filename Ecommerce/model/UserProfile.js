@@ -42,6 +42,11 @@ const userProfileSchema = new mongoose.Schema(
       required: true,
     },
 
+    state: {
+      type: String,
+      required: true,
+    },
+
     pincode: {
       type: String,
       required: true,

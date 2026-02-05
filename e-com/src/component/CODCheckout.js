@@ -48,8 +48,8 @@ function CODCheckout() {
             address1: data.profile.address1 || "",
             address2: data.profile.address2 || "",
             city: data.profile.city || "",
-            pin: data.profile.pincode || "",
-            state: "", // optional
+            state: data.profile.state || "",
+            pin: data.profile.pincode || ""
           }));
         }
       } catch (err) {
