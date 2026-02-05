@@ -16,22 +16,45 @@ function UserProfile() {
     "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
   );
   const [imageFile, setImageFile] = useState(null);
+  const [profileExists, setProfileExists] = useState(false);
 
   /* ======================
-     FETCH PROFILE (AUTO FILL)
+     AGE CALCULATION  
+     ====================== */
+  const calculateAge = (dob) => {
+    const birthDate = new Date(dob);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+    return age;
+  };
+
+  /* ======================
+     FETCH USER PROFILE (GET ONLY)
      ====================== */
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
     fetch("https://ecommerce-app-1-igf3.onrender.com/user-profile", {
+      method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.profile) {
+        if (data?.profile) {
+          setProfileExists(true);
+
           setProfile({
             phone: data.profile.phone || "",
             gender: data.profile.gender || "",
@@ -51,19 +74,27 @@ function UserProfile() {
             );
           }
         }
-      });
+      })
+      .catch(console.log);
   }, []);
 
   /* ======================
-     HANDLE INPUT
+     HANDLE INPUT CHANGE
      ====================== */
   const handleChange = (e) => {
-    setProfile({ ...profile, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    if (name === "birthday") {
+      setProfile({
+        ...profile,
+        birthday: value,
+        age: calculateAge(value),
+      });
+    } else {
+      setProfile({ ...profile, [name]: value });
+    }
   };
 
-  /* ======================
-     IMAGE UPLOAD
-     ====================== */
   const handleImage = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -73,44 +104,55 @@ function UserProfile() {
   };
 
   /* ======================
-     SAVE PROFILE
+     SAVE PROFILE (POST / PUT)
      ====================== */
   const saveProfile = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Login required");
+      return;
+    }
+
     const formData = new FormData();
     Object.keys(profile).forEach((key) =>
       formData.append(key, profile[key])
     );
+
     if (imageFile) {
-      formData.append("profileImage", imageFile);
+      formData.append("image", imageFile);
     }
 
-    const res = await fetch(
-      "https://ecommerce-app-1-igf3.onrender.com/user-profile",
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: formData,
-      }
-    );
+    const url = profileExists
+      ? "https://ecommerce-app-1-igf3.onrender.com/update-user-profile"
+      : "https://ecommerce-app-1-igf3.onrender.com/add-user-profile";
+
+    const method = profileExists ? "PUT" : "POST";
+
+    const res = await fetch(url, {
+      method,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    const data = await res.json();
 
     if (res.ok) {
-      alert("Profile updated successfully");
+      alert(data.message || "Profile saved successfully");
+      setProfileExists(true);
     } else {
-      alert("Profile update failed");
+      alert(data.message || "Operation failed");
     }
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen py-10 px-4">
+    <div className="bg-gray-100 py-10 px-4">
       <div className="max-w-5xl mx-auto bg-white rounded-xl shadow p-6">
-
         <h2 className="text-2xl font-bold mb-6">My Profile</h2>
 
         <div className="grid md:grid-cols-3 gap-8">
-
-          {/* ================= PROFILE IMAGE ================= */}
+          {/* PROFILE IMAGE */}
           <div className="flex flex-col items-center">
             <label className="relative cursor-pointer group">
               <img
@@ -118,14 +160,11 @@ function UserProfile() {
                 alt="profile"
                 className="w-36 h-36 rounded-full object-cover border-4 border-gray-200"
               />
-
-              {/* Hover overlay */}
-              <div className="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+              <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
                 <span className="text-white text-sm font-semibold">
                   Change Photo
                 </span>
               </div>
-
               <input
                 type="file"
                 hidden
@@ -133,28 +172,26 @@ function UserProfile() {
                 onChange={handleImage}
               />
             </label>
-
             <p className="text-xs text-gray-500 mt-2">
               Click image to upload
             </p>
           </div>
 
-          {/* ================= PROFILE FORM ================= */}
+          {/* PROFILE FORM */}
           <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-
             <input
               name="phone"
               placeholder="Phone Number"
               value={profile.phone}
               onChange={handleChange}
-              className="input"
+              className="border p-2 rounded"
             />
 
             <select
               name="gender"
               value={profile.gender}
               onChange={handleChange}
-              className="input"
+              className="border p-2 rounded"
             >
               <option value="">Select Gender</option>
               <option>Male</option>
@@ -167,15 +204,14 @@ function UserProfile() {
               name="birthday"
               value={profile.birthday}
               onChange={handleChange}
-              className="input"
+              className="border p-2 rounded"
             />
 
             <input
               name="age"
-              placeholder="Age"
               value={profile.age}
               readOnly
-              className="input bg-gray-100"
+              className="border p-2 rounded bg-gray-100"
             />
 
             <input
@@ -183,7 +219,7 @@ function UserProfile() {
               placeholder="Address Line 1"
               value={profile.address1}
               onChange={handleChange}
-              className="input col-span-2"
+              className="border p-2 rounded md:col-span-2"
             />
 
             <input
@@ -191,7 +227,7 @@ function UserProfile() {
               placeholder="Address Line 2"
               value={profile.address2}
               onChange={handleChange}
-              className="input col-span-2"
+              className="border p-2 rounded md:col-span-2"
             />
 
             <input
@@ -199,7 +235,7 @@ function UserProfile() {
               placeholder="City"
               value={profile.city}
               onChange={handleChange}
-              className="input"
+              className="border p-2 rounded"
             />
 
             <input
@@ -207,18 +243,17 @@ function UserProfile() {
               placeholder="Pincode"
               value={profile.pincode}
               onChange={handleChange}
-              className="input"
+              className="border p-2 rounded"
             />
           </div>
         </div>
 
-        {/* ================= SAVE BUTTON ================= */}
         <div className="mt-8 text-right">
           <button
             onClick={saveProfile}
             className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold"
           >
-            Save Profile
+            {profileExists ? "Update Profile" : "Save Profile"}
           </button>
         </div>
       </div>

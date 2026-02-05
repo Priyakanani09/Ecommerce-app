@@ -19,8 +19,45 @@ function CODCheckout() {
     phone: "",
   });
 
-  useEffect(() => {
+   useEffect(() => {
     window.scrollTo(0, 0);
+
+    const fetchProfile = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      try {
+        const res = await fetch(
+          "https://ecommerce-app-1-igf3.onrender.com/user-profile",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        const data = await res.json();
+
+        if (data?.profile) {
+          const fullName = data.profile.userId?.name || "";
+
+          setForm((prev) => ({
+            ...prev,
+            firstName: fullName.split(" ")[0] || "",
+            lastName: fullName.split(" ")[1] || "",
+            email: data.profile.userId?.email || "",
+            phone: data.profile.phone || "",
+            address1: data.profile.address1 || "",
+            address2: data.profile.address2 || "",
+            city: data.profile.city || "",
+            pin: data.profile.pincode || "",
+            state: "", // optional
+          }));
+        }
+      } catch (err) {
+        console.log("Profile fetch error:", err);
+      }
+    };
+
+    fetchProfile();
   }, []);
 
   const user = JSON.parse(localStorage.getItem("user"));
@@ -54,24 +91,17 @@ function CODCheckout() {
 
     const orderData = {
       customer: {
-        firstName: form.firstName,
-        lastName: form.lastName,
-        email: form.email,
-        phone: form.phone,
-        address: {
-          address1: form.address1,
-          address2: form.address2,
-          city: form.city,
-          state: form.state,
-          pin: form.pin,
-        },
+        address1: form.address1,
+        address2: form.address2,
+        city: form.city,
+        state: form.state,
+        pin: form.pin,
       },
       items: cartItems.map((item) => ({
         productId: item.productId?._id || item.productId,
         name: item.productId?.name,
         price: getCleanPrice(item.price || item.productId?.price),
         qty: item.qty || 1,
-        image: item.productId?.image,
       })),
       totalAmount: subtotal,
       paymentMethod: "COD",
@@ -114,6 +144,7 @@ function CODCheckout() {
                 name="firstName"
                 placeholder="First name"
                 onChange={handleChange}
+                value={form.firstName}
                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm
                           focus:outline-none focus:ring-2 focus:ring-green-500"
               />
@@ -127,6 +158,7 @@ function CODCheckout() {
                 name="lastName"
                 placeholder="Last name"
                 onChange={handleChange}
+                 value={form.lastName}
                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm
                           focus:outline-none focus:ring-2 focus:ring-green-500"
               />
@@ -142,6 +174,7 @@ function CODCheckout() {
               name="email"
               placeholder="example@email.com"
               onChange={handleChange}
+              value={form.email}
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm
                         focus:outline-none focus:ring-2 focus:ring-green-500"
             />
@@ -155,6 +188,7 @@ function CODCheckout() {
               name="address1"
               placeholder="House number and street name"
               onChange={handleChange}
+              value={form.address1}
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm
                         focus:outline-none focus:ring-2 mb-3 focus:ring-green-500"
             />
@@ -162,6 +196,7 @@ function CODCheckout() {
               name="address2"
               placeholder="Apartment, suite, unit (optional)"
               onChange={handleChange}
+              value={form.address2}
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm
                         focus:outline-none focus:ring-2 focus:ring-green-500"
             />
@@ -176,6 +211,7 @@ function CODCheckout() {
                 name="city"
                 placeholder="Town / City"
                 onChange={handleChange}
+                value={form.city}
                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm
                         focus:outline-none focus:ring-2 focus:ring-green-500"
               />
@@ -189,6 +225,7 @@ function CODCheckout() {
                 name="state"
                 placeholder="State"
                 onChange={handleChange}
+                value={form.state}
                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm
                         focus:outline-none focus:ring-2 focus:ring-green-500"
               />
@@ -205,6 +242,7 @@ function CODCheckout() {
                 placeholder="PIN Code"
                 maxLength={6}
                 onChange={handleChange}
+                value={form.pin}
                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm
                         focus:outline-none focus:ring-2 focus:ring-green-500"
               />
@@ -219,6 +257,7 @@ function CODCheckout() {
                 placeholder="Phone"
                 maxLength={10}
                 onChange={handleChange}
+                value={form.phone}
                 className="w-full border border-gray-300 rounded px-3 py-2 text-sm
                         focus:outline-none focus:ring-2 focus:ring-green-500"
               />

@@ -141,7 +141,7 @@ function App() {
             <Route path="/forgot-password" element={ <ForgotPassword />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/orders" element={<MyOrders />} />
-            {/* <Route path="/profile" element={<UserProfile /> } /> */}
+            <Route path="/profile" element={<UserProfile /> } />
             <Route path="/search" element={<Search />} />
             <Route path="/watchlist" element={ <Watchlist />} />
             <Route path="/checkout" element={<CODCheckout />} />
