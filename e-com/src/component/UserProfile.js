@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 function UserProfile() {
   const [profile, setProfile] = useState({
@@ -139,7 +140,7 @@ function UserProfile() {
     const data = await res.json();
 
     if (res.ok) {
-      alert(data.message || "Profile saved successfully");
+      toast.success(data.message || "Profile saved successfully");
       setProfileExists(true);
     } else {
       alert(data.message || "Operation failed");
@@ -147,7 +148,7 @@ function UserProfile() {
   };
 
   return (
-    <div className="bg-gray-100 py-10 px-4">
+    <div className="py-10 px-4">
       <div className="max-w-5xl mx-auto bg-white rounded-xl shadow p-6">
         <h2 className="text-2xl font-bold mb-6">My Profile</h2>
 
