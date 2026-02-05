@@ -68,7 +68,7 @@ function UserProfile() {
             address2: data.profile.address2 || "",
             city: data.profile.city || "",
             state: data.profile.state || "",
-            pincode: data.profile.pincode || "",
+            pincode: data.profile.pincode || ""
           });
 
           if (data.profile.profileImage) {
@@ -120,7 +120,7 @@ function UserProfile() {
     Object.keys(profile).forEach((key) => formData.append(key, profile[key]));
 
     if (imageFile) {
-      formData.append("image", imageFile);
+      formData.append("profileImage", imageFile);
     }
 
     const url = profileExists
