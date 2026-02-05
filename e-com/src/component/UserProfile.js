@@ -120,7 +120,7 @@ function UserProfile() {
     Object.keys(profile).forEach((key) => formData.append(key, profile[key]));
 
     if (imageFile) {
-      formData.append("profileImage", imageFile);
+      formData.append("image", imageFile);
     }
 
     const url = profileExists
