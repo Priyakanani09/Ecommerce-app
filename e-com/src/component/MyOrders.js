@@ -93,7 +93,7 @@ function MyOrders() {
                           <img
                             src={`https://ecommerce-app-1-igf3.onrender.com${item.productId.image[0]}`}
                             alt={item.name}
-                            className="w-28 h-28 object-cover rounded border"
+                            className="w-28 h-28 object-contain rounded border"
                           />
                         </Link>
                       </div>
