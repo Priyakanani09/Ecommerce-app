@@ -49,3 +49,21 @@ exports.getorder = async (req, res) => {
     });
   }
 };
+
+exports.getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate("userId", "name phone") // show user info
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      message: "All orders fetched successfully",
+      data: orders,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Failed to fetch orders",
+      error: err.message,
+    });
+  }
+};
