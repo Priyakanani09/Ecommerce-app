@@ -95,7 +95,7 @@ function ForgotPassword() {
         <Button
           variant="primary"
           type="submit"
-          className="w-100"
+          className="w-52 mx-auto d-block "
           disabled={loading}
         >
           {loading ? "Resetting..." : "Reset Password"}
