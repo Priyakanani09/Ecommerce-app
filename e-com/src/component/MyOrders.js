@@ -20,6 +20,7 @@ function MyOrders() {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log(data)
         setOrders(data.orders || []);
         setLoading(false);
       })

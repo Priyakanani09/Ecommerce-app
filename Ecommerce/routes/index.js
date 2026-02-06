@@ -53,7 +53,7 @@ router.post('/add-product',jwtAuth, admin,upload.array('image',5), productContro
 router.get('/products', productController.getProducts);
 router.delete("/delete/:name",jwtAuth,admin,productController.deleteProduct);
 router.put('/update-product/:id',jwtAuth,admin, upload.array('image',5), productController.updateProduct);
-router.get("/search",productController.searchProduct);
+router.get("/search",admin,productController.searchProduct);
 
 // User Order 
 router.post('/order',jwtAuth,ordercontroller.order);
