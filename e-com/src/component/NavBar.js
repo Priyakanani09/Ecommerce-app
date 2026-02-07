@@ -88,7 +88,7 @@ function NavBar() {
               onMouseLeave={() => setLoginMenu(false)}
             >
               {!user ? (
-                <div className="flex items-center gap-1 text-lg font-semibold text-black">
+                <div className="flex items-center gap-1 text-lg hover:!text-blue-600 font-semibold text-black">
                   <Link
                     to="/login"
                     className="no-underline text-black hover:!text-blue-600"
@@ -236,7 +236,7 @@ function NavBar() {
                 />
               )}
 
-              <div className="flex items-center gap-1 text-sm font-semibold text-gray-800">
+              <div className="flex items-center gap-1 text-sm font-semibold hover:text-blue-600 text-gray-800">
                 <span className="text-center">{cat.name}</span>
 
                 <FaAngleDown
@@ -266,16 +266,16 @@ function NavBar() {
                 />
               )}
 
-              <div className="flex items-center gap-1 font-semibold text-gray-800">
+              <div className="flex items-center gap-1 font-semibold hover:text-blue-600 text-gray-800">
                 <span
                   onClick={() => navigate(`/category/${cat._id}`)}
-                  className="cursor-pointer hover:text-blue-600"
+                  className="cursor-pointer"
                 >
                   {cat.name}
                 </span>
 
                 <FaAngleDown
-                  className={`transition-transform duration-200 ${
+                  className={`transition-transform duration-200  ${
                     openId === cat._id ? "rotate-180" : ""
                   }`}
                 />
