@@ -25,7 +25,7 @@ function Search() {
         .then((res) => res.json())
         .then((data) => {
           console.log(data)
-          setFiltered(data.data)})
+          setFiltered(data)})
         .catch((err) => console.error("Error fetching search results:", err))
         .finally(() => setLoading(false));
     }

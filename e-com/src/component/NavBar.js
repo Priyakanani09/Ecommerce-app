@@ -57,10 +57,7 @@ function NavBar() {
         `https://ecommerce-app-1-igf3.onrender.com/search?query=${search}`
       );
       const data = await res.json();
-
-      // IMPORTANT FIX
-      console.log(data)
-      setSuggestions(data.data.slice(0, 8));
+      setSuggestions(data.slice(0, 8));
     } catch (err) {
       console.error(err);
     }
