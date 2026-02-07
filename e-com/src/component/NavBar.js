@@ -46,25 +46,29 @@ function NavBar() {
   };
 
   useEffect(() => {
-    if (!search.trim()) {
-      setSuggestions([]);
-      return;
+  if (!search.trim()) {
+    setSuggestions([]);
+    return;
+  }
+
+  const fetchSuggestions = async () => {
+    try {
+      const res = await fetch(
+        `https://ecommerce-app-1-igf3.onrender.com/search?query=${search}`
+      );
+      const data = await res.json();
+
+      // IMPORTANT FIX
+      console.log(data)
+      setSuggestions(data.data.slice(0, 8));
+    } catch (err) {
+      console.error(err);
     }
+  };
 
-    const fetchSuggestions = async () => {
-      try {
-        const res = await fetch(
-          `https://ecommerce-app-1-igf3.onrender.com/search?query=${search}`,
-        );
-        const data = await res.json();
-        setSuggestions(data.slice(0, 8));
-      } catch (err) {
-        console.error(err);
-      }
-    };
+  fetchSuggestions();
+}, [search]);
 
-    fetchSuggestions();
-  }, [search]);
 
   return (
     <div>

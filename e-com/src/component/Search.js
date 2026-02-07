@@ -23,7 +23,9 @@ function Search() {
         headers: { "Cache-Control": "no-cache" },
       })
         .then((res) => res.json())
-        .then((data) => setFiltered(data))
+        .then((data) => {
+          console.log(data)
+          setFiltered(data.data)})
         .catch((err) => console.error("Error fetching search results:", err))
         .finally(() => setLoading(false));
     }
