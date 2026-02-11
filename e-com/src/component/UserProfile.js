@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 function UserProfile() {
@@ -14,6 +15,7 @@ function UserProfile() {
     pincode: "",
   });
 
+  const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState(
     "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
   );
@@ -44,8 +46,12 @@ function UserProfile() {
      ====================== */
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) return;
 
+    if (!token) {
+      alert("Please login first");
+      navigate("/login");
+      return;
+    }
     fetch("https://ecommerce-app-1-igf3.onrender.com/user-profile", {
       method: "GET",
       headers: {

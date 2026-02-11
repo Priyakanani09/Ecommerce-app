@@ -50,7 +50,6 @@ function NavBar() {
     setSuggestions([]);
     return;
   }
-
   const fetchSuggestions = async () => {
     try {
       const res = await fetch(
@@ -66,6 +65,20 @@ function NavBar() {
   fetchSuggestions();
 }, [search]);
 
+const goProtected = (path) => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("Please login first");
+
+    setTimeout(() => {
+      navigate("/login");
+    }, 100); // small delay
+    return;
+  }
+
+  navigate(path);
+};
 
   return (
     <div>
@@ -136,21 +149,21 @@ function NavBar() {
                   )}
 
                   <Link
-                    to={user ? "/profile" : "/login"}
+                    onClick={() => goProtected("/profile")}
                     className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 no-underline text-gray-700"
                   >
                     <FaUser /> My Profile
                   </Link>
 
                   <Link
-                    to={user ? "/orders" : "/login"}
+                    onClick={() => goProtected("/orders")}
                     className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 no-underline text-gray-700"
                   >
                     <FaBox /> Orders
                   </Link>
 
                   <Link
-                    to={user ? "/watchlist" : "/login"}
+                    onClick={() => goProtected("/watchlist")}
                     className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 no-underline text-gray-700"
                   >
                     <FaHeart /> Wishlist
