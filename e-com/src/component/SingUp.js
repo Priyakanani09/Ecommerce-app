@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { useContext } from "react";
@@ -11,7 +11,13 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { setUser } = useContext(AuthContext);
+  const { user,setUser } = useContext(AuthContext);
+
+  useEffect(() => {
+      if (user) {
+        navigate("/", { replace: true });
+      }
+    }, [user, navigate]);
 
   const collectData = () => {
     if (password !== confirmPassword) {
