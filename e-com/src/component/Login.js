@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { AuthContext } from "../App";
@@ -8,11 +8,23 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
-  const { setUser } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+
+  const { user, setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  /* ================= REDIRECT IF ALREADY LOGGED IN ================= */
+  useEffect(() => {
+    if (user) {
+      navigate("/", { replace: true });
+    }
+  }, [user, navigate]);
+
+  /* ================= LOGIN FUNCTION ================= */
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
       const res = await fetch(
         "https://ecommerce-app-1-igf3.onrender.com/login",
@@ -22,16 +34,20 @@ function Login() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ email, password }),
-        },
+        }
       );
 
       const result = await res.json();
 
       if (result.message === "Login successful" && result.user) {
+        // Store in localStorage
         localStorage.setItem("user", JSON.stringify(result.user));
         localStorage.setItem("token", result.token);
 
+        // Update context
         setUser(result.user);
+
+        // Redirect to home
         navigate("/", { replace: true });
       } else {
         localStorage.removeItem("user");
@@ -41,6 +57,8 @@ function Login() {
       console.error(error);
       setUser(null);
       alert("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,7 +69,6 @@ function Login() {
 
         {/* Email */}
         <Form.Group className="mb-4" controlId="formEmail">
-          {/* <Form.Label>Email address</Form.Label> */}
           <Form.Control
             type="email"
             placeholder="Enter your email"
@@ -60,6 +77,8 @@ function Login() {
             required
           />
         </Form.Group>
+
+        {/* Password */}
         <Form.Group className="mb-3 position-relative">
           <Form.Control
             type={showPass ? "text" : "password"}
@@ -68,6 +87,7 @@ function Login() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+
           <span
             onClick={() => setShowPass(!showPass)}
             style={{
@@ -81,6 +101,7 @@ function Login() {
           </span>
         </Form.Group>
 
+        {/* Forgot Password */}
         <div className="text-end mt-1 mb-3">
           <Link
             to="/forgot-password"
@@ -90,14 +111,17 @@ function Login() {
           </Link>
         </div>
 
+        {/* Button */}
         <Button
           variant="primary"
           type="submit"
           className="w-52 mx-auto d-block"
+          disabled={loading}
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </Button>
 
+        {/* Register */}
         <div className="text-center mt-3">
           <span>Don’t have an account? </span>
           <Link to="/signup" className="text-primary fw-bold">

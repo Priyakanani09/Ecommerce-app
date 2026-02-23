@@ -20,7 +20,7 @@ function ImageGallery({ images = [] }) {
       <div className="col-12 col-md-10 order-1 order-md-2 text-center d-flex justify-content-center">
         <img
           src={`${BASE_URL}${mainImg}`}
-          className="img-fluid main-img rounded border"
+          className="img-fluid main-img rounded border p-3"
           alt="main"
         />
       </div>

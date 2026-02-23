@@ -288,7 +288,7 @@ form {
 }
 
 .main-img {
-  max-height: 450px;
+  max-height: 360px;
   object-fit: contain;
 }
 
