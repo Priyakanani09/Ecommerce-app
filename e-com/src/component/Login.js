@@ -2,10 +2,12 @@ import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { AuthContext } from "../App";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPass, setShowPass] = useState(false);
   const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -58,14 +60,25 @@ function Login() {
             required
           />
         </Form.Group>
-        <Form.Group className="mb-2">
+        <Form.Group className="mb-3 position-relative">
           <Form.Control
-            type="password"
+            type={showPass ? "text" : "password"}
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+          <span
+            onClick={() => setShowPass(!showPass)}
+            style={{
+              position: "absolute",
+              right: "15px",
+              top: "15px",
+              cursor: "pointer",
+            }}
+          >
+            {showPass ? <FaEyeSlash /> : <FaEye />}
+          </span>
         </Form.Group>
 
         <div className="text-end mt-1 mb-3">
@@ -77,7 +90,11 @@ function Login() {
           </Link>
         </div>
 
-        <Button variant="primary" type="submit" className="w-52 mx-auto d-block">
+        <Button
+          variant="primary"
+          type="submit"
+          className="w-52 mx-auto d-block"
+        >
           Login
         </Button>
 

@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showNewPass, setShowNewPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
 
   const navigate = useNavigate();
 
@@ -32,19 +35,19 @@ function ForgotPassword() {
             email,
             newPassword,
           }),
-        }
+        },
       );
 
       const result = await res.json();
 
       if (res.ok) {
         alert(result.message);
-        navigate("/login"); 
+        navigate("/login");
       } else {
         alert(
           Array.isArray(result.message)
             ? result.message.join("\n")
-            : result.message
+            : result.message,
         );
       }
     } catch (error) {
@@ -71,25 +74,47 @@ function ForgotPassword() {
         </Form.Group>
 
         {/* New Password */}
-        <Form.Group className="mb-3">
+        <Form.Group className="mb-3 position-relative">
           <Form.Control
-            type="password"
+            type={showNewPass ? "text" : "password"}
             placeholder="Enter new password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             required
           />
+          <span
+            onClick={() => setShowNewPass(!showNewPass)}
+            style={{
+              position: "absolute",
+              right: "15px",
+              top: "15px",
+              cursor: "pointer",
+            }}
+          >
+            {showNewPass ? <FaEyeSlash /> : <FaEye />}
+          </span>
         </Form.Group>
 
         {/* Confirm Password */}
-        <Form.Group className="mb-3">
+        <Form.Group className="mb-3 position-relative">
           <Form.Control
-            type="password"
+            type={showConfirmPass ? "text" : "password"}
             placeholder="Confirm new password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
+          <span
+            onClick={() => setShowConfirmPass(!showConfirmPass)}
+            style={{
+              position: "absolute",
+              right: "15px",
+              top: "15px",
+              cursor: "pointer",
+            }}
+          >
+            {showConfirmPass ? <FaEyeSlash /> : <FaEye />}
+          </span>
         </Form.Group>
 
         <Button

@@ -46,39 +46,24 @@ function NavBar() {
   };
 
   useEffect(() => {
-  if (!search.trim()) {
-    setSuggestions([]);
-    return;
-  }
-  const fetchSuggestions = async () => {
-    try {
-      const res = await fetch(
-        `https://ecommerce-app-1-igf3.onrender.com/search?query=${search}`
-      );
-      const data = await res.json();
-      setSuggestions(data.slice(0, 8));
-    } catch (err) {
-      console.error(err);
+    if (!search.trim()) {
+      setSuggestions([]);
+      return;
     }
-  };
+    const fetchSuggestions = async () => {
+      try {
+        const res = await fetch(
+          `https://ecommerce-app-1-igf3.onrender.com/search?query=${search}`,
+        );
+        const data = await res.json();
+        setSuggestions(data.slice(0, 8));
+      } catch (err) {
+        console.error(err);
+      }
+    };
 
-  fetchSuggestions();
-}, [search]);
-
-const goProtected = (path) => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    alert("Please login first");
-
-    setTimeout(() => {
-      navigate("/login");
-    }, 100); // small delay
-    return;
-  }
-
-  navigate(path);
-};
+    fetchSuggestions();
+  }, [search]);
 
   return (
     <div>
@@ -149,21 +134,30 @@ const goProtected = (path) => {
                   )}
 
                   <Link
-                    onClick={() => goProtected("/profile")}
+                    to={user ? "/profile" : "/login"}
+                    onClick={() => {
+                      if (!user) alert("Please login first");
+                    }}
                     className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 no-underline text-gray-700"
                   >
                     <FaUser /> My Profile
                   </Link>
 
                   <Link
-                    onClick={() => goProtected("/orders")}
+                    to={user ? "/orders" : "/login"}
+                    onClick={() => {
+                      if (!user) alert("Please login first");
+                    }}
                     className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 no-underline text-gray-700"
                   >
                     <FaBox /> Orders
                   </Link>
 
                   <Link
-                    onClick={() => goProtected("/watchlist")}
+                    to={user ? "/watchlist" : "/login"}
+                    onClick={() => {
+                      if (!user) alert("Please login first");
+                    }}
                     className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 no-underline text-gray-700"
                   >
                     <FaHeart /> Wishlist
