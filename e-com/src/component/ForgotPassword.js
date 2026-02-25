@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState,useEffect, useContext } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { AuthContext } from "../App";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -10,8 +11,15 @@ function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [showNewPass, setShowNewPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
+  const { user} = useContext(AuthContext);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+      if (user) {
+        navigate("/", { replace: true });
+      }
+    }, [user, navigate]);
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
