@@ -220,7 +220,7 @@ function ProductDetail() {
           </div>
 
           <div className="position-relative">
-            {/* ❤️ WATCHLIST ICON ON IMAGE */}
+            {/* WATCHLIST ICON ON IMAGE */}
             <button
               className="btn position-absolute top-2 end-0 m-2"
               style={{ background: "none", border: "none", zIndex: 10 }}
