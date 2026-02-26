@@ -219,7 +219,7 @@ function Home() {
                       to={`/category/${p.category?._id}/${p.subCategory?._id}`}
                     >
                       <img
-                        src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                        src={`https://ecommerce-app-1-igf3.onrender.com$${p.thumbImage?.[0] || p.image[0]}`}
                         alt={p.name}
                       />
                     </Link>
@@ -255,7 +255,7 @@ function Home() {
                       to={`/category/${p.category?._id}/${p.subCategory?._id}`}
                     >
                       <img
-                        src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                        src={`https://ecommerce-app-1-igf3.onrender.com${p.thumbImage?.[0] || p.image[0]}`}
                         alt={p.name}
                       />
                     </Link>
@@ -290,7 +290,7 @@ function Home() {
                       to={`/category/${p.category?._id}/${p.subCategory?._id}`}
                     >
                       <img
-                        src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                        src={`https://ecommerce-app-1-igf3.onrender.com${p.thumbImage?.[0]}`}
                         alt={p.name}
                       />
                     </Link>
@@ -327,7 +327,7 @@ function Home() {
                       to={`/category/${p.category?._id}/${p.subCategory?._id}`}
                     >
                       <img
-                        src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                        src={`https://ecommerce-app-1-igf3.onrender.com$${p.thumbImage?.[0] || p.image[0]}`}
                         alt={p.name}
                       />
                     </Link>
@@ -362,7 +362,7 @@ function Home() {
                       to={`/category/${p.category?._id}/${p.subCategory?._id}`}
                     >
                       <img
-                        src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                        src={`https://ecommerce-app-1-igf3.onrender.com${p.thumbImage?.[0] || p.image[0]}`}
                         alt={p.name}
                       />
                     </Link>
@@ -397,7 +397,7 @@ function Home() {
                       to={`/category/${p.category?._id}/${p.subCategory?._id}`}
                     >
                       <img
-                        src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                        src={`https://ecommerce-app-1-igf3.onrender.com${p.thumbImage?.[0] || p.image[0]}`}
                         alt={p.name}
                       />
                     </Link>
@@ -437,7 +437,7 @@ function Home() {
                     to={`/category/${p.category?._id}/${p.subCategory?._id}`}
                   >
                     <img
-                      src={`https://ecommerce-app-1-igf3.onrender.com${p.image[0]}`}
+                      src={`https://ecommerce-app-1-igf3.onrender.com${p.thumbImage?.[0] || p.image[0]}`}
                       alt={p.name}
                     />
                   </Link>

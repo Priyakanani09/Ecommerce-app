@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
 const Product = require("../model/productmodel");
 const Category = require("../model/maincategorymodel");
-const SubCategory = require("../model/subcategorymodel")
+const SubCategory = require("../model/subcategorymodel");
+const sharp = require("sharp");
 
 exports.addProduct = async (req, res) => {
   try {
-    const { name, price, category,subCategory, description } = req.body;
+    const { name, price, category, subCategory, description } = req.body;
 
     // Validate category and subCategory IDs
     if (!mongoose.Types.ObjectId.isValid(category)) {
@@ -15,12 +16,25 @@ exports.addProduct = async (req, res) => {
       return res.status(400).json({ message: "Invalid subCategory ID" });
     }
 
-    const image = req.files
-      ? req.files.map((file) => `/Img/${file.filename}`)
-      : [];
+    let image = [];
+    let thumbImage = [];
 
+    if (req.files) {
+      for (let file of req.files) {
+        // Original Image
+        image.push(`/Img/${file.filename}`);
+
+        // Thumbnail Create
+        await sharp(file.path)
+          .resize(200, 200)
+          .toFile(`Img/thumb/thumb-${file.filename}`);
+
+        thumbImage.push(`/Img/thumb/thumb-${file.filename}`);
+      }
+    }
     const product = await Product.create({
       image,
+      thumbImage,
       name,
       price,
       category,
@@ -35,7 +49,6 @@ exports.addProduct = async (req, res) => {
 };
 exports.getProducts = async (req, res) => {
   try {
-
     if (req.query.allproduct === "true") {
       const products = await Product.find({})
         .limit(200)
@@ -66,19 +79,28 @@ exports.getProducts = async (req, res) => {
         return res.status(400).json({ message: "Invalid mainCategory ID" });
       }
 
-      const subCategories = await SubCategory.find(
-        { mainCategory },
-        "_id"
-      );
+      const subCategories = await SubCategory.find({ mainCategory }, "_id");
 
-      const subCategoryIds = subCategories.map(sc => sc._id);
+      const subCategoryIds = subCategories.map((sc) => sc._id);
       query.subCategory = { $in: subCategoryIds };
     }
-    
-    const totalProducts = await Product.countDocuments(query);
-    const products = await Product.find(query).skip(skip).limit(limit).populate("category", "name").populate("subCategory", "name");
 
-    res.status(200).json({message: "Product find successfully",products,totalProducts,currentPage: page, totalPages: Math.ceil(totalProducts / limit)});
+    const totalProducts = await Product.countDocuments(query);
+    const products = await Product.find(query)
+      .skip(skip)
+      .limit(limit)
+      .populate("category", "name")
+      .populate("subCategory", "name");
+
+    res
+      .status(200)
+      .json({
+        message: "Product find successfully",
+        products,
+        totalProducts,
+        currentPage: page,
+        totalPages: Math.ceil(totalProducts / limit),
+      });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Failed to fetch products" });
@@ -92,7 +114,7 @@ exports.deleteProduct = async (req, res) => {
       return res.status(400).json({ message: "Product name is required" });
     }
 
-    const deletedProduct = await Product.findOneAndDelete({ name : name })
+    const deletedProduct = await Product.findOneAndDelete({ name: name })
       .populate("category", "name")
       .populate("subCategory", "name");
 
@@ -132,21 +154,34 @@ exports.updateProduct = async (req, res) => {
     }
 
     let images = product.image;
-    if (req.files && req.files.length > 0) {
-      images = req.files.map((file) => `/Img/${file.filename}`);
-    }
+    let thumbImage = product.thumbImage || [];
 
+    if (req.files && req.files.length > 0) {
+      images = [];
+      thumbImage = [];
+
+      for (let file of req.files) {
+        images.push(`/Img/${file.filename}`);
+
+        await sharp(file.path)
+          .resize(200, 200)
+          .toFile(`Img/thumb/thumb-${file.filename}`);
+
+        thumbImage.push(`/Img/thumb/thumb-${file.filename}`);
+      }
+    }
     const updatedProduct = await Product.findByIdAndUpdate(
       id,
       {
         image: images,
+        thumbImage,
         name,
         price,
         category,
         subCategory,
         description,
       },
-      { new: true }
+      { new: true },
     )
       .populate("category", "name")
       .populate("subCategory", "name");
@@ -165,23 +200,23 @@ exports.searchProduct = async (req, res) => {
   try {
     const query = req.query.query || "";
 
-     const matchingCategories = await Category.find({
-      name: { $regex: query, $options: "i" }
+    const matchingCategories = await Category.find({
+      name: { $regex: query, $options: "i" },
     });
-    const categoryIds = matchingCategories.map(cat => cat._id);
+    const categoryIds = matchingCategories.map((cat) => cat._id);
 
     const matchingSubCategories = await SubCategory.find({
-      name: { $regex: query, $options: "i" }
+      name: { $regex: query, $options: "i" },
     });
-    const subCategoryIds = matchingSubCategories.map(sub => sub._id);
+    const subCategoryIds = matchingSubCategories.map((sub) => sub._id);
 
     // Search products by name, category ID, or subcategory ID
-   const products = await Product.find({
+    const products = await Product.find({
       $or: [
         { name: { $regex: query, $options: "i" } },
         { category: { $in: categoryIds } },
-        { subCategory: { $in: subCategoryIds } }
-      ]
+        { subCategory: { $in: subCategoryIds } },
+      ],
     })
       .limit(8)
       .populate("category", "name")
