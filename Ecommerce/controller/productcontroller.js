@@ -62,7 +62,7 @@ exports.getProducts = async (req, res) => {
     }
 
     const page = parseInt(req.query.page) || 1;
-    const limit = 24;
+    const limit = 20;
     const skip = (page - 1) * limit;
     const { mainCategory, subCategory } = req.query;
 
