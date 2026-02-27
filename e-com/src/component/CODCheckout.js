@@ -96,6 +96,7 @@ function CODCheckout() {
         city: form.city,
         state: form.state,
         pin: form.pin,
+        phone: form.phone 
       },
       items: cartItems.map((item) => ({
         productId: item.productId?._id || item.productId,
