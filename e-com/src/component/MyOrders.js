@@ -7,6 +7,28 @@ function MyOrders() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+   const getStatusColor = (status) => {
+    switch (status) {
+      case "Pending":
+        return "bg-yellow-100 text-yellow-700";
+
+      case "Confirmed":
+        return "bg-blue-100 text-blue-700";
+
+      case "Processing":
+        return "bg-purple-100 text-purple-700";
+
+      case "Delivered":
+        return "bg-green-100 text-green-700";
+
+      case "Cancelled":
+        return "bg-red-100 text-red-700";
+
+      default:
+        return "bg-gray-100 text-gray-700";
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -26,6 +48,26 @@ function MyOrders() {
       })
       .catch(() => setLoading(false));
   }, [navigate]);
+
+   const cancelOrder = async (id) => {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(
+      `https://ecommerce-app-1-igf3.onrender.com/cancel-order/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const data = await res.json();
+
+    alert(data.message);
+
+    window.location.reload();
+  };
 
   if (loading) {
     return (
@@ -153,15 +195,42 @@ function MyOrders() {
 
                 {/* ORDER FOOTER */}
                 <div className="flex justify-between items-center pt-4 mt-3">
-                  <span className="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700 font-semibold">
+                  <span
+                    className={`px-3 py-1 text-xs rounded-full font-semibold ${getStatusColor(
+                      order.status
+                    )}`}
+                  >
                     {order.status}
                   </span>
 
-                  <div className="text-green-600  flex font-bold text-sm">
-                    SubTotal :{" "}
-                    <MdCurrencyRupee size={14} className="-mr-1 mt-1" />
-                    {order.totalAmount.toLocaleString("en-IN")}
+                  <div className="flex items-center gap-4">
+
+
+                    {order.status !== "Delivered" &&
+                      order.status !== "Cancelled" && (
+
+                        <button
+                          onClick={() => cancelOrder(order._id)}
+                          className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600"
+                        >
+                          Cancel Order
+                        </button>
+
+                      )}
+
+
+
+                    <div className="text-green-600 flex font-bold text-sm">
+
+                      SubTotal :
+
+                      <MdCurrencyRupee size={14} className="-mr-1 mt-1" />
+
+                      {order.totalAmount.toLocaleString("en-IN")}
+
+                    </div>
                   </div>
+
                 </div>
               </div>
             ))}
