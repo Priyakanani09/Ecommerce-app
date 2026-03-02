@@ -59,6 +59,8 @@ router.get("/search",productController.searchProduct);
 router.post('/order',jwtAuth,ordercontroller.order);
 router.get("/getorder",jwtAuth,ordercontroller.getorder);
 router.get("/getallorder", ordercontroller.getAllOrders);
+router.put("/cancel-order/:id", ordercontroller.cancelOrder);
+
 
 //recently view product 
 router.post('/recently-view',jwtAuth,recentlyViewed.saveRecentlyViewed);
