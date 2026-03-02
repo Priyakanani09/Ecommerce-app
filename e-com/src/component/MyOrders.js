@@ -7,7 +7,7 @@ function MyOrders() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-   const getStatusColor = (status) => {
+  const getStatusColor = (status) => {
     switch (status) {
       case "Pending":
         return "bg-yellow-100 text-yellow-700";
@@ -42,14 +42,14 @@ function MyOrders() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
+        console.log(data);
         setOrders(data.orders || []);
         setLoading(false);
       })
       .catch(() => setLoading(false));
   }, [navigate]);
 
-   const cancelOrder = async (id) => {
+  const cancelOrder = async (id) => {
     const token = localStorage.getItem("token");
 
     const res = await fetch(
@@ -59,7 +59,7 @@ function MyOrders() {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     const data = await res.json();
@@ -80,9 +80,7 @@ function MyOrders() {
   return (
     <div className="bg-gray-50 py-6">
       <div className="max-w-6xl mx-auto px-4">
-        <h3 className="text-xl md:text-2xl mb-6">
-          My Orders
-        </h3>
+        <h3 className="text-xl md:text-2xl mb-6">My Orders</h3>
 
         {orders.length === 0 ? (
           <div className="bg-white p-6 rounded-lg shadow text-center text-gray-600">
@@ -183,7 +181,9 @@ function MyOrders() {
                         <MdCurrencyRupee size={14} className="-mr-1" />
                         {item.price.toLocaleString("en-IN")}
                       </div>
-                      <div className="text-center font-semibold text-sm">{item.qty}</div>
+                      <div className="text-center font-semibold text-sm">
+                        {item.qty}
+                      </div>
 
                       <div className="text-right text-sm font-semibold flex items-center justify-end">
                         <MdCurrencyRupee size={14} className="-mr-1 mt-1" />
@@ -197,40 +197,29 @@ function MyOrders() {
                 <div className="flex justify-between items-center pt-4 mt-3">
                   <span
                     className={`px-3 py-1 text-xs rounded-full font-semibold ${getStatusColor(
-                      order.status
+                      order.status,
                     )}`}
                   >
                     {order.status}
                   </span>
 
                   <div className="flex items-center gap-4">
-
-
                     {order.status !== "Delivered" &&
                       order.status !== "Cancelled" && (
-
                         <button
                           onClick={() => cancelOrder(order._id)}
                           className="bg-red-500 text-white px-3 py-1 rounded text-xs hover:bg-red-600"
                         >
                           Cancel Order
                         </button>
-
                       )}
 
-
-
                     <div className="text-green-600 flex font-bold text-sm">
-
                       SubTotal :
-
                       <MdCurrencyRupee size={14} className="-mr-1 mt-1" />
-
                       {order.totalAmount.toLocaleString("en-IN")}
-
                     </div>
                   </div>
-
                 </div>
               </div>
             ))}
